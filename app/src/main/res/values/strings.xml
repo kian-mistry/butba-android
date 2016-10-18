@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">BUTBA</string>
+
+    <string name="nav_drawer_open">Open</string>
+    <string name="nav_drawer_close">Close</string>
+
+    <string-array name="nav_items">
+        <item>Home</item>
+        <item>Committee</item>
+    </string-array>
 </resources>
