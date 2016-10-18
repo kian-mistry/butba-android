@@ -9,14 +9,14 @@
     <com.pkmmte.view.CircularImageView
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@mipmap/ic_action_account_circle"
+        android:src="@mipmap/ic_logo_circle"
         android:layout_marginLeft="@dimen/nav_drawer_icon_margin"
         android:layout_marginRight="8dp"
         android:layout_marginTop="@dimen/nav_drawer_icon_margin"
         android:layout_marginBottom="8dp"
         app:border="true"
         app:border_color="@android:color/white"
-        app:border_width="4dp"
+        app:border_width="2dp"
         app:shadow="true" />
 
     <LinearLayout
