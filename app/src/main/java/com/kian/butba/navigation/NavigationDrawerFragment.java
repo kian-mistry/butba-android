@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.kian.butba.HomeScreen;
 import com.kian.butba.R;
 import com.kian.butba.views.DividerItemDecoration;
 import com.kian.butba.views.OnItemPressListener;
@@ -82,26 +83,19 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private void navigationItemsActions(Context context, int position) {
-        try {
-            switch(position - 1) {
-                case -1:
-                    Toast.makeText(context, "Profile", Toast.LENGTH_SHORT).show();
-                    break;
-                case 0:
-                    Class<?> homeScreen = Class.forName(".HomeScreen");
-                    Intent iHomeScreen = new Intent(context, homeScreen);
-                    context.startActivity(iHomeScreen);
-                    Toast.makeText(context, "Home", Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    Toast.makeText(context, "Test", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-            closeDrawer();
+        switch(position - 1) {
+            case -1:
+                Toast.makeText(context, "Profile", Toast.LENGTH_SHORT).show();
+                break;
+            case 0:
+                Intent iHomeScreen = new Intent(context, HomeScreen.class);
+                context.startActivity(iHomeScreen);
+                break;
+            default:
+                Toast.makeText(context, "Test", Toast.LENGTH_SHORT).show();
+                break;
         }
-        catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        closeDrawer();
     }
 
     public void setup(final DrawerLayout drawerLayout, final Toolbar toolbar, int fragmentId) {
