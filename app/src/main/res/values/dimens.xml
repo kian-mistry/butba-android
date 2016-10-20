@@ -9,4 +9,7 @@
     <dimen name="nav_drawer_icon_margin">16dp</dimen>
     <dimen name="nav_drawer_title_margin">72dp</dimen>
     <dimen name="nav_drawer_item_height">48dp</dimen>
+
+    <!-- Tab Dimensions -->
+    <dimen name="tab_height">48dp</dimen>
 </resources>

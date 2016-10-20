@@ -23,8 +23,8 @@ public class SplashActivity extends Activity {
                     e.printStackTrace();
                 }
                 finally {
-                    Intent iHomeMenu = new Intent("HOME_SCREEN");
-                    startActivity(iHomeMenu);
+                    Intent iProfile = new Intent(SplashActivity.this, ProfileActivity.class);
+                    startActivity(iProfile);
                 }
             }
         };

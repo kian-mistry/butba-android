@@ -10,6 +10,9 @@
     <color name="colourSecondaryText">#757575</color>
     <color name="colourDivider">#BDBDBD</color>
 
+    <!-- Tab -->
+    <color name="colourInactiveTab">#B3B3B3</color>
+
     <!-- Misc -->
     <color name="blueGrey">#607D8B</color>
 </resources>

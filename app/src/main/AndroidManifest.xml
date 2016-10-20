@@ -22,7 +22,17 @@
             android:name=".ProfileActivity"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="HOME_SCREEN" />
+                <action android:name="PROFILE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <!-- Sub Activities -->
+        <activity
+            android:name=".committee.CommitteeActivity"
+            android:label="Committee"
+            android:parentActivityName=".ProfileActivity">
+            <intent-filter>
+                <action android:name="COMMITTEE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.kian.butba.ProfileActivity;
 import com.kian.butba.R;
+import com.kian.butba.committee.CommitteeActivity;
 import com.kian.butba.views.DividerItemDecoration;
 import com.kian.butba.views.OnItemPressListener;
 import com.kian.butba.views.RecyclerTouchListener;
@@ -88,9 +89,12 @@ public class NavigationDrawerFragment extends Fragment {
                 Toast.makeText(context, "Profile", Toast.LENGTH_SHORT).show();
                 break;
             case 0:
-                Intent iHomeScreen = new Intent(context, ProfileActivity.class);
-                context.startActivity(iHomeScreen);
+                Intent iProfile = new Intent(context, ProfileActivity.class);
+                context.startActivity(iProfile);
                 break;
+            case 1:
+                Intent iCommittee = new Intent(context, CommitteeActivity.class);
+                context.startActivity(iCommittee);
             default:
                 Toast.makeText(context, "Test", Toast.LENGTH_SHORT).show();
                 break;

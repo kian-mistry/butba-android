@@ -8,4 +8,9 @@
         <item>Profile</item>
         <item>Committee</item>
     </string-array>
+
+    <string-array name="tab_committees">
+        <item>Executive</item>
+        <item>Non-Executive</item>
+    </string-array>
 </resources>
