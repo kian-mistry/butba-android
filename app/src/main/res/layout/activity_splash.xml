@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:background="@android:color/white"
-    tools:context="com.kian.butba.SplashScreen">
+    tools:context="com.kian.butba.SplashActivity">
 
     <ImageView
         android:layout_width="match_parent"

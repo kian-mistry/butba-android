@@ -5,7 +5,7 @@
     <string name="nav_drawer_close">Close</string>
 
     <string-array name="nav_items">
-        <item>Home</item>
+        <item>Profile</item>
         <item>Committee</item>
     </string-array>
 </resources>

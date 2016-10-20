@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 
 import com.kian.butba.navigation.NavigationDrawerFragment;
 
@@ -12,7 +11,7 @@ import com.kian.butba.navigation.NavigationDrawerFragment;
  * Created by Kian Mistry on 17/10/16.
  */
 
-public class HomeScreen extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -21,7 +20,7 @@ public class HomeScreen extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home_screen);
+        setContentView(R.layout.activity_profile);
 
         //Set up toolbar.
         toolbar = (Toolbar) findViewById(R.id.app_bar);

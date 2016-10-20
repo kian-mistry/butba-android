@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.kian.butba.HomeScreen;
+import com.kian.butba.ProfileActivity;
 import com.kian.butba.R;
 import com.kian.butba.views.DividerItemDecoration;
 import com.kian.butba.views.OnItemPressListener;
@@ -88,7 +88,7 @@ public class NavigationDrawerFragment extends Fragment {
                 Toast.makeText(context, "Profile", Toast.LENGTH_SHORT).show();
                 break;
             case 0:
-                Intent iHomeScreen = new Intent(context, HomeScreen.class);
+                Intent iHomeScreen = new Intent(context, ProfileActivity.class);
                 context.startActivity(iHomeScreen);
                 break;
             default:
@@ -161,8 +161,8 @@ public class NavigationDrawerFragment extends Fragment {
         List<NavigationItem> navigationItems = new ArrayList<>();
 
         int[] menuIcons = {
-            R.mipmap.ic_action_home,
-            R.mipmap.ic_action_account_circle
+            R.mipmap.ic_action_perm_identity,
+            R.mipmap.ic_action_group_work
         };
 
         String[] menuTitles = getResources().getStringArray(R.array.nav_items);
