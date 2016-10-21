@@ -34,6 +34,7 @@ public class CommitteeActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Initialise view page and set up adapter.
         viewPager = (ViewPager) findViewById(R.id.committee_view_pager);
@@ -59,10 +60,10 @@ public class CommitteeActivity extends AppCompatActivity {
 
             switch (position) {
                 case EXEC_COMMITTEE:
-                    fragment = ExecutiveCommittee.newInstance("", "");
+                    fragment = CommitteeProfiles.newInstance(0);
                     break;
                 case NON_EXEC_COMMITTEE:
-                    fragment = ExecutiveCommittee.newInstance("", "");
+                    fragment = CommitteeProfiles.newInstance(1);
                     break;
                 default:
                     break;

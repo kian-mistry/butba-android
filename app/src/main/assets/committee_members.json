@@ -1,0 +1,72 @@
+{
+  "exec": [
+    {
+      "position": "Chair",
+      "forename": "Kirsty",
+      "surname": "Ralph",
+      "university": "Nottingham Trent University (2009-2015)",
+      "email": "chair@butba.co.uk",
+      "high-game": 246,
+      "high-series": 655,
+      "image": "http://butba.co.uk/wp-content/uploads/committee/kirsty_ralph.png",
+      "about": " "
+    },
+    {
+      "position": "Vice-Chair",
+      "forename": "Tim",
+      "surname": "Hughes",
+      "university": "Birmingham City University (2009-2013)",
+      "email": "vicechair@butba.co.uk",
+      "high-game": 246,
+      "high-series": 642,
+      "image": "http://butba.co.uk/wp-content/uploads/committee/tim_hughes.png",
+      "about": " "
+    },
+    {
+      "position": "Secretary",
+      "forename": "Sarah",
+      "surname": "Hood",
+      "university": "University of Gloucestershire (2004)",
+      "email": "secretary@butba.co.uk",
+      "high-game": 298,
+      "high-series": 777,
+      "image": "http://butba.co.uk/wp-content/uploads/committee/sarah_hood.png",
+      "about": " "
+    },
+    {
+      "position": "Treasurer",
+      "forename": "Paul",
+      "surname": "Marks",
+      "university": "Manchester Metropolitan University (2008-)",
+      "email": "treasurer@butba.co.uk",
+      "high-game": 289,
+      "high-series": 782,
+      "image": "http://butba.co.uk/wp-content/uploads/committee/paul_marks.png",
+      "about": " "
+    },
+    {
+      "position": "Tournament Coordinator",
+      "forename": "James",
+      "surname": "Larkin",
+      "university": "Nottingham Trent University (1996-2005)",
+      "email": "tournaments@butba.co.uk",
+      "high-game": 279,
+      "high-series": 721,
+      "image": "http://butba.co.uk/wp-content/uploads/committee/james_larkin.png",
+      "about": " "
+    }
+  ],
+  "non-exec": [
+    {
+      "position": "Developer",
+      "forename": "Kian",
+      "surname": "Mistry",
+      "university": "University of Birmingham (2012-2017)",
+      "email": "developer@butba.co.uk",
+      "high-game": 256,
+      "high-series": 635,
+      "image": "http://butba.co.uk/wp-content/uploads/committee/kian_mistry.png",
+      "about": " "
+    }
+  ]
+}
