@@ -4,12 +4,15 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.kian.butba.profile.ProfileFragment;
 
 /**
  * Created by Kian Mistry on 25/10/16.
@@ -62,16 +65,19 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
         switch(id) {
             case R.id.nav_profile:
+                ProfileFragment profileFragment = new ProfileFragment();
+                FragmentManager manager = getSupportFragmentManager();
+                manager.beginTransaction().replace(R.id.content_main, profileFragment, profileFragment.getTag()).commit();
                 Snackbar.make(this.getCurrentFocus(), "Profile", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_committee:
-
+                Snackbar.make(this.getCurrentFocus(), "Committee", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_settings:
-
+                Snackbar.make(this.getCurrentFocus(), "Settings", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_help:
-
+                Snackbar.make(this.getCurrentFocus(), "Help", Snackbar.LENGTH_SHORT).show();
                 break;
             default:
 
