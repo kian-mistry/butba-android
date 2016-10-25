@@ -21,10 +21,10 @@
             android:text="Chair"
             android:fontFamily="sans-serif"
             android:textStyle="bold"
-            android:textSize="32sp" />
+            android:textSize="28sp" />
 
         <ImageView
-            android:id="@+id/committee_picture"
+            android:id="@+id/committee_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_below="@id/committee_position"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/committee_position"
-            android:layout_toRightOf="@id/committee_picture"
+            android:layout_toRightOf="@id/committee_image"
             android:padding="2.5dp"
             android:text="Name: "
             android:textSize="16sp"
@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/committee_name"
-            android:layout_toRightOf="@id/committee_picture"
+            android:layout_toRightOf="@id/committee_image"
             android:padding="2.5dp"
             android:text="Email: "
             android:textSize="14sp"
@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/committee_email"
-            android:layout_toRightOf="@id/committee_picture"
+            android:layout_toRightOf="@id/committee_image"
             android:padding="2.5dp"
             android:text="University: "
             android:textSize="14sp" />
@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/committee_uni"
-            android:layout_toRightOf="@id/committee_picture"
+            android:layout_toRightOf="@id/committee_image"
             android:padding="2.5dp"
             android:text="High Game: "
             android:textSize="14sp" />
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/committee_high_game"
             android:layout_marginBottom="5dp"
-            android:layout_toRightOf="@id/committee_picture"
+            android:layout_toRightOf="@id/committee_image"
             android:padding="2.5dp"
             android:text="High Series: "
             android:textSize="14sp" />

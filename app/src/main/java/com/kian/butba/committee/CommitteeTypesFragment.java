@@ -62,7 +62,7 @@ public class CommitteeTypesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        //Inflate the layout for this fragment.
         View layout = inflater.inflate(R.layout.fragment_committee_members, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.committee_cards_container);
 
@@ -81,44 +81,39 @@ public class CommitteeTypesFragment extends Fragment {
         Bundle args = getArguments();
         if(args != null) {
             arg1 = args.getInt(ARG_1, 0);
-
             jsonObject = JSONHandler.loadJson(getContext(), "committee_members.json");
         }
 
-        if(arg1 == 0) {
-            try {
+        try {
+            if (arg1 == 0) {
                 jsonArray = jsonObject.getJSONArray("exec");
             }
-            catch(JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        else if(arg1 == 1) {
-            try {
+            else if (arg1 == 1) {
                 jsonArray = jsonObject.getJSONArray("non-exec");
             }
-            catch(JSONException e) {
-                e.printStackTrace();
-            }
-        }
 
-        try {
             members = new ArrayList<>();
             HashMap<String, String> memberDetails;
 
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject member = jsonArray.getJSONObject(i);
 
+                String imageUrl = member.getString("image");
                 String position = member.getString("position");
                 String name = member.getString("forename") + " " + member.getString("surname");
                 String university = member.getString("university");
                 String email = member.getString("email");
+                String highGame = String.valueOf(member.getInt("high-game"));
+                String highSeries = String.valueOf(member.getInt("high-series"));
 
                 memberDetails = new HashMap<>();
+                memberDetails.put("image", imageUrl);
                 memberDetails.put("position", position);
                 memberDetails.put("name", name);
                 memberDetails.put("university", university);
                 memberDetails.put("email", email);
+                memberDetails.put("high-game", highGame);
+                memberDetails.put("high-series", highSeries);
 
                 members.add(memberDetails);
             }

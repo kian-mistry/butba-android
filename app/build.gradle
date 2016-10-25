@@ -51,4 +51,7 @@ dependencies {
 
     //Tabs
     compile 'io.karim:materialtabs:2.0.5'
+
+    //Picasso
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
