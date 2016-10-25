@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        FragmentManager manager = null;
+        FragmentManager manager = getSupportFragmentManager();
 
         //Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -70,18 +70,15 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         switch(id) {
             case R.id.nav_profile:
                 ProfileFragment profileFragment = new ProfileFragment();
-                manager = getSupportFragmentManager();
                 manager.beginTransaction().replace(R.id.content_main, profileFragment, profileFragment.getTag()).commit();
                 Snackbar.make(this.getCurrentFocus(), "Profile", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_committee:
                 CommitteeFragment committeeFragment = new CommitteeFragment();
-                manager = getSupportFragmentManager();
                 manager.beginTransaction()
                         .replace(R.id.content_main, committeeFragment, committeeFragment.getTag())
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
-                Snackbar.make(this.getCurrentFocus(), "Committee", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_settings:
                 Snackbar.make(this.getCurrentFocus(), "Settings", Snackbar.LENGTH_SHORT).show();
@@ -90,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                 Snackbar.make(this.getCurrentFocus(), "Help", Snackbar.LENGTH_SHORT).show();
                 break;
             default:
-
                 break;
         }
 
