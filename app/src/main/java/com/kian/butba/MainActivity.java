@@ -57,23 +57,20 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+        //Handle navigation view item clicks here.
         int id = item.getItemId();
 
         switch(id) {
-            case R.id.nav_camera:
-                Snackbar.make(this.getCurrentFocus(), "Camera", Snackbar.LENGTH_SHORT).show();
+            case R.id.nav_profile:
+                Snackbar.make(this.getCurrentFocus(), "Profile", Snackbar.LENGTH_SHORT).show();
                 break;
-            case R.id.nav_gallery:
+            case R.id.nav_committee:
 
                 break;
-            case R.id.nav_manage:
+            case R.id.nav_settings:
 
                 break;
-            case R.id.nav_share:
-
-                break;
-            case R.id.nav_send:
+            case R.id.nav_help:
 
                 break;
             default:
