@@ -23,7 +23,7 @@ public class SplashActivity extends Activity {
                     e.printStackTrace();
                 }
                 finally {
-                    Intent iProfile = new Intent(SplashActivity.this, ProfileActivity.class);
+                    Intent iProfile = new Intent(SplashActivity.this, MainActivity.class);
                     startActivity(iProfile);
                 }
             }
