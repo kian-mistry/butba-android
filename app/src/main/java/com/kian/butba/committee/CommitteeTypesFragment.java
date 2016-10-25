@@ -22,7 +22,7 @@ import java.util.HashMap;
  * Created by Kian Mistry on 20/10/16.
  */
 
-public class CommitteeProfiles extends Fragment {
+public class CommitteeTypesFragment extends Fragment {
 
     public static final String ARG_1 = "arg1";
 
@@ -38,12 +38,12 @@ public class CommitteeProfiles extends Fragment {
     private CommitteeCardsAdapter committeeCardsAdapter;
 
 
-    public CommitteeProfiles() {
+    public CommitteeTypesFragment() {
         //Required: Empty public constructor.
     }
 
-    public static CommitteeProfiles newInstance(int committeeType) {
-        CommitteeProfiles fragment = new CommitteeProfiles();
+    public static CommitteeTypesFragment newInstance(int committeeType) {
+        CommitteeTypesFragment fragment = new CommitteeTypesFragment();
 
         Bundle args = new Bundle();
         args.putInt(ARG_1, committeeType);
@@ -63,7 +63,7 @@ public class CommitteeProfiles extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View layout = inflater.inflate(R.layout.fragment_committee, container, false);
+        View layout = inflater.inflate(R.layout.fragment_committee_members, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.committee_cards_container);
 
         committeeCardsAdapter = new CommitteeCardsAdapter(getActivity(), getMembers());

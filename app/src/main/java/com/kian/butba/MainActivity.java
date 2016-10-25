@@ -5,6 +5,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.kian.butba.committee.CommitteeFragment;
 import com.kian.butba.profile.ProfileFragment;
 
 /**
@@ -60,17 +62,25 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        FragmentManager manager = null;
+
         //Handle navigation view item clicks here.
         int id = item.getItemId();
 
         switch(id) {
             case R.id.nav_profile:
                 ProfileFragment profileFragment = new ProfileFragment();
-                FragmentManager manager = getSupportFragmentManager();
+                manager = getSupportFragmentManager();
                 manager.beginTransaction().replace(R.id.content_main, profileFragment, profileFragment.getTag()).commit();
                 Snackbar.make(this.getCurrentFocus(), "Profile", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_committee:
+                CommitteeFragment committeeFragment = new CommitteeFragment();
+                manager = getSupportFragmentManager();
+                manager.beginTransaction()
+                        .replace(R.id.content_main, committeeFragment, committeeFragment.getTag())
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
                 Snackbar.make(this.getCurrentFocus(), "Committee", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_settings:

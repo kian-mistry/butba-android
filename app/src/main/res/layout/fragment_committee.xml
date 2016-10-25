@@ -1,18 +1,29 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context="com.kian.butba.committee.CommitteeActivity">
+    android:background="@android:color/white">
 
-    <RelativeLayout
+    <!-- Tabs -->
+   <io.karim.MaterialTabs
+        android:id="@+id/committee_tabs"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="@dimen/tab_height"
+        android:background="@color/colourPrimary"
+        app:mtIndicatorColor="@color/colourAccent"
+        android:textColor="@color/colourInactiveTab"
+       app:mtTextColorSelected="@android:color/white"
+        app:mtSameWeightTabs="true"
+        app:mtPaddingMiddle="false"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/committee_cards_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <!-- View Pager -->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/committee_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-    </RelativeLayout>
-</FrameLayout>
+</LinearLayout>

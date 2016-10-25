@@ -26,14 +26,5 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <!-- Sub Activities -->
-        <activity
-            android:name=".committee.CommitteeActivity"
-            android:label="Committee">
-            <intent-filter>
-                <action android:name="COMMITTEE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
     </application>
 </manifest>

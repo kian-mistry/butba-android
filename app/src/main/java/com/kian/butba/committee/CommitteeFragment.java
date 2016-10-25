@@ -3,10 +3,11 @@ package com.kian.butba.committee;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.kian.butba.R;
 
@@ -16,37 +17,33 @@ import io.karim.MaterialTabs;
  * Created by Kian Mistry on 20/10/16.
  */
 
-public class CommitteeActivity extends AppCompatActivity {
+public class CommitteeFragment extends Fragment {
     public static final int EXEC_COMMITTEE = 0;
     public static final int NON_EXEC_COMMITTEE = 1;
 
-    private Toolbar toolbar;
     private ViewPager viewPager;
     private MaterialTabs tabs;
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_committee);
-
-        //Set up toolbar.
-        toolbar = (Toolbar) findViewById(R.id.app_bar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        //Initialise view page and set up adapter.
-        viewPager = (ViewPager) findViewById(R.id.committee_view_pager);
-        viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
-
-        //Bind tabs to view pager.
-        tabs = (MaterialTabs) findViewById(R.id.committee_tabs);
-        tabs.setViewPager(viewPager);
-
+    public CommitteeFragment() {
+        //Required: Empty public constructor.
     }
 
-    private class ViewPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_committee, container, false);
+
+        //Initialise view pager and set up adapter.
+        viewPager = (ViewPager) view.findViewById(R.id.committee_view_pager);
+        viewPager.setAdapter(new ViewPagerAdapter(getActivity().getSupportFragmentManager()));
+
+        //Bind tabs to the view pager.
+        tabs = (MaterialTabs) view.findViewById(R.id.committee_tabs);
+        tabs.setViewPager(viewPager);
+
+        return view;
+    }
+
+    private class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         private final String[] tabTitles = getResources().getStringArray(R.array.tab_committees);
 
@@ -60,10 +57,10 @@ public class CommitteeActivity extends AppCompatActivity {
 
             switch (position) {
                 case EXEC_COMMITTEE:
-                    fragment = CommitteeProfiles.newInstance(0);
+                    fragment = CommitteeTypesFragment.newInstance(0);
                     break;
                 case NON_EXEC_COMMITTEE:
-                    fragment = CommitteeProfiles.newInstance(1);
+                    fragment = CommitteeTypesFragment.newInstance(1);
                     break;
                 default:
                     break;
