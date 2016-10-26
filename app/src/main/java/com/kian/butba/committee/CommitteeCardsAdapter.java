@@ -1,11 +1,15 @@
 package com.kian.butba.committee;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,7 +41,7 @@ public class CommitteeCardsAdapter extends Adapter<CommitteeProfileHolder> {
 
     @Override
     public void onBindViewHolder(CommitteeProfileHolder holder, int position) {
-        HashMap<String, String> current = committeeProfiles.get(position);
+        final HashMap<String, String> current = committeeProfiles.get(position);
 
         //Use of Picasso library to load image from URL.
         Picasso.with(inflater.getContext())
@@ -49,7 +53,17 @@ public class CommitteeCardsAdapter extends Adapter<CommitteeProfileHolder> {
         holder.getCommitteePosition().setText(current.get("position"));
         holder.getCommitteeName().setText(current.get("name"));
         holder.getCommitteeUniversity().setText(current.get("university"));
-        holder.getCommitteeEmail().setText(current.get("email"));
+        holder.getCommitteeEmail().setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                emailIntent.setData(Uri.parse("mailto:"));
+                emailIntent.setType("plain/text");
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {current.get("email")});
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "BUTBA Query");
+                inflater.getContext().startActivity(emailIntent);
+            }
+        });
         holder.getCommitteeHighGame().setText("High Game: " + current.get("high-game"));
         holder.getCommitteeHighSeries().setText("High Series: " + current.get("high-series"));
     }
@@ -64,7 +78,7 @@ public class CommitteeCardsAdapter extends Adapter<CommitteeProfileHolder> {
         private ImageView committeeImage;
         private TextView committeePosition;
         private TextView committeeName;
-        private TextView committeeEmail;
+        private Button committeeEmail;
         private TextView committeeUniversity;
         private TextView committeeHighGame;
         private TextView committeeHighSeries;
@@ -75,7 +89,7 @@ public class CommitteeCardsAdapter extends Adapter<CommitteeProfileHolder> {
             committeeImage = (ImageView) itemView.findViewById(R.id.committee_image);
             committeePosition = (TextView) itemView.findViewById(R.id.committee_position);
             committeeName = (TextView) itemView.findViewById(R.id.committee_name);
-            committeeEmail = (TextView) itemView.findViewById(R.id.committee_email);
+            committeeEmail = (Button) itemView.findViewById(R.id.committee_email);
             committeeUniversity = (TextView) itemView.findViewById(R.id.committee_uni);
             committeeHighGame = (TextView) itemView.findViewById(R.id.committee_high_game);
             committeeHighSeries = (TextView) itemView.findViewById(R.id.committee_high_series);
@@ -93,7 +107,7 @@ public class CommitteeCardsAdapter extends Adapter<CommitteeProfileHolder> {
             return committeeName;
         }
 
-        public TextView getCommitteeEmail() {
+        public Button getCommitteeEmail() {
             return committeeEmail;
         }
 
