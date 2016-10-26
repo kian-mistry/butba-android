@@ -1,5 +1,6 @@
 package com.kian.butba;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 
 import com.kian.butba.committee.CommitteeFragment;
 import com.kian.butba.profile.ProfileFragment;
+import com.kian.butba.settings.SettingsActivity;
 
 /**
  * Created by Kian Mistry on 25/10/16.
@@ -87,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                         .commit();
                 break;
             case R.id.nav_settings:
+                Intent iSettings = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(iSettings);
                 Snackbar.make(this.getCurrentFocus(), "Settings", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_help:
