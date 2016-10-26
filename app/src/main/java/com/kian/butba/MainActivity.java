@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private ActionBarDrawerToggle toggle;
     private NavigationView navigationView;
 
+    private FragmentManager manager = getSupportFragmentManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +49,12 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         //Initialise the navigation view.
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //Display ProfileFragment on startup
+        if (savedInstanceState == null) {
+            manager.beginTransaction().replace(R.id.content_main, new ProfileFragment()).commit();
+            navigationView.setCheckedItem(R.id.nav_profile);
+        }
     }
 
     @Override
@@ -62,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        FragmentManager manager = getSupportFragmentManager();
-
         //Handle navigation view item clicks here.
         int id = item.getItemId();
 
