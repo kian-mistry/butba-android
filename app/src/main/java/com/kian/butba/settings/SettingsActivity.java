@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.kian.butba.R;
+import com.kian.butba.database.QueryFetcher;
+import com.kian.butba.database.QueryMap;
 
 import java.util.Arrays;
 
@@ -20,7 +22,10 @@ import java.util.Arrays;
 public class SettingsActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private SettingsFragment fragment = new SettingsFragment();
+    private SettingsFragment fragment;
+
+    private QueryMap bowlersQueryMap;
+    private QueryFetcher queryFetcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +40,16 @@ public class SettingsActivity extends AppCompatActivity {
 
 
         //Set up Settings fragment.
+        fragment = new SettingsFragment();
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_main, fragment, fragment.getTag())
                 .commit();
+
+        //Set up query fetcher to retrieve a list of all of BUTBA members.
+        bowlersQueryMap = new QueryMap(QueryMap.QueryTag.SELECT_ALL_BOWLERS, "", "");
+        queryFetcher = new QueryFetcher(this);
+        queryFetcher.execute(bowlersQueryMap);
     }
 
     public static class SettingsFragment extends PreferenceFragment {
