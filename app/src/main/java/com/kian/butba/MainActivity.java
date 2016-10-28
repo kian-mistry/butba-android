@@ -69,13 +69,13 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         //Get bowler's details from a shared preference.
         SharedPreferences sharedPreferences = getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
         boolean isButbaMember = sharedPreferences.getBoolean("is_butba_member", false);
-        String bowlerName = sharedPreferences.getString("bowler_name", "");
+        String bowlerName = sharedPreferences.getString("bowler_name", null);
 
         navigationHeader = navigationView.getHeaderView(0);
         tvBowlerName = (TextView) navigationHeader.findViewById(R.id.nav_header_name);
         tvBowlerEmail = (TextView) navigationHeader.findViewById(R.id.nav_header_email);
 
-        if(!isButbaMember) {
+        if(!isButbaMember || bowlerName == null) {
             tvBowlerName.setText("Guest");
             tvBowlerEmail.setText("");
         }
