@@ -1,14 +1,17 @@
 package com.kian.butba.settings;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import com.kian.butba.R;
 import com.kian.butba.database.QueryFetcher;
@@ -51,15 +54,36 @@ public class SettingsActivity extends AppCompatActivity {
         private QueryMap bowlersQueryMap;
         private QueryFetcher queryFetcher;
 
+        private CheckBoxPreference isButbaMember;
         private ListPreference listButbaMembers;
 
         private CharSequence[] entries;
         private CharSequence[] entryValues;
 
+        private SharedPreferences sharedPreferences;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_settings);
+
+            //Set up shared preference.
+            sharedPreferences = getActivity().getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
+
+            //Set up check box preference.
+            isButbaMember = (CheckBoxPreference) findPreference("pref_is_butba_member");
+            isButbaMember.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                    //Store whether user is a BUTBA member in a shared preference.
+                    Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("is_butba_member", Boolean.valueOf(newValue.toString()));
+                    editor.commit();
+
+                    return true;
+                }
+            });
 
             //Set up list preference.
             listButbaMembers = (ListPreference) findPreference("pref_butba_member");
@@ -85,6 +109,12 @@ public class SettingsActivity extends AppCompatActivity {
                     int position = Arrays.asList(entryValues).indexOf(newValue);
                     preference.setSummary(entries[position]);
 
+                    //Store the selected bowler in a shared preference.
+                    Editor editor = sharedPreferences.edit();
+                    editor.putInt("bowler_id", Integer.parseInt((String) newValue));
+                    editor.putString("bowler_name", entries[position].toString());
+                    editor.commit();
+
                     return true;
                 }
             });
@@ -103,15 +133,12 @@ public class SettingsActivity extends AppCompatActivity {
                         entryValues[i] = output.get(i)[0];
                         entries[i] = output.get(i)[1];
                     }
-
-                    Log.d("DB", entries.toString());
-
                     setListPreference(listButbaMembers, entries, entryValues);
                 }
             });
             queryFetcher.execute(bowlersQueryMap);
-
         }
+
 
         private void setListPreference(ListPreference listPreference, CharSequence[] entries, CharSequence[] entryValues) {
             listPreference.setEntries(entries);

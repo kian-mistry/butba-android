@@ -1,6 +1,8 @@
 package com.kian.butba;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
@@ -13,6 +15,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.kian.butba.committee.CommitteeFragment;
 import com.kian.butba.profile.ProfileFragment;
@@ -29,6 +33,10 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private NavigationView navigationView;
+    private View navigationHeader;
+
+    private TextView tvBowlerName;
+    private TextView tvBowlerEmail;
 
     private FragmentManager manager = getSupportFragmentManager();
 
@@ -52,10 +60,28 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //Display ProfileFragment on startup
+        //Display ProfileFragment on startup.
         if (savedInstanceState == null) {
             manager.beginTransaction().replace(R.id.content_main, new ProfileFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_profile);
+        }
+
+        //Get bowler's details from a shared preference.
+        SharedPreferences sharedPreferences = getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
+        boolean isButbaMember = sharedPreferences.getBoolean("is_butba_member", false);
+        String bowlerName = sharedPreferences.getString("bowler_name", "");
+
+        navigationHeader = navigationView.getHeaderView(0);
+        tvBowlerName = (TextView) navigationHeader.findViewById(R.id.nav_header_name);
+        tvBowlerEmail = (TextView) navigationHeader.findViewById(R.id.nav_header_email);
+
+        if(!isButbaMember) {
+            tvBowlerName.setText("Guest");
+            tvBowlerEmail.setText("");
+        }
+        else {
+            tvBowlerName.setText(bowlerName);
+            tvBowlerEmail.setText("");
         }
     }
 
