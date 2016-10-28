@@ -14,7 +14,8 @@ import java.util.HashMap;
 public class QueryMap {
 
     public enum QueryTag {
-        SELECT_ALL_BOWLERS
+        SELECT_ALL_BOWLERS,
+        GET_BOWLER_STATUSES
     }
 
     private QueryTag queryTag;
