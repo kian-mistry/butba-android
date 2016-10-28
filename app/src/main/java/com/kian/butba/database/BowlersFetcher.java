@@ -21,20 +21,20 @@ import java.util.ArrayList;
  */
 
 /**
- * Class which fetches queries from a MySQL database using AsyncTask.
+ * Class which fetches all BUTBA members from a MySQL database using AsyncTask.
  */
-public class QueryFetcher extends AsyncTask<QueryMap, Void, ArrayList<String[]>> {
+public class BowlersFetcher extends AsyncTask<QueryMap, Void, ArrayList<String[]>> {
 
     private URL queriesUrl;
     private HttpURLConnection urlConnection;
 
-    public AsyncResponse delegate = null;
+    public AsyncDelegate delegate = null;
 
-    public interface AsyncResponse {
+    public interface AsyncDelegate {
         void onProcessResults(ArrayList<String[]> output);
     }
 
-    public QueryFetcher(AsyncResponse delegate) {
+    public BowlersFetcher(AsyncDelegate delegate) {
         this.delegate = delegate;
     }
 
@@ -45,17 +45,8 @@ public class QueryFetcher extends AsyncTask<QueryMap, Void, ArrayList<String[]>>
 
     @Override
     protected ArrayList<String[]> doInBackground(QueryMap... params) {
-        InputStream inputStream = null;
-        BufferedReader bufferedReader = null;
-
         try {
-            switch(params[0].getQueryTag()) {
-                case SELECT_ALL_BOWLERS:
-                    queriesUrl = new URL(Queries.URL_SELECT_ALL_BOWLERS);
-                    break;
-                default:
-                    break;
-            }
+            queriesUrl = new URL(Queries.URL_SELECT_ALL_BOWLERS);
 
             //Runs PHP script.
             urlConnection = (HttpURLConnection) queriesUrl.openConnection();
@@ -67,8 +58,8 @@ public class QueryFetcher extends AsyncTask<QueryMap, Void, ArrayList<String[]>>
             bufferedWriter.close();
             outputStream.close();
 
-            inputStream = urlConnection.getInputStream();
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
+            InputStream inputStream = urlConnection.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
 
             //PHP echoes a JSON encoded array, which is decoded here.
             JSONArray jsonArray = new JSONArray(bufferedReader.readLine());

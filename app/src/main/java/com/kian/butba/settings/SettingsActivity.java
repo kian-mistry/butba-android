@@ -14,7 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.kian.butba.R;
-import com.kian.butba.database.QueryFetcher;
+import com.kian.butba.database.BowlersFetcher;
 import com.kian.butba.database.QueryMap;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static class SettingsFragment extends PreferenceFragment {
 
         private QueryMap bowlersQueryMap;
-        private QueryFetcher queryFetcher;
+        private BowlersFetcher bowlersFetcher;
 
         private CheckBoxPreference isButbaMember;
         private ListPreference listButbaMembers;
@@ -121,7 +121,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             //Set up query fetcher to retrieve a list of all of BUTBA members.
             bowlersQueryMap = new QueryMap(QueryMap.QueryTag.SELECT_ALL_BOWLERS, "", "");
-            queryFetcher = new QueryFetcher(new QueryFetcher.AsyncResponse() {
+            bowlersFetcher = new BowlersFetcher(new BowlersFetcher.AsyncDelegate() {
                 @Override
                 public void onProcessResults(ArrayList<String[]> output) {
                     int outputSize = output.size();
@@ -136,7 +136,7 @@ public class SettingsActivity extends AppCompatActivity {
                     setListPreference(listButbaMembers, entries, entryValues);
                 }
             });
-            queryFetcher.execute(bowlersQueryMap);
+            bowlersFetcher.execute(bowlersQueryMap);
         }
 
 
