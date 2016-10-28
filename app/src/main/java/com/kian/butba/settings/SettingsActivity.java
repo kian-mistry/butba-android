@@ -8,11 +8,13 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.kian.butba.R;
 import com.kian.butba.database.QueryFetcher;
 import com.kian.butba.database.QueryMap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -23,9 +25,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private SettingsFragment fragment;
-
-    private QueryMap bowlersQueryMap;
-    private QueryFetcher queryFetcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,26 +44,17 @@ public class SettingsActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.content_main, fragment, fragment.getTag())
                 .commit();
-
-        //Set up query fetcher to retrieve a list of all of BUTBA members.
-        bowlersQueryMap = new QueryMap(QueryMap.QueryTag.SELECT_ALL_BOWLERS, "", "");
-        queryFetcher = new QueryFetcher(this);
-        queryFetcher.execute(bowlersQueryMap);
     }
 
     public static class SettingsFragment extends PreferenceFragment {
 
+        private QueryMap bowlersQueryMap;
+        private QueryFetcher queryFetcher;
+
         private ListPreference listButbaMembers;
 
-        private CharSequence[] entries = {
-                "Kian Mistry",
-                "Sarah Hood",
-                "Paul Marks"
-        };
-
-        CharSequence[] entryValues = {
-                "41", "2", "5"
-        };
+        private CharSequence[] entries;
+        private CharSequence[] entryValues;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -98,6 +88,28 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
+
+            //Set up query fetcher to retrieve a list of all of BUTBA members.
+            bowlersQueryMap = new QueryMap(QueryMap.QueryTag.SELECT_ALL_BOWLERS, "", "");
+            queryFetcher = new QueryFetcher(new QueryFetcher.AsyncResponse() {
+                @Override
+                public void onProcessResults(ArrayList<String[]> output) {
+                    int outputSize = output.size();
+
+                    entries = new CharSequence[outputSize];
+                    entryValues = new CharSequence[outputSize];
+
+                    for(int i = 0; i < output.size(); i++) {
+                        entryValues[i] = output.get(i)[0];
+                        entries[i] = output.get(i)[1];
+                    }
+
+                    Log.d("DB", entries.toString());
+
+                    setListPreference(listButbaMembers, entries, entryValues);
+                }
+            });
+            queryFetcher.execute(bowlersQueryMap);
 
         }
 

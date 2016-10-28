@@ -1,8 +1,6 @@
 package com.kian.butba.database;
 
-import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v7.app.AlertDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,6 +14,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by Kian Mistry on 27/10/16.
@@ -24,30 +23,28 @@ import java.net.URL;
 /**
  * Class which fetches queries from a MySQL database using AsyncTask.
  */
-public class QueryFetcher extends AsyncTask<QueryMap, Void, String> {
-
-    private Context context;
+public class QueryFetcher extends AsyncTask<QueryMap, Void, ArrayList<String[]>> {
 
     private URL queriesUrl;
     private HttpURLConnection urlConnection;
 
-    private AlertDialog alertDialog;
+    public AsyncResponse delegate = null;
 
-    public QueryFetcher(Context context) {
-        this.context = context;
+    public interface AsyncResponse {
+        void onProcessResults(ArrayList<String[]> output);
     }
 
+    public QueryFetcher(AsyncResponse delegate) {
+        this.delegate = delegate;
+    }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-
-        alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Login Status");
     }
 
     @Override
-    protected String doInBackground(QueryMap... params) {
+    protected ArrayList<String[]> doInBackground(QueryMap... params) {
         InputStream inputStream = null;
         BufferedReader bufferedReader = null;
 
@@ -75,12 +72,17 @@ public class QueryFetcher extends AsyncTask<QueryMap, Void, String> {
 
             //PHP echoes a JSON encoded array, which is decoded here.
             JSONArray jsonArray = new JSONArray(bufferedReader.readLine());
+            ArrayList<String[]> butbaMembers = new ArrayList<>();
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONArray butbaMemberDetails = jsonArray.getJSONArray(i);
+                butbaMembers.add(new String[] {(String) butbaMemberDetails.get(0), (String) butbaMemberDetails.get(1)});
+            }
 
             bufferedReader.close();
             inputStream.close();
             urlConnection.disconnect();
 
-            return jsonArray.toString();
+            return butbaMembers;
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -93,11 +95,10 @@ public class QueryFetcher extends AsyncTask<QueryMap, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(ArrayList<String[]> result) {
         super.onPostExecute(result);
 
-        //JSON Array displayed in AlertDialog.
-        alertDialog.setMessage(result);
-        alertDialog.show();
+        //Passes result back to the class which called it.
+        delegate.onProcessResults(result);
     }
 }
