@@ -1,7 +1,6 @@
 package com.kian.butba.database;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,7 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -54,7 +52,6 @@ public class SeasonDetailsFetcher extends AsyncTask<QueryMap, Void, ArrayList<St
     protected ArrayList<String[]> doInBackground(QueryMap... params) {
         try {
             bowlerId = params[0].getValue(BOWLER_ID_IDENTIFIER);
-            Log.d("DiB", bowlerId);
             queriesUrl = new URL(Queries.URL_GET_BOWLERS_SEASON_DETAILS);
 
             //Runs PHP script.
