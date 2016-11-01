@@ -9,15 +9,15 @@
 
     <!-- Tabs -->
    <io.karim.MaterialTabs
-        android:id="@+id/committee_tabs"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/tab_height"
-        android:background="@color/colourPrimary"
-        app:mtIndicatorColor="@color/colourAccent"
-        android:textColor="@color/colourInactiveTab"
+       android:id="@+id/committee_tabs"
+       android:layout_width="match_parent"
+       android:layout_height="@dimen/tab_height"
+       android:background="@color/colourPrimary"
+       app:mtIndicatorColor="@color/colourAccent"
+       android:textColor="@color/colourInactiveTab"
        app:mtTextColorSelected="@android:color/white"
-        app:mtSameWeightTabs="true"
-        app:mtPaddingMiddle="false"/>
+       app:mtSameWeightTabs="true"
+       app:mtPaddingMiddle="false" />
 
     <!-- View Pager -->
     <android.support.v4.view.ViewPager
