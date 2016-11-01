@@ -10,6 +10,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -27,6 +28,7 @@ import java.util.Arrays;
 public class SettingsActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
+    private DrawerLayout drawerLayout;
     private SettingsFragment fragment;
 
     @Override
@@ -40,6 +42,9 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //Disallow navigation drawer to open in the Settings activity.
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         //Set up Settings fragment.
         fragment = new SettingsFragment();
