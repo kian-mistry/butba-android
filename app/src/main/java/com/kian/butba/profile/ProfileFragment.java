@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,14 +64,20 @@ public class ProfileFragment extends Fragment {
                     HashMap<String, String> seasonDetails;
 
                     for(int i = 0; i < output.size(); i++) {
-                        String studentStatus = output.get(i)[0];
-                        String rankingStatus = output.get(i)[1];
-                        String university = output.get(i)[2];
+                        String academicYear = output.get(i)[0];
+                        String studentStatus = output.get(i)[1];
+                        String rankingStatus = output.get(i)[2];
+                        String university = output.get(i)[3];
+                        String average = output.get(i)[4];
+                        String games = output.get(i)[5];
 
                         seasonDetails = new HashMap<>();
+                        seasonDetails.put("academic_year", academicYear);
                         seasonDetails.put("student_status", studentStatus);
                         seasonDetails.put("ranking_status", rankingStatus);
                         seasonDetails.put("university", university);
+                        seasonDetails.put("average", average);
+                        seasonDetails.put("games", games);
 
                         profiles.add(seasonDetails);
                     }
