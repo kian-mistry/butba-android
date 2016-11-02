@@ -78,7 +78,15 @@ public class SeasonDetailsFetcher extends AsyncTask<QueryMap, Void, ArrayList<St
             ArrayList<String[]> bowlerStatusDetails = new ArrayList<>();
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONArray jsonDetails = jsonArray.getJSONArray(i);
-                bowlerStatusDetails.add(new String[] {(String) jsonDetails.get(0), (String) jsonDetails.get(1), (String) jsonDetails.get(2)});
+
+                //Skips if a bowler has not bowled in a particular season.
+                if(jsonDetails.get(0).equals(null)) continue;
+
+                String[] details = new String[jsonDetails.length()];
+                for(int j = 0; j < jsonDetails.length(); j++) {
+                    details[j] = jsonDetails.get(j).toString();
+                }
+                bowlerStatusDetails.add(details);
             }
 
             bufferedReader.close();
