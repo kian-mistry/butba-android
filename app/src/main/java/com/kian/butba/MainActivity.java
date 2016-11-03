@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.kian.butba.committee.CommitteeFragment;
+import com.kian.butba.database.sqlite.DatabaseOperations;
 import com.kian.butba.profile.ProfileFragment;
 import com.kian.butba.settings.SettingsActivity;
 
@@ -83,7 +84,10 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             tvBowlerName.setText(bowlerName);
             tvBowlerEmail.setText("");
         }
+
+        DatabaseOperations.getAllBowlers(this);
     }
+
 
     @Override
     public void onBackPressed() {

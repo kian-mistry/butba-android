@@ -9,9 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.kian.butba.R;
-import com.kian.butba.database.server.AsyncDelegate;
-import com.kian.butba.database.server.QueryTag;
 import com.kian.butba.database.server.TablesFetcher;
+import com.kian.butba.database.sqlite.TableBowler;
+import com.kian.butba.database.sqlite.entities.Bowler;
 
 import java.util.List;
 
@@ -75,23 +75,18 @@ public class SettingsActivity extends AppCompatActivity {
             lpButbaMembers.setOnPreferenceClickListener(this);
             lpButbaMembers.setOnPreferenceChangeListener(this);
 
-            //Set up query fetcher to retrieve a list of all of BUTBA members.
-            bowlersFetcher = new TablesFetcher(new AsyncDelegate() {
-                @Override
-                public void onProcessResults(List<String[]> results) {
-                    int outputSize = results.size();
+            //Retrieve a list of all of BUTBA members from the local SQLite database.
+            List<Bowler> bowlers = new TableBowler(this.getActivity().getBaseContext()).getAllBowlers();
+            int bowlersSize = bowlers.size();
 
-                    entries = new CharSequence[outputSize];
-                    entryValues = new CharSequence[outputSize];
+            entries = new CharSequence[bowlersSize];
+            entryValues = new CharSequence[bowlersSize];
 
-                    for(int i = 0; i < results.size(); i++) {
-                        entryValues[i] = results.get(i)[0];
-                        entries[i] = results.get(i)[1];
-                    }
-                    populateListPreference(lpButbaMembers, entries, entryValues);
-                }
-            });
-            bowlersFetcher.execute(QueryTag.GET_ALL_BOWLERS);
+            for(int i = 0; i < bowlersSize; i++) {
+                entryValues[i] = String.valueOf(bowlers.get(i).getId());
+                entries[i] = bowlers.get(i).getFullName();
+            }
+            populateListPreference(lpButbaMembers, entries, entryValues);
         }
     }
 }
