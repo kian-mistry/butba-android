@@ -2,6 +2,8 @@ package com.kian.butba.database.sqlite;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -17,18 +19,32 @@ import java.util.List;
 
 public class TableBowler extends SQLiteOpenHelper {
 
+    private SharedPreferences sharedPreferences;
+
     public TableBowler(Context context) {
         super(context, DatabaseConstants.DATABASE_NAME, null, DatabaseConstants.DATABASE_VERSION);
+
+        sharedPreferences = context.getSharedPreferences("butba_database", Context.MODE_PRIVATE);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DatabaseQueries.QUERY_CREATE_BOWLERS_TABLE);
+
+        Editor editor = sharedPreferences.edit();
+        editor.putBoolean("pref_table_bowlers", true);
+        editor.commit();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(DatabaseQueries.QUERY_DROP_BOWLERS_TABLE);
 
+        Editor editor = sharedPreferences.edit();
+        editor.putBoolean("pref_table_bowlers", false);
+        editor.commit();
+
+        onCreate(db);
     }
 
     public void addBowler(Bowler bowler) {
@@ -43,8 +59,6 @@ public class TableBowler extends SQLiteOpenHelper {
         db.insert(DatabaseConstants.TABLE_BOWLER, null, values);
         db.close();
     }
-
-
 
     public List<Bowler> getAllBowlers() {
         ArrayList<Bowler> bowlerList = new ArrayList<>();
@@ -68,5 +82,4 @@ public class TableBowler extends SQLiteOpenHelper {
 
         return bowlerList;
     }
-
 }

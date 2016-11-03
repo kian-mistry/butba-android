@@ -84,10 +84,15 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             tvBowlerName.setText(bowlerName);
             tvBowlerEmail.setText("");
         }
-
-        DatabaseOperations.getAllBowlers(this);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //Check whether table exists, if not create and populate table.
+        prefCheckTablesExists();
+    }
 
     @Override
     public void onBackPressed() {
@@ -132,5 +137,17 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * Use a preference to check whether a table exists.
+     */
+    private void prefCheckTablesExists() {
+        SharedPreferences prefDatabase = getSharedPreferences("butba_database", Context.MODE_PRIVATE);
+        boolean tableBowlerExists = prefDatabase.getBoolean("pref_table_bowlers", false);
+
+        if(!tableBowlerExists) {
+            DatabaseOperations.getAllBowlers(this);
+        }
     }
 }

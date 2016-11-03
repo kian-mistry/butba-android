@@ -45,8 +45,8 @@ public class ProfileFragment extends Fragment {
         super.onStart();
 
         //Obtain Bowler ID from shared preference.
-        sharedPreferences = getActivity().getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
-        int bowlerId = sharedPreferences.getInt("bowler_id", 0);
+        prefBowlerDetails = getActivity().getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
+        int bowlerId = prefBowlerDetails.getInt("bowler_id", 0);
 
         if(bowlerId != 0) {
             //A BUTBA member exists.

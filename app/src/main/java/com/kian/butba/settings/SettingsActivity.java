@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.kian.butba.R;
-import com.kian.butba.database.server.TablesFetcher;
 import com.kian.butba.database.sqlite.TableBowler;
 import com.kian.butba.database.sqlite.entities.Bowler;
 
@@ -50,17 +49,15 @@ public class SettingsActivity extends AppCompatActivity {
 
     public static class SettingsFragment extends SettingsListener {
 
-        private TablesFetcher bowlersFetcher;
-
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_settings);
 
             //Retrieve shared preferences.
-            sharedPreferences = getActivity().getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
-            bowlerId = sharedPreferences.getInt("bowler_id", 0);
-            bowlerName = sharedPreferences.getString("bowler_name", null);
+            prefBowlerDetails = getActivity().getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
+            bowlerId = prefBowlerDetails.getInt("bowler_id", 0);
+            bowlerName = prefBowlerDetails.getString("bowler_name", null);
 
             //Initialise preferences.
             cbpButbaMember = (CheckBoxPreference) findPreference("pref_is_butba_member");

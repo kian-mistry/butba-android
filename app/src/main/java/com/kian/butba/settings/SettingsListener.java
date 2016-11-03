@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 public class SettingsListener extends PreferenceFragment implements OnPreferenceChangeListener, OnPreferenceClickListener {
 
-    protected SharedPreferences sharedPreferences;
+    protected SharedPreferences prefBowlerDetails;
     protected int bowlerId;
     protected String bowlerName;
 
@@ -34,7 +34,7 @@ public class SettingsListener extends PreferenceFragment implements OnPreference
             //Store whether user is a BUTBA member in a shared preference.
             boolean isChecked = Boolean.valueOf(newValue.toString());
 
-            Editor editor = sharedPreferences.edit();
+            Editor editor = prefBowlerDetails.edit();
             editor.putBoolean("is_butba_member", isChecked);
             editor.commit();
 
@@ -53,7 +53,7 @@ public class SettingsListener extends PreferenceFragment implements OnPreference
             preference.setSummary(entries[position]);
 
             //Store the selected bowler in a shared preference.
-            Editor editor = sharedPreferences.edit();
+            Editor editor = prefBowlerDetails.edit();
             editor.putInt("bowler_id", Integer.parseInt((String) newValue));
             editor.putString("bowler_name", entries[position].toString());
             editor.commit();
