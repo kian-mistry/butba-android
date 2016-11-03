@@ -9,10 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.kian.butba.R;
-import com.kian.butba.database.BowlersFetcher;
-import com.kian.butba.database.QueryMap;
-
-import java.util.ArrayList;
+import com.kian.butba.database.server.BowlersFetcher;
+import com.kian.butba.database.server.QueryMap;
 
 /**
  * Created by Kian Mistry on 26/10/16.
@@ -76,23 +74,23 @@ public class SettingsActivity extends AppCompatActivity {
             lpButbaMembers.setOnPreferenceChangeListener(this);
 
             //Set up query fetcher to retrieve a list of all of BUTBA members.
-            bowlersQueryMap = new QueryMap(QueryMap.QueryTag.SELECT_ALL_BOWLERS, "", "");
-            bowlersFetcher = new BowlersFetcher(new BowlersFetcher.AsyncDelegate() {
-                @Override
-                public void onProcessResults(ArrayList<String[]> output) {
-                    int outputSize = output.size();
-
-                    entries = new CharSequence[outputSize];
-                    entryValues = new CharSequence[outputSize];
-
-                    for(int i = 0; i < output.size(); i++) {
-                        entryValues[i] = output.get(i)[0];
-                        entries[i] = output.get(i)[1];
-                    }
-                    populateListPreference(lpButbaMembers, entries, entryValues);
-                }
-            });
-            bowlersFetcher.execute(bowlersQueryMap);
+//            bowlersQueryMap = new QueryMap(QueryMap.QueryTag.SELECT_ALL_BOWLERS, "", "");
+//            bowlersFetcher = new BowlersFetcher(new BowlersFetcher.AsyncDelegate() {
+//                @Override
+//                public void onProcessResults(ArrayList<String[]> output) {
+//                    int outputSize = output.size();
+//
+//                    entries = new CharSequence[outputSize];
+//                    entryValues = new CharSequence[outputSize];
+//
+//                    for(int i = 0; i < output.size(); i++) {
+//                        entryValues[i] = output.get(i)[0];
+//                        entries[i] = output.get(i)[1];
+//                    }
+//                    populateListPreference(lpButbaMembers, entries, entryValues);
+//                }
+//            });
+//            bowlersFetcher.execute(bowlersQueryMap);
         }
     }
 }

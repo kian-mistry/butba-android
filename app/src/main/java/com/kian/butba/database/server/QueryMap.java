@@ -1,4 +1,4 @@
-package com.kian.butba.database;
+package com.kian.butba.database.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;

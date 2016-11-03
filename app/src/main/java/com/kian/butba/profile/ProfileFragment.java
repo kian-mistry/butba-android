@@ -1,20 +1,15 @@
 package com.kian.butba.profile;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
-import com.kian.butba.database.QueryMap;
-import com.kian.butba.database.QueryMap.QueryTag;
-import com.kian.butba.database.SeasonDetailsFetcher;
+import com.kian.butba.database.server.SeasonDetailsFetcher;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +39,7 @@ public class ProfileFragment extends Fragment {
 
         return view;
     }
-
+/*
     @Override
     public void onStart() {
         super.onStart();
@@ -70,6 +65,8 @@ public class ProfileFragment extends Fragment {
                         String university = output.get(i)[3];
                         String average = output.get(i)[4];
                         String games = output.get(i)[5];
+                        String totalRankings = output.get(i)[6];
+                        String bestX = output.get(i)[7];
 
                         seasonDetails = new HashMap<>();
                         seasonDetails.put("academic_year", academicYear);
@@ -78,6 +75,10 @@ public class ProfileFragment extends Fragment {
                         seasonDetails.put("university", university);
                         seasonDetails.put("average", average);
                         seasonDetails.put("games", games);
+                        seasonDetails.put("total_rankings", totalRankings);
+                        seasonDetails.put("best_x", bestX);
+
+                        Log.d("RANKINGS ", academicYear + " // " + totalRankings + " // " + bestX);
 
                         profiles.add(seasonDetails);
                     }
@@ -91,6 +92,7 @@ public class ProfileFragment extends Fragment {
             fetcher.execute(queryMap);
         }
     }
+*/
 
     public ArrayList<HashMap<String, String>> getProfiles() {
         return profiles;
