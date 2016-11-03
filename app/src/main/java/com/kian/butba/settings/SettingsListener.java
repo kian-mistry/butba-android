@@ -24,9 +24,8 @@ public class SettingsListener extends PreferenceFragment implements OnPreference
     protected CheckBoxPreference cbpButbaMember;
     protected ListPreference lpButbaMembers;
 
-    protected CharSequence[] entries = new CharSequence[]{"Kian Mistry", "Rachael Potter"};
-    protected CharSequence[] entryValues = new CharSequence[]{"1", "2"};
-
+    protected CharSequence[] entries = null;
+    protected CharSequence[] entryValues = null;
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
