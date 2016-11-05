@@ -10,4 +10,5 @@ public class DatabaseConstants {
     public static final String DATABASE_NAME = "ButbaMembers.db";
 
     public static final String TABLE_BOWLER = "Bowler";
+    public static final String TABLE_BOWLER_SEASON = "BowlerSeason";
 }

@@ -7,6 +7,9 @@ import com.kian.butba.database.server.AsyncDelegate;
 import com.kian.butba.database.server.QueryTag;
 import com.kian.butba.database.server.TablesFetcher;
 import com.kian.butba.database.sqlite.entities.Bowler;
+import com.kian.butba.database.sqlite.entities.BowlerSeason;
+import com.kian.butba.database.sqlite.tables.TableBowler;
+import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 
 import java.util.List;
 
@@ -37,6 +40,33 @@ public class DatabaseOperations {
             }
         });
         bowlersFetcher.execute(QueryTag.GET_ALL_BOWLERS);
+    }
+
+    /**
+     * Set up a query fetcher to retrieve all the BUTBA members bowled in each season, starting from the 2015/16 season,
+     * and store in a local SQLite database.
+     * @param activity
+     */
+    public static void getAllBowlersSeasons(final Activity activity) {
+        TablesFetcher bowlersSeasonsFetcher = new TablesFetcher(new AsyncDelegate() {
+            @Override
+            public void onProcessResults(List<String[]> results) {
+                for(int i = 0; i < results.size(); i++) {
+                    TableBowlerSeason tableBowlerSeason = new TableBowlerSeason(activity);
+                    tableBowlerSeason.addBowlerToSeason(new BowlerSeason(
+                            Integer.valueOf(i + 1),
+                            Integer.valueOf(results.get(i)[1]),
+                            Integer.valueOf(results.get(i)[2]),
+                            Integer.valueOf(results.get(i)[3]),
+                            Integer.valueOf(results.get(i)[4]),
+                            Integer.valueOf(results.get(i)[5])
+                    ));
+                }
+
+                Snackbar.make(activity.getCurrentFocus(), "Retrieved all bowlers seasons", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+        bowlersSeasonsFetcher.execute(QueryTag.GET_ALL_BOWLERS_SEASONS);
     }
 
 }

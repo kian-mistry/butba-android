@@ -1,4 +1,4 @@
-package com.kian.butba.database.sqlite;
+package com.kian.butba.database.sqlite.tables;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.kian.butba.database.sqlite.DatabaseConstants;
+import com.kian.butba.database.sqlite.DatabaseQueries;
 import com.kian.butba.database.sqlite.entities.Bowler;
 
 import java.util.ArrayList;
@@ -44,6 +46,12 @@ public class TableBowler extends SQLiteOpenHelper {
         editor.putBoolean("pref_table_bowlers", false);
         editor.commit();
 
+        onCreate(db);
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
         onCreate(db);
     }
 

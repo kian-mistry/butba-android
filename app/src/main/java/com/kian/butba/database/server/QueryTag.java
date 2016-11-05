@@ -7,8 +7,7 @@ package com.kian.butba.database.server;
 public enum QueryTag {
     GET_ACADEMIC_YEARS,
     GET_ALL_BOWLERS,
-    GET_ALL_BOWLERS_15_16,
-    GET_ALL_BOWLERS_16_17,
+    GET_ALL_BOWLERS_SEASONS,
     GET_EVENT_AVERAGES_15_16,
     GET_EVENT_GAMES_16_17,
     GET_EVENT_CODES,

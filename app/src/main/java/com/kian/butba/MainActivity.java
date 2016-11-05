@@ -145,9 +145,16 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private void prefCheckTablesExists() {
         SharedPreferences prefDatabase = getSharedPreferences("butba_database", Context.MODE_PRIVATE);
         boolean tableBowlerExists = prefDatabase.getBoolean("pref_table_bowlers", false);
+        boolean tableBowlerSeasonsExists = prefDatabase.getBoolean("pref_table_bowlers_seasons", false);
+
 
         if(!tableBowlerExists) {
             DatabaseOperations.getAllBowlers(this);
         }
+
+        if(!tableBowlerSeasonsExists) {
+            DatabaseOperations.getAllBowlersSeasons(this);
+        }
+
     }
 }

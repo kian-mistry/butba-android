@@ -1,8 +1,10 @@
 package com.kian.butba.profile;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +12,12 @@ import android.view.ViewGroup;
 
 import com.kian.butba.R;
 import com.kian.butba.database.server.SeasonDetailsFetcher;
+import com.kian.butba.database.sqlite.entities.BowlerSeason;
+import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Kian Mistry on 17/10/16.
@@ -20,7 +25,7 @@ import java.util.HashMap;
 
 public class ProfileFragment extends Fragment {
 
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences prefBowlerDetails;
 
     private SeasonDetailsFetcher fetcher;
 
@@ -39,7 +44,7 @@ public class ProfileFragment extends Fragment {
 
         return view;
     }
-/*
+
     @Override
     public void onStart() {
         super.onStart();
@@ -49,50 +54,74 @@ public class ProfileFragment extends Fragment {
         int bowlerId = prefBowlerDetails.getInt("bowler_id", 0);
 
         if(bowlerId != 0) {
-            //A BUTBA member exists.
-            QueryMap queryMap = new QueryMap(QueryTag.GET_BOWLER_STATUSES, "bowler_id", String.valueOf(bowlerId));
+            List<BowlerSeason> bowlersSeason = new TableBowlerSeason(getActivity().getBaseContext()).getBowlersSeason(bowlerId);
+            int bowlersSeasonSize = bowlersSeason.size();
 
-            fetcher = new SeasonDetailsFetcher(new SeasonDetailsFetcher.AsyncDelegate() {
-                @Override
-                public void onProcessResults(ArrayList<String[]> output) {
-                    profiles = new ArrayList<>();
-                    HashMap<String, String> seasonDetails;
+            //TODO: Bit hacky, need to neaten up.
+            profiles = new ArrayList<>();
+            HashMap<String, String> seasonDetails;
 
-                    for(int i = 0; i < output.size(); i++) {
-                        String academicYear = output.get(i)[0];
-                        String studentStatus = output.get(i)[1];
-                        String rankingStatus = output.get(i)[2];
-                        String university = output.get(i)[3];
-                        String average = output.get(i)[4];
-                        String games = output.get(i)[5];
-                        String totalRankings = output.get(i)[6];
-                        String bestX = output.get(i)[7];
+            for(int i = 0; i < bowlersSeasonSize; i++) {
+                seasonDetails = new HashMap<>();
+                seasonDetails.put("academic_year", String.valueOf(bowlersSeason.get(i).getAcademicYear()));
+                seasonDetails.put("student_status", String.valueOf(bowlersSeason.get(i).getStudentStatus()));
+                seasonDetails.put("ranking_status", String.valueOf(bowlersSeason.get(i).getRankingStatus()));
+                seasonDetails.put("university", String.valueOf(bowlersSeason.get(i).getUniversityId()));
 
-                        seasonDetails = new HashMap<>();
-                        seasonDetails.put("academic_year", academicYear);
-                        seasonDetails.put("student_status", studentStatus);
-                        seasonDetails.put("ranking_status", rankingStatus);
-                        seasonDetails.put("university", university);
-                        seasonDetails.put("average", average);
-                        seasonDetails.put("games", games);
-                        seasonDetails.put("total_rankings", totalRankings);
-                        seasonDetails.put("best_x", bestX);
+                profiles.add(seasonDetails);
+            }
 
-                        Log.d("RANKINGS ", academicYear + " // " + totalRankings + " // " + bestX);
-
-                        profiles.add(seasonDetails);
-                    }
-
-                    //Set up recycler view to display the bowler's profile for each season.
-                    profileCardsAdapter = new ProfileCardsAdapter(getActivity(), getProfiles());
-                    recyclerView.setAdapter(profileCardsAdapter);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                }
-            });
-            fetcher.execute(queryMap);
+            //Set up recycler view to display the bowler's profile for each season.
+            profileCardsAdapter = new ProfileCardsAdapter(getActivity(), getProfiles());
+            recyclerView.setAdapter(profileCardsAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
+//
+//        if(bowlerId != 0) {
+//            //A BUTBA member exists.
+//            QueryMap queryMap = new QueryMap(QueryTag.GET_BOWLER_STATUSES, "bowler_id", String.valueOf(bowlerId));
+//
+//            fetcher = new SeasonDetailsFetcher(new SeasonDetailsFetcher.AsyncDelegate() {
+//                @Override
+//                public void onProcessResults(ArrayList<String[]> output) {
+//                    profiles = new ArrayList<>();
+//                    HashMap<String, String> seasonDetails;
+//
+//                    for(int i = 0; i < output.size(); i++) {
+//                        String academicYear = output.get(i)[0];
+//                        String studentStatus = output.get(i)[1];
+//                        String rankingStatus = output.get(i)[2];
+//                        String university = output.get(i)[3];
+//                        String average = output.get(i)[4];
+//                        String games = output.get(i)[5];
+//                        String totalRankings = output.get(i)[6];
+//                        String bestX = output.get(i)[7];
+//
+//                        seasonDetails = new HashMap<>();
+//                        seasonDetails.put("academic_year", academicYear);
+//                        seasonDetails.put("student_status", studentStatus);
+//                        seasonDetails.put("ranking_status", rankingStatus);
+//                        seasonDetails.put("university", university);
+//                        seasonDetails.put("average", average);
+//                        seasonDetails.put("games", games);
+//                        seasonDetails.put("total_rankings", totalRankings);
+//                        seasonDetails.put("best_x", bestX);
+//
+//                        Log.d("RANKINGS ", academicYear + " // " + totalRankings + " // " + bestX);
+//
+//                        profiles.add(seasonDetails);
+//                    }
+//
+//                    //Set up recycler view to display the bowler's profile for each season.
+//                    profileCardsAdapter = new ProfileCardsAdapter(getActivity(), getProfiles());
+//                    recyclerView.setAdapter(profileCardsAdapter);
+//                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//                }
+//            });
+//            fetcher.execute(queryMap);
+//        }
     }
-*/
+
 
     public ArrayList<HashMap<String, String>> getProfiles() {
         return profiles;
