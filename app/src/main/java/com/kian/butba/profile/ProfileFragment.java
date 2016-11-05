@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import com.kian.butba.R;
 import com.kian.butba.database.server.SeasonDetailsFetcher;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
+import com.kian.butba.database.sqlite.tables.TableAcademicYear;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 
 import java.util.ArrayList;
@@ -26,8 +28,6 @@ import java.util.List;
 public class ProfileFragment extends Fragment {
 
     private SharedPreferences prefBowlerDetails;
-
-    private SeasonDetailsFetcher fetcher;
 
     private RecyclerView recyclerView;
     private ProfileCardsAdapter profileCardsAdapter;
@@ -63,7 +63,10 @@ public class ProfileFragment extends Fragment {
 
             for(int i = 0; i < bowlersSeasonSize; i++) {
                 seasonDetails = new HashMap<>();
-                seasonDetails.put("academic_year", String.valueOf(bowlersSeason.get(i).getAcademicYear()));
+
+                String academicYear = new TableAcademicYear(getActivity().getBaseContext()).getAcademicYear(bowlersSeason.get(i).getAcademicYear());
+
+                seasonDetails.put("academic_year", academicYear);
                 seasonDetails.put("student_status", String.valueOf(bowlersSeason.get(i).getStudentStatus()));
                 seasonDetails.put("ranking_status", String.valueOf(bowlersSeason.get(i).getRankingStatus()));
                 seasonDetails.put("university", String.valueOf(bowlersSeason.get(i).getUniversityId()));
@@ -88,7 +91,6 @@ public class ProfileFragment extends Fragment {
 //                    HashMap<String, String> seasonDetails;
 //
 //                    for(int i = 0; i < output.size(); i++) {
-//                        String academicYear = output.get(i)[0];
 //                        String studentStatus = output.get(i)[1];
 //                        String rankingStatus = output.get(i)[2];
 //                        String university = output.get(i)[3];
@@ -98,7 +100,6 @@ public class ProfileFragment extends Fragment {
 //                        String bestX = output.get(i)[7];
 //
 //                        seasonDetails = new HashMap<>();
-//                        seasonDetails.put("academic_year", academicYear);
 //                        seasonDetails.put("student_status", studentStatus);
 //                        seasonDetails.put("ranking_status", rankingStatus);
 //                        seasonDetails.put("university", university);

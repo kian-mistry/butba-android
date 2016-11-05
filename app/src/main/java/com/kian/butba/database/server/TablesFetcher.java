@@ -41,6 +41,9 @@ public class TablesFetcher extends AsyncTask<QueryTag, Void, List<String[]>> {
     protected List<String[]> doInBackground(QueryTag... params) {
         try {
             switch(params[0]) {
+                case GET_ACADEMIC_YEARS:
+                    urlQuery = new URL(QueriesUrl.URL_GET_ALL_ACADEMIC_YEARS);
+                    break;
                 case GET_ALL_BOWLERS:
                     urlQuery = new URL(QueriesUrl.URL_GET_ALL_BOWLERS);
                     break;

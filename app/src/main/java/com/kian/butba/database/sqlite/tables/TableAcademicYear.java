@@ -7,23 +7,24 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.kian.butba.database.sqlite.DatabaseConstants;
 import com.kian.butba.database.sqlite.DatabaseQueries;
-import com.kian.butba.database.sqlite.entities.BowlerSeason;
+import com.kian.butba.database.sqlite.entities.AcademicYear;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Kian Mistry on 03/11/16.
+ * Created by Kian Mistry on 05/11/16.
  */
 
-public class TableBowlerSeason extends SQLiteOpenHelper{
+public class TableAcademicYear extends SQLiteOpenHelper {
 
     private SharedPreferences sharedPreferences;
 
-    public TableBowlerSeason(Context context) {
+    public TableAcademicYear(Context context) {
         super(context, DatabaseConstants.DATABASE_NAME, null, DatabaseConstants.DATABASE_VERSION);
 
         sharedPreferences = context.getSharedPreferences("butba_database", Context.MODE_PRIVATE);
@@ -31,19 +32,19 @@ public class TableBowlerSeason extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DatabaseQueries.QUERY_CREATE_BOWLERS_SEASONS_TABLE);
+        db.execSQL(DatabaseQueries.QUERY_CREATE_ACADEMIC_YEAR_TABLE);
 
         Editor editor = sharedPreferences.edit();
-        editor.putBoolean("pref_table_bowlers_seasons", true);
+        editor.putBoolean("pref_table_academic_year", true);
         editor.commit();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(DatabaseQueries.QUERY_DROP_BOWLERS_SEASONS_TABLE);
+        db.execSQL(DatabaseQueries.QUERY_DROP_ACADEMIC_YEAR_TABLE);
 
         Editor editor = sharedPreferences.edit();
-        editor.putBoolean("pref_table_bowlers_seasons", false);
+        editor.putBoolean("pref_table_academic_year", false);
         editor.commit();
 
         onCreate(db);
@@ -61,44 +62,49 @@ public class TableBowlerSeason extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public void addBowlerToSeason(BowlerSeason bowler) {
+    public void addAcademicYear(AcademicYear academicYear) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("bowlerSeasonId", bowler.getId());
-        values.put("bowlerId", bowler.getBowlerId());
-        values.put("studentStatus", bowler.getStudentStatus());
-        values.put("rankingStatus", bowler.getRankingStatus());
-        values.put("universityId", bowler.getUniversityId());
-        values.put("academicYear", bowler.getAcademicYear());
+        values.put("yearId", academicYear.getId());
+        values.put("acadYear", academicYear.getAcademicYear());
 
-        db.insert(DatabaseConstants.TABLE_BOWLER_SEASON, null, values);
+        db.insert(DatabaseConstants.TABLE_ACADEMIC_YEAR, null, values);
         db.close();
     }
 
-    public List<BowlerSeason> getBowlersSeason(int id) {
-        List<BowlerSeason> bowlersSeasons = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
+    public String getAcademicYear(int id) {
+        String academicYear = null;
 
-        //Using prepared statements.
-        Cursor cursor = db.rawQuery(DatabaseQueries.QUERY_PARTICULAR_BOWLERS_PLAYED_SEASON, new String[]{String.valueOf(id)});
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(DatabaseQueries.QUERY_PARTICULAR_ACADEMIC_YEAR, new String[]{String.valueOf(id)});
+
+        if(cursor.moveToFirst()) {
+            academicYear = cursor.getString(0);
+        }
+        db.close();
+
+        return academicYear;
+    }
+
+    public List<AcademicYear> getAllAcademicYears() {
+        ArrayList<AcademicYear> academicYearsList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(DatabaseQueries.QUERY_SELECT_ALL_ACADEMIC_YEARS, null);
 
         if(cursor.moveToFirst()) {
             do {
-                BowlerSeason bowlerSeason = new BowlerSeason(
+                AcademicYear academicYear = new AcademicYear(
                         Integer.parseInt(cursor.getString(0)),
-                        Integer.parseInt(cursor.getString(1)),
-                        Integer.parseInt(cursor.getString(2)),
-                        Integer.parseInt(cursor.getString(3)),
-                        Integer.parseInt(cursor.getString(4)),
-                        Integer.parseInt(cursor.getString(5))
+                        cursor.getString(1)
                 );
 
-                bowlersSeasons.add(bowlerSeason);
+                academicYearsList.add(academicYear);
             } while(cursor.moveToNext());
         }
         db.close();
 
-        return bowlersSeasons;
+        return academicYearsList;
     }
 }

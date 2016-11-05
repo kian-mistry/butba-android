@@ -2,12 +2,15 @@ package com.kian.butba.database.sqlite;
 
 import android.app.Activity;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 
 import com.kian.butba.database.server.AsyncDelegate;
 import com.kian.butba.database.server.QueryTag;
 import com.kian.butba.database.server.TablesFetcher;
+import com.kian.butba.database.sqlite.entities.AcademicYear;
 import com.kian.butba.database.sqlite.entities.Bowler;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
+import com.kian.butba.database.sqlite.tables.TableAcademicYear;
 import com.kian.butba.database.sqlite.tables.TableBowler;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 
@@ -18,6 +21,25 @@ import java.util.List;
  */
 
 public class DatabaseOperations {
+
+    public static void getAllAcademicYears(final Activity activity) {
+        TablesFetcher academicYearsFetcher = new TablesFetcher(new AsyncDelegate() {
+            @Override
+            public void onProcessResults(List<String[]> results) {
+                for(int i = 0; i < results.size(); i++) {
+                    TableAcademicYear tableAcademicYear = new TableAcademicYear(activity);
+                    tableAcademicYear.addAcademicYear(new AcademicYear(
+                            Integer.valueOf(results.get(i)[0]),
+                            results.get(i)[1]
+                    ));
+                }
+
+                Snackbar.make(activity.getCurrentFocus(), "Retrieved all academic years", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+        academicYearsFetcher.execute(QueryTag.GET_ACADEMIC_YEARS);
+    }
+
     /**
      * Set up a query fetcher to retrieve all the BUTBA members and to store in a local SQLite database.
      * @param activity

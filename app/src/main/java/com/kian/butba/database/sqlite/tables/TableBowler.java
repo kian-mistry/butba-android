@@ -50,6 +50,12 @@ public class TableBowler extends SQLiteOpenHelper {
     }
 
     @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        super.onDowngrade(db, oldVersion, newVersion);
+        onUpgrade(db, oldVersion, newVersion);
+    }
+
+    @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
         onCreate(db);
@@ -87,6 +93,7 @@ public class TableBowler extends SQLiteOpenHelper {
                 bowlerList.add(bowler);
             } while(cursor.moveToNext());
         }
+        db.close();
 
         return bowlerList;
     }
