@@ -10,9 +10,15 @@ import com.kian.butba.database.server.TablesFetcher;
 import com.kian.butba.database.sqlite.entities.AcademicYear;
 import com.kian.butba.database.sqlite.entities.Bowler;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
+import com.kian.butba.database.sqlite.entities.RankingStatus;
+import com.kian.butba.database.sqlite.entities.StudentStatus;
+import com.kian.butba.database.sqlite.entities.University;
 import com.kian.butba.database.sqlite.tables.TableAcademicYear;
 import com.kian.butba.database.sqlite.tables.TableBowler;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
+import com.kian.butba.database.sqlite.tables.TableRankingStatus;
+import com.kian.butba.database.sqlite.tables.TableStudentStatus;
+import com.kian.butba.database.sqlite.tables.TableUniversity;
 
 import java.util.List;
 
@@ -76,7 +82,7 @@ public class DatabaseOperations {
                 for(int i = 0; i < results.size(); i++) {
                     TableBowlerSeason tableBowlerSeason = new TableBowlerSeason(activity);
                     tableBowlerSeason.addBowlerToSeason(new BowlerSeason(
-                            Integer.valueOf(i + 1),
+                            i + 1,
                             Integer.valueOf(results.get(i)[1]),
                             Integer.valueOf(results.get(i)[2]),
                             Integer.valueOf(results.get(i)[3]),
@@ -91,4 +97,57 @@ public class DatabaseOperations {
         bowlersSeasonsFetcher.execute(QueryTag.GET_ALL_BOWLERS_SEASONS);
     }
 
+    public static void getAllRankingStatuses(final Activity activity) {
+        TablesFetcher rankingsFetcher = new TablesFetcher(new AsyncDelegate() {
+            @Override
+            public void onProcessResults(List<String[]> results) {
+                for(int i = 0; i < results.size(); i++) {
+                    TableRankingStatus tableRankingStatus = new TableRankingStatus(activity);
+                    tableRankingStatus.addRankingStatus(new RankingStatus(
+                            Integer.valueOf(results.get(i)[0]),
+                            results.get(i)[1]
+                    ));
+                }
+
+                Snackbar.make(activity.getCurrentFocus(), "Retrieved all ranking statuses", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+        rankingsFetcher.execute(QueryTag.GET_RANKING_STATUSES);
+    }
+
+    public static void getAllStudentStatuses(final Activity activity) {
+        TablesFetcher studentsFetcher = new TablesFetcher(new AsyncDelegate() {
+            @Override
+            public void onProcessResults(List<String[]> results) {
+                for(int i = 0; i < results.size(); i++) {
+                    TableStudentStatus tableStudentStatus = new TableStudentStatus(activity);
+                    tableStudentStatus.addStudentStatus(new StudentStatus(
+                            Integer.valueOf(results.get(i)[0]),
+                            results.get(i)[1]
+                    ));
+                }
+
+                Snackbar.make(activity.getCurrentFocus(), "Retrieved all student statuses", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+        studentsFetcher.execute(QueryTag.GET_STUDENT_STATUSES);
+    }
+
+    public static void getAllUniversities(final Activity activity) {
+        TablesFetcher universityFetcher = new TablesFetcher(new AsyncDelegate() {
+            @Override
+            public void onProcessResults(List<String[]> results) {
+                for(int i = 0; i < results.size(); i++) {
+                    TableUniversity tableUniversity = new TableUniversity(activity);
+                    tableUniversity.addUniversity(new University(
+                            Integer.valueOf(results.get(i)[0]),
+                            results.get(i)[1]
+                    ));
+                }
+
+                Snackbar.make(activity.getCurrentFocus(), "Retrieved all universities", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+        universityFetcher.execute(QueryTag.GET_UNIVERSITIES);
+    }
 }

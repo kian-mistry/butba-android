@@ -16,6 +16,9 @@ import com.kian.butba.database.server.SeasonDetailsFetcher;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
 import com.kian.butba.database.sqlite.tables.TableAcademicYear;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
+import com.kian.butba.database.sqlite.tables.TableRankingStatus;
+import com.kian.butba.database.sqlite.tables.TableStudentStatus;
+import com.kian.butba.database.sqlite.tables.TableUniversity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,11 +68,16 @@ public class ProfileFragment extends Fragment {
                 seasonDetails = new HashMap<>();
 
                 String academicYear = new TableAcademicYear(getActivity().getBaseContext()).getAcademicYear(bowlersSeason.get(i).getAcademicYear());
+                String rankingStatus = new TableRankingStatus(getActivity().getBaseContext()).getRankingStatus(bowlersSeason.get(i).getRankingStatus());
+                String studentStatus = new TableStudentStatus(getActivity().getBaseContext()).getStudentStatus(bowlersSeason.get(i).getStudentStatus());
+                String university = new TableUniversity(getActivity().getBaseContext()).getUniversity(bowlersSeason.get(i).getUniversityId());
+
+
 
                 seasonDetails.put("academic_year", academicYear);
-                seasonDetails.put("student_status", String.valueOf(bowlersSeason.get(i).getStudentStatus()));
-                seasonDetails.put("ranking_status", String.valueOf(bowlersSeason.get(i).getRankingStatus()));
-                seasonDetails.put("university", String.valueOf(bowlersSeason.get(i).getUniversityId()));
+                seasonDetails.put("ranking_status", rankingStatus);
+                seasonDetails.put("student_status", studentStatus);
+                seasonDetails.put("university", university);
 
                 profiles.add(seasonDetails);
             }

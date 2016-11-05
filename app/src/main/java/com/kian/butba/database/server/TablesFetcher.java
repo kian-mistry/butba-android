@@ -50,6 +50,15 @@ public class TablesFetcher extends AsyncTask<QueryTag, Void, List<String[]>> {
                 case GET_ALL_BOWLERS_SEASONS:
                     urlQuery = new URL(QueriesUrl.URL_GET_ALL_BOWLERS_SEASONS);
                     break;
+                case GET_RANKING_STATUSES:
+                    urlQuery = new URL(QueriesUrl.URL_GET_ALL_RANKING_STATUSES);
+                    break;
+                case GET_STUDENT_STATUSES:
+                    urlQuery = new URL(QueriesUrl.URL_GET_ALL_STUDENT_STATUSES);
+                    break;
+                case GET_UNIVERSITIES:
+                    urlQuery = new URL(QueriesUrl.URL_GET_ALL_UNIVERSITIES);
+                    break;
                 default:
                     urlQuery = null;
                     break;
