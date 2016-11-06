@@ -12,7 +12,7 @@ public class DatabaseConstants {
     public static final String TABLE_ACADEMIC_YEAR = "AcademicYear";
     public static final String TABLE_BOWLER = "Bowler";
     public static final String TABLE_BOWLER_SEASON = "BowlerSeason";
-    public static final String TABLE_EVENT_AVG_15_16 = "EventAverage1516";
+    public static final String TABLE_EVENT_AVERAGE = "EventAverage";
     public static final String TABLE_EVENT_GAME_16_17 = "EventGame1617";
     public static final String TABLE_EVENT_CODE = "EventCode";
     public static final String TABLE_RANKING_STATUS = "RankingStatus";

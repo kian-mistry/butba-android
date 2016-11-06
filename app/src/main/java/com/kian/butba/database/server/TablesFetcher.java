@@ -50,6 +50,9 @@ public class TablesFetcher extends AsyncTask<QueryTag, Void, List<String[]>> {
                 case GET_ALL_BOWLERS_SEASONS:
                     urlQuery = new URL(QueriesUrl.URL_GET_ALL_BOWLERS_SEASONS);
                     break;
+                case GET_EVENT_AVERAGES:
+                    urlQuery = new URL(QueriesUrl.URL_GET_ALL_BOWLERS_EVENT_AVERAGE);
+                    break;
                 case GET_RANKING_STATUSES:
                     urlQuery = new URL(QueriesUrl.URL_GET_ALL_RANKING_STATUSES);
                     break;
@@ -80,7 +83,8 @@ public class TablesFetcher extends AsyncTask<QueryTag, Void, List<String[]>> {
                 row = jsonArray.getJSONArray(i);
                 columns = new String[row.length()];
                 for(int j = 0; j < row.length(); j++) {
-                    columns[j] = (String) row.get(j);
+                    //Taking null values into consideration.
+                    columns[j] = (row.get(j).equals(null) || row.get(j).equals("null")) ? "" : (String) row.get(j);
                 }
                 rows.add(columns);
             }

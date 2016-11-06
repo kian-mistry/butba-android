@@ -1,6 +1,8 @@
 package com.kian.butba.database.sqlite;
 
 import android.app.Activity;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 
@@ -10,12 +12,14 @@ import com.kian.butba.database.server.TablesFetcher;
 import com.kian.butba.database.sqlite.entities.AcademicYear;
 import com.kian.butba.database.sqlite.entities.Bowler;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
+import com.kian.butba.database.sqlite.entities.EventAverage;
 import com.kian.butba.database.sqlite.entities.RankingStatus;
 import com.kian.butba.database.sqlite.entities.StudentStatus;
 import com.kian.butba.database.sqlite.entities.University;
 import com.kian.butba.database.sqlite.tables.TableAcademicYear;
 import com.kian.butba.database.sqlite.tables.TableBowler;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
+import com.kian.butba.database.sqlite.tables.TableEventAverage;
 import com.kian.butba.database.sqlite.tables.TableRankingStatus;
 import com.kian.butba.database.sqlite.tables.TableStudentStatus;
 import com.kian.butba.database.sqlite.tables.TableUniversity;
@@ -94,7 +98,46 @@ public class DatabaseOperations {
                 Snackbar.make(activity.getCurrentFocus(), "Retrieved all bowlers seasons", Snackbar.LENGTH_SHORT).show();
             }
         });
-        bowlersSeasonsFetcher.execute(QueryTag.GET_ALL_BOWLERS_SEASONS);
+
+        //Run this thread in parallel with the next thread.
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            bowlersSeasonsFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, QueryTag.GET_ALL_BOWLERS_SEASONS);
+        }
+        else {
+            bowlersSeasonsFetcher.execute(QueryTag.GET_ALL_BOWLERS_SEASONS);
+        }
+    }
+
+    public static void getAllEventAverages(final Activity activity) {
+        TablesFetcher eventAveragesFetcher = new TablesFetcher(new AsyncDelegate() {
+            @Override
+            public void onProcessResults(List<String[]> results) {
+                for(int i = 0; i < results.size(); i++) {
+                    Integer hcpRankingPinfall = (results.get(i)[5] == "") ? 0 : Integer.valueOf(results.get(i)[5]);
+
+                    TableEventAverage tableEventAverage = new TableEventAverage(activity);
+                    tableEventAverage.addEventAverage(new EventAverage(
+                            i + 1,
+                            Integer.valueOf(results.get(i)[1]),
+                            Integer.valueOf(results.get(i)[2]),
+                            Integer.valueOf(results.get(i)[3]),
+                            Integer.valueOf(results.get(i)[4]),
+                            hcpRankingPinfall,
+                            Integer.valueOf(results.get(i)[6]),
+                            Integer.valueOf(results.get(i)[7])
+                    ));
+                }
+
+                Snackbar.make(activity.getCurrentFocus(), "Retrieved all event averages", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            eventAveragesFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, QueryTag.GET_EVENT_AVERAGES);
+        }
+        else {
+            eventAveragesFetcher.execute(QueryTag.GET_EVENT_AVERAGES);
+        }
     }
 
     public static void getAllRankingStatuses(final Activity activity) {

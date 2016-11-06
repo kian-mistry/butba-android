@@ -147,11 +147,13 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         boolean tableAcademicYearExists = prefDatabase.getBoolean("pref_table_academic_year", false);
         boolean tableBowlerExists = prefDatabase.getBoolean("pref_table_bowlers", false);
         boolean tableBowlerSeasonsExists = prefDatabase.getBoolean("pref_table_bowlers_seasons", false);
+        boolean tableEventAverageExists = prefDatabase.getBoolean("pref_table_event_average", false);
         boolean tableRankingStatusExists = prefDatabase.getBoolean("pref_table_ranking_status", false);
         boolean tableStudentStatusExists = prefDatabase.getBoolean("pref_table_student_status", false);
         boolean tableUniversityExists = prefDatabase.getBoolean("pref_table_university", false);
 
-
+        //TODO: Create threads for each operation.
+        //TODO: Sort of solved using parallel pools of AsyncTasks.
         if(!tableAcademicYearExists) {
             DatabaseOperations.getAllAcademicYears(this);
         }
@@ -176,5 +178,8 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             DatabaseOperations.getAllBowlersSeasons(this);
         }
 
+        if(!tableEventAverageExists) {
+            DatabaseOperations.getAllEventAverages(this);
+        }
     }
 }
