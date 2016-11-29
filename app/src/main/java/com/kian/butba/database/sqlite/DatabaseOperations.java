@@ -47,7 +47,14 @@ public class DatabaseOperations {
                 Snackbar.make(activity.getCurrentFocus(), "Retrieved all academic years", Snackbar.LENGTH_SHORT).show();
             }
         });
-        academicYearsFetcher.execute(QueryTag.GET_ACADEMIC_YEARS);
+
+        //Run this thread in parallel with the next thread.
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            academicYearsFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, QueryTag.GET_ACADEMIC_YEARS);
+        }
+        else {
+            academicYearsFetcher.execute(QueryTag.GET_ACADEMIC_YEARS);
+        }
     }
 
     /**
@@ -71,7 +78,14 @@ public class DatabaseOperations {
                 Snackbar.make(activity.getCurrentFocus(), "Retrieved all bowlers", Snackbar.LENGTH_SHORT).show();
             }
         });
-        bowlersFetcher.execute(QueryTag.GET_ALL_BOWLERS);
+
+        //Run this thread in parallel with the next thread.
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            bowlersFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, QueryTag.GET_ALL_BOWLERS);
+        }
+        else {
+            bowlersFetcher.execute(QueryTag.GET_ALL_BOWLERS);
+        }
     }
 
     /**
@@ -113,6 +127,7 @@ public class DatabaseOperations {
             @Override
             public void onProcessResults(List<String[]> results) {
                 for(int i = 0; i < results.size(); i++) {
+                    Integer rankingPinfall = (results.get(i)[4] == "") ? 0 : Integer.valueOf(results.get(i)[4]);
                     Integer hcpRankingPinfall = (results.get(i)[5] == "") ? 0 : Integer.valueOf(results.get(i)[5]);
 
                     TableEventAverage tableEventAverage = new TableEventAverage(activity);
@@ -121,7 +136,7 @@ public class DatabaseOperations {
                             Integer.valueOf(results.get(i)[1]),
                             Integer.valueOf(results.get(i)[2]),
                             Integer.valueOf(results.get(i)[3]),
-                            Integer.valueOf(results.get(i)[4]),
+                            rankingPinfall,
                             hcpRankingPinfall,
                             Integer.valueOf(results.get(i)[6]),
                             Integer.valueOf(results.get(i)[7])
@@ -132,6 +147,7 @@ public class DatabaseOperations {
             }
         });
 
+        //Run this thread in parallel with the next thread.
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             eventAveragesFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, QueryTag.GET_EVENT_AVERAGES);
         }
@@ -155,7 +171,14 @@ public class DatabaseOperations {
                 Snackbar.make(activity.getCurrentFocus(), "Retrieved all ranking statuses", Snackbar.LENGTH_SHORT).show();
             }
         });
-        rankingsFetcher.execute(QueryTag.GET_RANKING_STATUSES);
+
+        //Run this thread in parallel with the next thread.
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            rankingsFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, QueryTag.GET_RANKING_STATUSES);
+        }
+        else {
+            rankingsFetcher.execute(QueryTag.GET_RANKING_STATUSES);
+        }
     }
 
     public static void getAllStudentStatuses(final Activity activity) {
@@ -173,7 +196,14 @@ public class DatabaseOperations {
                 Snackbar.make(activity.getCurrentFocus(), "Retrieved all student statuses", Snackbar.LENGTH_SHORT).show();
             }
         });
-        studentsFetcher.execute(QueryTag.GET_STUDENT_STATUSES);
+
+        //Run this thread in parallel with the next thread.
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            studentsFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, QueryTag.GET_STUDENT_STATUSES);
+        }
+        else {
+            studentsFetcher.execute(QueryTag.GET_STUDENT_STATUSES);
+        }
     }
 
     public static void getAllUniversities(final Activity activity) {
@@ -191,6 +221,13 @@ public class DatabaseOperations {
                 Snackbar.make(activity.getCurrentFocus(), "Retrieved all universities", Snackbar.LENGTH_SHORT).show();
             }
         });
-        universityFetcher.execute(QueryTag.GET_UNIVERSITIES);
+
+        //Run this thread in parallel with the next thread.
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            universityFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, QueryTag.GET_UNIVERSITIES);
+        }
+        else {
+            universityFetcher.execute(QueryTag.GET_UNIVERSITIES);
+        }
     }
 }
