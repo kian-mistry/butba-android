@@ -53,6 +53,9 @@ public class TablesFetcher extends AsyncTask<QueryTag, Void, List<String[]>> {
                 case GET_EVENT_AVERAGES:
                     urlQuery = new URL(QueriesUrl.URL_GET_ALL_BOWLERS_EVENT_AVERAGE);
                     break;
+                case GET_EVENT_CODES:
+                    urlQuery = new URL(QueriesUrl.URL_GET_ALL_EVENT_CODES);
+                    break;
                 case GET_RANKING_STATUSES:
                     urlQuery = new URL(QueriesUrl.URL_GET_ALL_RANKING_STATUSES);
                     break;

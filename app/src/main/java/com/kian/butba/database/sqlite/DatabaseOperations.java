@@ -1,6 +1,7 @@
 package com.kian.butba.database.sqlite;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,7 @@ import com.kian.butba.database.sqlite.entities.AcademicYear;
 import com.kian.butba.database.sqlite.entities.Bowler;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
 import com.kian.butba.database.sqlite.entities.EventAverage;
+import com.kian.butba.database.sqlite.entities.EventCode;
 import com.kian.butba.database.sqlite.entities.RankingStatus;
 import com.kian.butba.database.sqlite.entities.StudentStatus;
 import com.kian.butba.database.sqlite.entities.University;
@@ -20,6 +22,7 @@ import com.kian.butba.database.sqlite.tables.TableAcademicYear;
 import com.kian.butba.database.sqlite.tables.TableBowler;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 import com.kian.butba.database.sqlite.tables.TableEventAverage;
+import com.kian.butba.database.sqlite.tables.TableEventCode;
 import com.kian.butba.database.sqlite.tables.TableRankingStatus;
 import com.kian.butba.database.sqlite.tables.TableStudentStatus;
 import com.kian.butba.database.sqlite.tables.TableUniversity;
@@ -153,6 +156,31 @@ public class DatabaseOperations {
         }
         else {
             eventAveragesFetcher.execute(QueryTag.GET_EVENT_AVERAGES);
+        }
+    }
+
+    public static void getAllEvents(final Activity activity) {
+        TablesFetcher eventsFetcher = new TablesFetcher(new AsyncDelegate() {
+            @Override
+            public void onProcessResults(List<String[]> results) {
+                for(int i = 0; i < results.size(); i++) {
+                    TableEventCode tableEventCode = new TableEventCode(activity);
+                    tableEventCode.addEvent(new EventCode(
+                            Integer.valueOf(results.get(i)[0]),
+                            results.get(i)[1]
+                    ));
+                }
+
+                Snackbar.make(activity.getCurrentFocus(), "Retrieved all events", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
+        //Run this thread in parallel with the next thread.
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            eventsFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, QueryTag.GET_EVENT_CODES);
+        }
+        else {
+            eventsFetcher.execute(QueryTag.GET_EVENT_CODES);
         }
     }
 
