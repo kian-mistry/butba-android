@@ -91,48 +91,6 @@ public class ProfileFragment extends Fragment {
             recyclerView.setAdapter(profileCardsAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
-//
-//        if(bowlerId != 0) {
-//            //A BUTBA member exists.
-//            QueryMap queryMap = new QueryMap(QueryTag.GET_BOWLER_STATUSES, "bowler_id", String.valueOf(bowlerId));
-//
-//            fetcher = new SeasonDetailsFetcher(new SeasonDetailsFetcher.AsyncDelegate() {
-//                @Override
-//                public void onProcessResults(ArrayList<String[]> output) {
-//                    profiles = new ArrayList<>();
-//                    HashMap<String, String> seasonDetails;
-//
-//                    for(int i = 0; i < output.size(); i++) {
-//                        String studentStatus = output.get(i)[1];
-//                        String rankingStatus = output.get(i)[2];
-//                        String university = output.get(i)[3];
-//                        String average = output.get(i)[4];
-//                        String games = output.get(i)[5];
-//                        String totalRankings = output.get(i)[6];
-//                        String bestX = output.get(i)[7];
-//
-//                        seasonDetails = new HashMap<>();
-//                        seasonDetails.put("student_status", studentStatus);
-//                        seasonDetails.put("ranking_status", rankingStatus);
-//                        seasonDetails.put("university", university);
-//                        seasonDetails.put("average", average);
-//                        seasonDetails.put("games", games);
-//                        seasonDetails.put("total_rankings", totalRankings);
-//                        seasonDetails.put("best_x", bestX);
-//
-//                        Log.d("RANKINGS ", academicYear + " // " + totalRankings + " // " + bestX);
-//
-//                        profiles.add(seasonDetails);
-//                    }
-//
-//                    //Set up recycler view to display the bowler's profile for each season.
-//                    profileCardsAdapter = new ProfileCardsAdapter(getActivity(), getProfiles());
-//                    recyclerView.setAdapter(profileCardsAdapter);
-//                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//                }
-//            });
-//            fetcher.execute(queryMap);
-//        }
     }
 
 

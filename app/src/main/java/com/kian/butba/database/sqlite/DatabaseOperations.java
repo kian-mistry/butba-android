@@ -1,11 +1,9 @@
 package com.kian.butba.database.sqlite;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 
 import com.kian.butba.database.server.AsyncDelegate;
 import com.kian.butba.database.server.QueryTag;

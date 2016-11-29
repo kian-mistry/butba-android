@@ -19,7 +19,7 @@ import java.util.List;
  */
 
 /**
- * Class which fetches a particular table from a MYSQL database using AsyncTask.
+ * Class which fetches a particular table from a MySQL database using AsyncTask.
  */
 public class TablesFetcher extends AsyncTask<QueryTag, Void, List<String[]>> {
 
