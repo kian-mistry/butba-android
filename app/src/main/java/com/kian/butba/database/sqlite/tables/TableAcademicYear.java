@@ -7,10 +7,9 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.kian.butba.database.sqlite.DatabaseConstants;
-import com.kian.butba.database.sqlite.DatabaseQueries;
+import com.kian.butba.database.sqlite.queries.DatabaseQueries;
 import com.kian.butba.database.sqlite.entities.AcademicYear;
 
 import java.util.ArrayList;
