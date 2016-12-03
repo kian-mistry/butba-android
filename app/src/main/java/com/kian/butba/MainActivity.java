@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import com.kian.butba.committee.CommitteeFragment;
 import com.kian.butba.database.sqlite.DatabaseOperations;
+import com.kian.butba.database.sqlite.entities.BowlerSeason;
+import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 import com.kian.butba.profile.ProfileFragment;
 import com.kian.butba.settings.SettingsActivity;
 
@@ -82,7 +84,23 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         }
         else {
             tvBowlerName.setText(bowlerName);
-            tvBowlerStatus.setText("");
+
+            TableBowlerSeason tableBowlerSeason = new TableBowlerSeason(this);
+            BowlerSeason bowlerSeason = tableBowlerSeason.getBowlersSeason(bowlerId).get(0);
+
+            //Only displays the bowler's status for the current academic year.
+            if(bowlerSeason != null && bowlerSeason.getAcademicYear() == 2) {
+                int studentStatus = bowlerSeason.getStudentStatus();
+                int rankingStatus = bowlerSeason.getRankingStatus();
+
+                String student = (studentStatus == 1) ? "Student" : "Ex-Student";
+                String ranking = (rankingStatus == 1) ? "Scratch" : "Handicap";
+
+                tvBowlerStatus.setText(student + " // " + ranking);
+            }
+            else {
+                tvBowlerStatus.setText("");
+            }
         }
     }
 
