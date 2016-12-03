@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private View navigationHeader;
 
     private TextView tvBowlerName;
-    private TextView tvBowlerEmail;
+    private TextView tvBowlerStatus;
 
     private FragmentManager manager = getSupportFragmentManager();
 
@@ -69,20 +69,20 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
         //Get bowler's details from a shared preference.
         SharedPreferences sharedPreferences = getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
-        boolean isButbaMember = sharedPreferences.getBoolean("is_butba_member", false);
+        int bowlerId = sharedPreferences.getInt("bowler_id", 0);
         String bowlerName = sharedPreferences.getString("bowler_name", null);
 
         navigationHeader = navigationView.getHeaderView(0);
         tvBowlerName = (TextView) navigationHeader.findViewById(R.id.nav_header_name);
-        tvBowlerEmail = (TextView) navigationHeader.findViewById(R.id.nav_header_email);
+        tvBowlerStatus = (TextView) navigationHeader.findViewById(R.id.nav_header_status);
 
-        if(!isButbaMember || bowlerName == null) {
+        if(bowlerId == 0 || bowlerName == null) {
             tvBowlerName.setText("Guest");
-            tvBowlerEmail.setText("");
+            tvBowlerStatus.setText("");
         }
         else {
             tvBowlerName.setText(bowlerName);
-            tvBowlerEmail.setText("");
+            tvBowlerStatus.setText("");
         }
     }
 

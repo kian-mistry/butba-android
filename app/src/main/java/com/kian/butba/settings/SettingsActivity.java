@@ -1,18 +1,17 @@
 package com.kian.butba.settings;
 
 import android.content.Context;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.kian.butba.R;
-import com.kian.butba.database.sqlite.tables.TableBowler;
-import com.kian.butba.database.sqlite.entities.Bowler;
-
-import java.util.List;
 
 /**
  * Created by Kian Mistry on 26/10/16.
@@ -47,43 +46,114 @@ public class SettingsActivity extends AppCompatActivity {
                 .commit();
     }
 
-    public static class SettingsFragment extends SettingsListener {
+    public static class SettingsFragment extends SettingsMethods {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_settings);
 
-            //Retrieve shared preferences.
+            //Initialise shared preferences.
             prefBowlerDetails = getActivity().getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
-            bowlerId = prefBowlerDetails.getInt("bowler_id", 0);
-            bowlerName = prefBowlerDetails.getString("bowler_name", null);
 
             //Initialise preferences.
             cbpButbaMember = (CheckBoxPreference) findPreference("pref_is_butba_member");
+            lpBowlerGender = (ListPreference) findPreference("pref_gender");
             lpButbaMembers = (ListPreference) findPreference("pref_butba_member");
 
-            //Set up check box preference.
-            setListPreferenceSummary();
-            cbpButbaMember.setOnPreferenceChangeListener(this);
+            //Set list preference options for bowler's gender.
+            setListPreferenceEntries(lpBowlerGender, genderEntryValues, genderEntries);
 
-            //Set up list preference.
-            populateListPreference(lpButbaMembers, entries, entryValues);
-            lpButbaMembers.setOnPreferenceClickListener(this);
-            lpButbaMembers.setOnPreferenceChangeListener(this);
+            /* Set up listeners */
+            //Set change listener for the BUTBA member checkbox preference.
+            cbpButbaMember.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean isChecked = Boolean.valueOf(newValue.toString());
 
-            //Retrieve a list of all of BUTBA members from the local SQLite database.
-            List<Bowler> bowlers = new TableBowler(this.getActivity().getBaseContext()).getAllBowlers();
-            int bowlersSize = bowlers.size();
+                    //Store whether user is a BUTBA member in a shared preference.
+                    if(!isChecked) {
+                        Editor editor = prefBowlerDetails.edit();
+                        editor.putInt("bowler_id", 0);
+                        editor.putString("bowler_name", null);
+                        editor.putInt("bowler_gender", 0);
 
-            entries = new CharSequence[bowlersSize];
-            entryValues = new CharSequence[bowlersSize];
+                        editor.commit();
 
-            for(int i = 0; i < bowlersSize; i++) {
-                entryValues[i] = String.valueOf(bowlers.get(i).getId());
-                entries[i] = bowlers.get(i).getFullName();
+                        lpBowlerGender.setValueIndex(0);
+                        setGenderListPreferenceSummary(0);
+                    }
+                    else if(isChecked && lpBowlerGender.findIndexOfValue(lpBowlerGender.getEntry().toString()) == -1) {
+                        disableBowlersNameListPreference(0);
+                    }
+
+                    return true;
+                }
+            });
+
+            //Set change listener for the bowler's gender list preference.
+            lpBowlerGender.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    int index = lpBowlerGender.findIndexOfValue(newValue.toString());
+
+                    //Obtain bowlers list depending on which gender is chosen.
+                    if(index == 1 || index == 2) {
+                        obtainGenderSpecificBowlers(index);
+                    }
+
+                    //User cannot select a bowler until the gender has been selected as Male or Female.
+                    disableBowlersNameListPreference(index);
+
+                    //Reset previously selected bowler if the user selects a different gender.
+                    Editor editor = prefBowlerDetails.edit();
+                    editor.putInt("bowler_id", 0);
+                    editor.putString("bowler_name", null);
+                    editor.putInt("bowler_gender", index);
+                    editor.commit();
+
+                    //Remove previously selected bowler's name from the summary.
+                    lpButbaMembers.setSummary("Select your name.");
+
+                    return true;
+                }
+            });
+
+            //Set change listener for the BUTBA members list preference.
+            lpButbaMembers.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    int bowlerId = Integer.parseInt(newValue.toString());
+
+                    String bowlerName = setBowlerListPreferenceSummary(bowlerId);
+
+                    Editor editor = prefBowlerDetails.edit();
+                    editor.putInt("bowler_id", bowlerId);
+                    editor.putString("bowler_name", bowlerName);
+                    editor.commit();
+
+                    return true;
+                }
+            });
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+
+            //Retrieve shared preferences.
+            bowlerId = prefBowlerDetails.getInt("bowler_id", 0);
+            bowlerName = prefBowlerDetails.getString("bowler_name", null);
+            bowlerGender = prefBowlerDetails.getInt("bowler_gender", 0);
+
+            //Set gender list option.
+            lpBowlerGender.setValueIndex(bowlerGender);
+            if(bowlerGender == 1 || bowlerGender == 2) {
+                obtainGenderSpecificBowlers(bowlerGender);
             }
-            populateListPreference(lpButbaMembers, entries, entryValues);
+
+            setGenderListPreferenceSummary(bowlerGender);
+            setBowlerListPreferenceSummary(bowlerId);
         }
     }
 }

@@ -9,8 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.kian.butba.database.sqlite.DatabaseConstants;
-import com.kian.butba.database.sqlite.queries.DatabaseQueries;
 import com.kian.butba.database.sqlite.entities.Bowler;
+import com.kian.butba.database.sqlite.queries.DatabaseQueries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +72,30 @@ public class TableBowler extends SQLiteOpenHelper {
 
         db.insert(DatabaseConstants.TABLE_BOWLER, null, values);
         db.close();
+    }
+
+    public List<Bowler> getGenderSpecificBowlers(String gender) {
+        ArrayList<Bowler> bowlerList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(DatabaseQueries.QUERY_SELECT_GENDER_SPECIFIC_BOWLERS, new String[]{gender});
+
+        //Go through all rows, adding each row to the list.
+        if(cursor.moveToFirst()) {
+            do {
+                Bowler bowler = new Bowler(
+                        Integer.parseInt(cursor.getString(0)),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3).charAt(0)
+                );
+
+                bowlerList.add(bowler);
+            } while(cursor.moveToNext());
+        }
+        db.close();
+
+        return bowlerList;
     }
 
     public List<Bowler> getAllBowlers() {

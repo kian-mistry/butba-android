@@ -3,15 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Profile">
         <CheckBoxPreference
+            android:key="pref_is_butba_member"
             android:defaultValue="false"
             android:disableDependentsState="false"
-            android:key="pref_is_butba_member"
             android:summary="Select if you are a BUTBA member."
             android:title="BUTBA Member" />
 
         <ListPreference
-            android:key="pref_butba_member"
+            android:key="pref_gender"
             android:dependency="pref_is_butba_member"
+            android:defaultValue="None"
+            android:summary="Select your gender."
+            android:title="Gender" />
+
+        <ListPreference
+            android:key="pref_butba_member"
+            android:dependency="pref_gender"
             android:defaultValue=""
             android:summary="Select your name."
             android:title="Name" />
