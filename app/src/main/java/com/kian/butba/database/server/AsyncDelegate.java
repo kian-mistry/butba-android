@@ -7,5 +7,5 @@ import java.util.List;
  */
 
 public interface AsyncDelegate {
-    void onProcessResults(List<String[]> results);
+    void onProcessResults(List<?> results);
 }

@@ -36,12 +36,14 @@ public class DatabaseOperations {
     public static void getAllAcademicYears(final Activity activity) {
         TablesFetcher academicYearsFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
-            public void onProcessResults(List<String[]> results) {
+            public void onProcessResults(List<?> results) {
+                List<String[]> res = (List<String[]>) results;
+
                 for(int i = 0; i < results.size(); i++) {
                     TableAcademicYear tableAcademicYear = new TableAcademicYear(activity);
                     tableAcademicYear.addAcademicYear(new AcademicYear(
-                            Integer.valueOf(results.get(i)[0]),
-                            results.get(i)[1]
+                            Integer.valueOf(res.get(i)[0]),
+                            res.get(i)[1]
                     ));
                 }
 
@@ -65,14 +67,16 @@ public class DatabaseOperations {
     public static void getAllBowlers(final Activity activity) {
         TablesFetcher bowlersFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
-            public void onProcessResults(List<String[]> results) {
+            public void onProcessResults(List<?> results) {
+                List<String[]> res = (List<String[]>) results;
+
                 for(int i = 0; i < results.size(); i++) {
                     TableBowler tableBowler = new TableBowler(activity);
                     tableBowler.addBowler(new Bowler(
-                            Integer.valueOf(results.get(i)[0]),
-                            results.get(i)[1],
-                            results.get(i)[2],
-                            results.get(i)[3].charAt(0)
+                            Integer.valueOf(res.get(i)[0]),
+                            res.get(i)[1],
+                            res.get(i)[2],
+                            res.get(i)[3].charAt(0)
                     ));
                 }
 
@@ -97,16 +101,18 @@ public class DatabaseOperations {
     public static void getAllBowlersSeasons(final Activity activity) {
         TablesFetcher bowlersSeasonsFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
-            public void onProcessResults(List<String[]> results) {
+            public void onProcessResults(List<?> results) {
+                List<String[]> res = (List<String[]>) results;
+
                 for(int i = 0; i < results.size(); i++) {
                     TableBowlerSeason tableBowlerSeason = new TableBowlerSeason(activity);
                     tableBowlerSeason.addBowlerToSeason(new BowlerSeason(
                             i + 1,
-                            Integer.valueOf(results.get(i)[1]),
-                            Integer.valueOf(results.get(i)[2]),
-                            Integer.valueOf(results.get(i)[3]),
-                            Integer.valueOf(results.get(i)[4]),
-                            Integer.valueOf(results.get(i)[5])
+                            Integer.valueOf(res.get(i)[1]),
+                            Integer.valueOf(res.get(i)[2]),
+                            Integer.valueOf(res.get(i)[3]),
+                            Integer.valueOf(res.get(i)[4]),
+                            Integer.valueOf(res.get(i)[5])
                     ));
                 }
 
@@ -126,21 +132,23 @@ public class DatabaseOperations {
     public static void getAllEventAverages(final Activity activity) {
         TablesFetcher eventAveragesFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
-            public void onProcessResults(List<String[]> results) {
+            public void onProcessResults(List<?> results) {
+                List<String[]> res = (List<String[]>) results;
+
                 for(int i = 0; i < results.size(); i++) {
-                    Integer rankingPinfall = (results.get(i)[4] == "") ? 0 : Integer.valueOf(results.get(i)[4]);
-                    Integer hcpRankingPinfall = (results.get(i)[5] == "") ? 0 : Integer.valueOf(results.get(i)[5]);
+                    Integer rankingPinfall = (res.get(i)[4] == "") ? 0 : Integer.valueOf(res.get(i)[4]);
+                    Integer hcpRankingPinfall = (res.get(i)[5] == "") ? 0 : Integer.valueOf(res.get(i)[5]);
 
                     TableEventAverage tableEventAverage = new TableEventAverage(activity);
                     tableEventAverage.addEventAverage(new EventAverage(
                             i + 1,
-                            Integer.valueOf(results.get(i)[1]),
-                            Integer.valueOf(results.get(i)[2]),
-                            Integer.valueOf(results.get(i)[3]),
+                            Integer.valueOf(res.get(i)[1]),
+                            Integer.valueOf(res.get(i)[2]),
+                            Integer.valueOf(res.get(i)[3]),
                             rankingPinfall,
                             hcpRankingPinfall,
-                            Integer.valueOf(results.get(i)[6]),
-                            Integer.valueOf(results.get(i)[7])
+                            Integer.valueOf(res.get(i)[6]),
+                            Integer.valueOf(res.get(i)[7])
                     ));
                 }
 
@@ -160,12 +168,14 @@ public class DatabaseOperations {
     public static void getAllEvents(final Activity activity) {
         TablesFetcher eventsFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
-            public void onProcessResults(List<String[]> results) {
+            public void onProcessResults(List<?> results) {
+                List<String[]> res = (List<String[]>) results;
+
                 for(int i = 0; i < results.size(); i++) {
                     TableEventCode tableEventCode = new TableEventCode(activity);
                     tableEventCode.addEvent(new EventCode(
-                            Integer.valueOf(results.get(i)[0]),
-                            results.get(i)[1]
+                            Integer.valueOf(res.get(i)[0]),
+                            res.get(i)[1]
                     ));
                 }
 
@@ -185,12 +195,14 @@ public class DatabaseOperations {
     public static void getAllRankingStatuses(final Activity activity) {
         TablesFetcher rankingsFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
-            public void onProcessResults(List<String[]> results) {
+            public void onProcessResults(List<?> results) {
+                List<String[]> res = (List<String[]>) results;
+
                 for(int i = 0; i < results.size(); i++) {
                     TableRankingStatus tableRankingStatus = new TableRankingStatus(activity);
                     tableRankingStatus.addRankingStatus(new RankingStatus(
-                            Integer.valueOf(results.get(i)[0]),
-                            results.get(i)[1]
+                            Integer.valueOf(res.get(i)[0]),
+                            res.get(i)[1]
                     ));
                 }
 
@@ -210,12 +222,14 @@ public class DatabaseOperations {
     public static void getAllStudentStatuses(final Activity activity) {
         TablesFetcher studentsFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
-            public void onProcessResults(List<String[]> results) {
+            public void onProcessResults(List<?> results) {
+                List<String[]> res = (List<String[]>) results;
+
                 for(int i = 0; i < results.size(); i++) {
                     TableStudentStatus tableStudentStatus = new TableStudentStatus(activity);
                     tableStudentStatus.addStudentStatus(new StudentStatus(
-                            Integer.valueOf(results.get(i)[0]),
-                            results.get(i)[1]
+                            Integer.valueOf(res.get(i)[0]),
+                            res.get(i)[1]
                     ));
                 }
 
@@ -235,12 +249,14 @@ public class DatabaseOperations {
     public static void getAllUniversities(final Activity activity) {
         TablesFetcher universityFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
-            public void onProcessResults(List<String[]> results) {
+            public void onProcessResults(List<?> results) {
+                List<String[]> res = (List<String[]>) results;
+
                 for(int i = 0; i < results.size(); i++) {
                     TableUniversity tableUniversity = new TableUniversity(activity);
                     tableUniversity.addUniversity(new University(
-                            Integer.valueOf(results.get(i)[0]),
-                            results.get(i)[1]
+                            Integer.valueOf(res.get(i)[0]),
+                            res.get(i)[1]
                     ));
                 }
 
