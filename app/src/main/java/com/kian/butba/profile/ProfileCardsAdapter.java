@@ -39,10 +39,12 @@ public class ProfileCardsAdapter extends Adapter<ProfileHolder>{
     @Override
     public void onBindViewHolder(ProfileHolder holder, int position) {
         final HashMap<String, String> current = profiles.get(position);
-        holder.getProfileSeason().setText(current.get("academic_year"));
+
+        String academicYear = current.get("academic_year");
+        holder.getProfileSeason().setText(academicYear);
 
         String studentStatus = current.get("student_status");
-        if(!studentStatus.equals("Ex-Student")) {
+        if(studentStatus.equals("Student")) {
             holder.getProfileStatus().setText(studentStatus + " // " + current.get("ranking_status") + " // " + current.get("university"));
         }
         else {
@@ -51,6 +53,14 @@ public class ProfileCardsAdapter extends Adapter<ProfileHolder>{
 
         holder.getProfileAverage().setText("Overall Average: " + current.get("average"));
         holder.getProfileGames().setText("Games: " + current.get("games"));
+
+        if(academicYear.equals("2016/17") && studentStatus.equals("Student")) {
+            holder.getProfileRankingPoints().setText("Total Points: " + current.get("points") + " // Best 4: " + current.get("best_n"));
+        }
+        else {
+            holder.getProfileRankingPoints().setText("Total Points: " + current.get("points") + " // Best 5: " + current.get("best_n"));
+        }
+
     }
 
     @Override

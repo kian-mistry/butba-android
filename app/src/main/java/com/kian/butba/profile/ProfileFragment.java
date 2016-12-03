@@ -11,14 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
+import com.kian.butba.database.server.AsyncDelegate;
+import com.kian.butba.database.server.BowlersSeasonStatsFetcher;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
-import com.kian.butba.database.sqlite.entities.OverallAverage;
+import com.kian.butba.database.sqlite.entities.BowlersSeasonStats;
 import com.kian.butba.database.sqlite.tables.TableAcademicYear;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
-import com.kian.butba.database.sqlite.tables.TableEventAverage;
 import com.kian.butba.database.sqlite.tables.TableRankingStatus;
 import com.kian.butba.database.sqlite.tables.TableStudentStatus;
-import com.kian.butba.database.sqlite.tables.TableUniversity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,43 +54,59 @@ public class ProfileFragment extends Fragment {
 
         //Obtain Bowler ID from shared preference.
         prefBowlerDetails = getActivity().getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
-        int bowlerId = prefBowlerDetails.getInt("bowler_id", 0);
+        final int bowlerId = prefBowlerDetails.getInt("bowler_id", 0);
 
-        if(bowlerId != 0) {
-            List<BowlerSeason> bowlersSeason = new TableBowlerSeason(getActivity().getBaseContext()).getBowlersSeason(bowlerId);
-            List<OverallAverage> bowlersAverage = new TableEventAverage(getActivity().getBaseContext()).getOverallAverageOverAllSeasons(bowlerId);
-            int bowlersSeasonSize = bowlersSeason.size();
-            int bowlersAverageSize = bowlersAverage.size();
+        BowlersSeasonStatsFetcher bowlersSeasonStatsFetcher = new BowlersSeasonStatsFetcher(new AsyncDelegate() {
+            @Override
+            public void onProcessResults(List<?> results) {
+                if(bowlerId != 0) {
+                    List<BowlersSeasonStats> bowlersSeasonStats = (List<BowlersSeasonStats>) results;
+                    List<BowlerSeason> bowlersSeason = new TableBowlerSeason(getActivity().getBaseContext()).getBowlersSeason(bowlerId);
+//                    List<OverallAverage> bowlersAverage = new TableEventAverage(getActivity().getBaseContext()).getOverallAverageOverAllSeasons(bowlerId);
+//                    int bowlersSeasonSize = bowlersSeason.size();
+                    int bowlersSeasonStatsSize = bowlersSeasonStats.size();
+//                    int bowlersAverageSize = bowlersAverage.size();
 
-            //TODO: Bit hacky, need to neaten up.
-            profiles = new ArrayList<>();
-            HashMap<String, String> seasonDetails;
+                    //TODO: Bit hacky, need to neaten up.
+                    profiles = new ArrayList<>();
+                    HashMap<String, String> seasonDetails;
 
-            for(int i = 0; i < bowlersSeasonSize && i < bowlersAverageSize; i++) {
-                seasonDetails = new HashMap<>();
+                    for(int i = 0; i < bowlersSeasonStatsSize; i++) {
+                        seasonDetails = new HashMap<>();
 
-                String academicYear = new TableAcademicYear(getActivity().getBaseContext()).getAcademicYear(bowlersSeason.get(i).getAcademicYear());
-                String rankingStatus = new TableRankingStatus(getActivity().getBaseContext()).getRankingStatus(bowlersSeason.get(i).getRankingStatus());
-                String studentStatus = new TableStudentStatus(getActivity().getBaseContext()).getStudentStatus(bowlersSeason.get(i).getStudentStatus());
-                String university = new TableUniversity(getActivity().getBaseContext()).getUniversity(bowlersSeason.get(i).getUniversityId());
-                String average = String.valueOf(bowlersAverage.get(i).getAverage());
-                String games = String.valueOf(bowlersAverage.get(i).getTotalGames());
+                        String academicYear = new TableAcademicYear(getActivity().getBaseContext()).getAcademicYear(bowlersSeasonStats.get(i).getAcademicYear());
+                        String rankingStatus = new TableRankingStatus(getActivity().getBaseContext()).getRankingStatus(bowlersSeasonStats.get(i).getRankingStatus());
+                        String studentStatus = new TableStudentStatus(getActivity().getBaseContext()).getStudentStatus(bowlersSeasonStats.get(i).getStudentStatus());
+                        String university = bowlersSeasonStats.get(i).getUniversity();
+//                        String university = new TableUniversity(getActivity().getBaseContext()).getUniversity(bowlersSeason.get(i).getUniversityId());
+//                        String average = String.valueOf(bowlersAverage.get(i).getAverage());
+//                        String games = String.valueOf(bowlersAverage.get(i).getTotalGames());
+                        String average = String.valueOf(bowlersSeasonStats.get(i).getOverallAverage());
+                        String games = String.valueOf(bowlersSeasonStats.get(i).getTotalGames());
+                        String points = String.valueOf(bowlersSeasonStats.get(i).getTotalPoints());
+                        String bestN = String.valueOf(bowlersSeasonStats.get(i).getBestN());
 
-                seasonDetails.put("academic_year", academicYear);
-                seasonDetails.put("ranking_status", rankingStatus);
-                seasonDetails.put("student_status", studentStatus);
-                seasonDetails.put("university", university);
-                seasonDetails.put("average", average);
-                seasonDetails.put("games", games);
+                        seasonDetails.put("academic_year", academicYear);
+                        seasonDetails.put("ranking_status", rankingStatus);
+                        seasonDetails.put("student_status", studentStatus);
+                        seasonDetails.put("university", university);
+                        seasonDetails.put("average", average);
+                        seasonDetails.put("games", games);
+                        seasonDetails.put("points", points);
+                        seasonDetails.put("best_n", bestN);
 
-                profiles.add(seasonDetails);
+                        profiles.add(seasonDetails);
+                    }
+
+                    //Set up recycler view to display the bowler's profile for each season.
+                    profileCardsAdapter = new ProfileCardsAdapter(getActivity(), getProfiles());
+                    recyclerView.setAdapter(profileCardsAdapter);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                }
             }
+        });
 
-            //Set up recycler view to display the bowler's profile for each season.
-            profileCardsAdapter = new ProfileCardsAdapter(getActivity(), getProfiles());
-            recyclerView.setAdapter(profileCardsAdapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        }
+        bowlersSeasonStatsFetcher.execute(bowlerId);
     }
 
 
