@@ -74,6 +74,26 @@ public class TableBowler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public Bowler getBowler(int bowlerId) {
+        Bowler bowler = null;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(DatabaseQueries.QUERY_PARTICULAR_BOWLER, new String[]{String.valueOf(bowlerId)});
+
+        //Go through all rows, adding each row to the list.
+        if(cursor.moveToFirst()) {
+            bowler = new Bowler(
+                Integer.parseInt(cursor.getString(0)),
+                cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3).charAt(0)
+            );
+        }
+        db.close();
+
+        return bowler;
+    }
+
     public List<Bowler> getGenderSpecificBowlers(String gender) {
         ArrayList<Bowler> bowlerList = new ArrayList<>();
 
