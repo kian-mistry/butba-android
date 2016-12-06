@@ -22,6 +22,7 @@ import com.kian.butba.committee.CommitteeFragment;
 import com.kian.butba.database.sqlite.DatabaseOperations;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
+import com.kian.butba.events.EventsFragment;
 import com.kian.butba.profile.ProfileFragment;
 import com.kian.butba.settings.SettingsActivity;
 
@@ -140,6 +141,11 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                         .replace(R.id.content_main, committeeFragment, committeeFragment.getTag())
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
+                break;
+            case R.id.nav_events:
+                EventsFragment eventsFragment = new EventsFragment();
+                manager.beginTransaction().replace(R.id.content_main, eventsFragment, eventsFragment.getTag()).commit();
+                Snackbar.make(this.getCurrentFocus(), "Events", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_settings:
                 Intent iSettings = new Intent(MainActivity.this, SettingsActivity.class);

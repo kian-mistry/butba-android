@@ -10,6 +10,10 @@
             android:id="@+id/nav_committee"
             android:icon="@drawable/ic_menu_group_work"
             android:title="Committee" />
+        <item
+            android:id="@+id/nav_events"
+            android:icon="@drawable/ic_menu_event"
+            android:title="Events" />
     </group>
     <group android:id="@+id/nav_grp_2" android:checkableBehavior="single">
             <item
