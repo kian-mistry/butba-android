@@ -8,6 +8,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,9 +24,10 @@ import com.kian.butba.R;
  * Created by Kian Mistry on 04/12/16.
  */
 
-public class EventsFragment extends Fragment {
+public class EventsFragment extends Fragment implements OnMenuItemClickListener {
 
     private ActionBar toolbar;
+    private PopupMenu popupMenu;
 
     private SharedPreferences prefShownEvents;
     private boolean studentEvents;
@@ -55,8 +58,17 @@ public class EventsFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        //Add custom buttons to the toolbar.
+        menu.clear();
+        inflater.inflate(R.menu.toolbar_events_items, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
         //Obtain which events are shown from the shared preferences.
         prefShownEvents = getActivity().getSharedPreferences("events_shown", Context.MODE_PRIVATE);
@@ -64,25 +76,38 @@ public class EventsFragment extends Fragment {
         exStudentEvents = prefShownEvents.getBoolean("ex_student_events", true);
         btbaEvents = prefShownEvents.getBoolean("btba_events", true);
 
+        switch(id) {
+            case R.id.action_filter:
+                //Add popup menu.
+                View menuActionFilter = getActivity().findViewById(R.id.action_filter);
+                popupMenu = new PopupMenu(getActivity(), menuActionFilter);
+                popupMenu.inflate(R.menu.menu_events);
+
+                //Attach item click listener.
+                popupMenu.setOnMenuItemClickListener(this);
+
+                //Initialise the checked values of the menu items.
+                popupMenu.getMenu().getItem(0).setChecked(studentEvents);
+                popupMenu.getMenu().getItem(1).setChecked(exStudentEvents);
+                popupMenu.getMenu().getItem(2).setChecked(btbaEvents);
+                popupMenu.show();
+
+                break;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-        menu.clear();
-        inflater.inflate(R.menu.menu_events, menu);
-
-        //Initialise the checked values of the menu items.
-        menu.getItem(0).setChecked(studentEvents);
-        menu.getItem(1).setChecked(exStudentEvents);
-        menu.getItem(2).setChecked(btbaEvents);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
         int id = item.getItemId();
         boolean status = toggleCheckBox(item);
+
+        //Prevent popup menu from closing when an option is selected.
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+        item.setActionView(new View(getContext()));
 
         Editor editor = prefShownEvents.edit();
 
@@ -105,7 +130,7 @@ public class EventsFragment extends Fragment {
 
         editor.commit();
 
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     private boolean toggleCheckBox(MenuItem item) {
