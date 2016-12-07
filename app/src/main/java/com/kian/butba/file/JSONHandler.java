@@ -1,7 +1,6 @@
-package com.kian.butba.json;
+package com.kian.butba.file;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
