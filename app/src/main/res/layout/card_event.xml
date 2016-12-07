@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/event_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginBottom="4dp"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="8dp" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/event_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/event_name"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="Sun"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textColor="@color/colourAccent"/>
+
+        <TextView
+            android:id="@+id/event_day_of_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_day"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="01"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:textColor="@color/colourAccent" />
+
+        <TextView
+            android:id="@+id/event_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_day_of_month"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="16dp"
+            android:text="Dec"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/colourAccent" />
+
+        <TextView
+            android:id="@+id/event_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_day_of_month"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="16dp"
+            android:text="2016"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/colourAccent"
+            android:layout_alignRight="@+id/event_day_of_month"
+            android:layout_alignEnd="@+id/event_day_of_month" />
+
+        <TextView
+            android:id="@+id/event_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_toRightOf="@id/event_day_of_month"
+            android:text="Name: "
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_above="@+id/event_day_of_month"
+            android:layout_alignParentTop="true" />
+
+        <TextView
+            android:id="@+id/event_venue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_name"
+            android:paddingTop="4dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"
+            android:layout_toRightOf="@id/event_day_of_month"
+            android:text="Venue: "
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/event_entry_form"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_venue"
+            android:layout_toRightOf="@id/event_day_of_month"
+            android:layout_alignLeft="@id/event_name"
+            android:paddingLeft="16dp"
+            android:paddingBottom="16dp"
+            android:src="@mipmap/ic_pdf"
+            android:background="@android:color/white" />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -1,0 +1,70 @@
+{
+  "events1617": [
+    {
+      "id": "MGS",
+      "date": "22-10-2016",
+      "time": "09:00:00",
+      "name": "Freshers Trios",
+      "venue": "MFA Bowl, Nottingham",
+      "entryForm": "http://butba.co.uk/documents/2016/10/freshers-trios-entry-form-16-17.pdf",
+      "facebookEvent": "https://www.facebook.com/events/370968709901403/",
+      "results": "http://butba.co.uk/documents/2016/10/freshers-trios-results-16-17.xlsx",
+      "tags": "S;"
+    },
+    {
+      "id": "MGX",
+      "date": "22-10-2016",
+      "time": "10:00:00",
+      "name": "Ex-Student X Games",
+      "venue": "MFA Bowl, Nottingham",
+      "entryForm": "http://butba.co.uk/documents/2016/10/ex-student-x-games-entry-form-16-17.pdf",
+      "facebookEvent": "https://www.facebook.com/events/651970391647195/",
+      "results": "http://butba.co.uk/documents/2016/10/ex-student-x-games-results-16-17.xlsx",
+      "tags": "X;"
+    },
+    {
+      "id": "STOP 1",
+      "date": "12-11-2016",
+      "time": "09:00:00",
+      "name": "Worcester Singles",
+      "venue": "MFA Bowl, Worcester",
+      "entryForm": "http://butba.co.uk/documents/2016/10/rnk1-worcester-singles-students-entry-form-16-17.pdf",
+      "facebookEvent": "https://www.facebook.com/events/621543134682474/",
+      "results": "http://butba.co.uk/documents/2016/11/rnk1-worcester-singles-students-results-16-17.xlsx",
+      "tags": "S;"
+    },
+    {
+      "id": "STOP 1",
+      "date": "13-11-2016",
+      "time": "09:00:00",
+      "name": "Worcester Singles",
+      "venue": "MFA Bowl, Worcester",
+      "entryForm": "http://butba.co.uk/documents/2016/10/rnk1-worcester-singles-ex-students-entry-form-16-17.pdf",
+      "facebookEvent": "https://www.facebook.com/events/1783599835188634/",
+      "results": "http://butba.co.uk/documents/2016/11/rnk1-worcester-singles-ex-students-results-16-17.xlsx",
+      "tags": "X;"
+    },
+    {
+      "id": "STOP 2",
+      "date": "04-12-2016",
+      "time": "09:00:00",
+      "name": "Loughborough Diamond Fives",
+      "venue": "The Chesterfield Bowl, Chesterfield",
+      "entryForm": "http://butba.co.uk/documents/2016/10/rnk2-loughborough-diamond-fives-students-entry-form-16-17.pdf",
+      "facebookEvent": "https://www.facebook.com/events/965818220195421/",
+      "results": "",
+      "tags": "S;X;"
+    },
+    {
+      "id": "BTBA 1 / STOP 3",
+      "date": "29-01-2017",
+      "time": "09:00:00",
+      "name": "Nuneaton Scotch Doubles",
+      "venue": "MFA Bowl, Nuneaton",
+      "entryForm": "http://butba.co.uk/documents/2016/10/btba1-nuneaton-scotch-doubles-entry-form-16-17.pdf",
+      "facebookEvent": "https://www.facebook.com/events/1646533352305341/",
+      "results": "",
+      "tags": "S;X;BTBA;"
+    }
+  ]
+}
