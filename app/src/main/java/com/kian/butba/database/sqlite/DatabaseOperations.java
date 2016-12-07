@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
 
-import com.kian.butba.database.server.AsyncDelegate;
+import com.kian.butba.file.AsyncDelegate;
 import com.kian.butba.database.server.QueryTag;
 import com.kian.butba.database.server.TablesFetcher;
 import com.kian.butba.database.sqlite.entities.AcademicYear;

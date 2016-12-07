@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
-import com.kian.butba.database.server.AsyncDelegate;
+import com.kian.butba.file.AsyncDelegate;
 import com.kian.butba.database.server.BowlersSeasonStatsFetcher;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
 import com.kian.butba.database.sqlite.entities.BowlersSeasonStats;
