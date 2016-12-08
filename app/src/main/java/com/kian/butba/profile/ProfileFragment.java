@@ -11,12 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
-import com.kian.butba.file.AsyncDelegate;
+import com.kian.butba.database.server.AsyncDelegate;
 import com.kian.butba.database.server.BowlersSeasonStatsFetcher;
-import com.kian.butba.database.sqlite.entities.BowlerSeason;
 import com.kian.butba.database.sqlite.entities.BowlersSeasonStats;
 import com.kian.butba.database.sqlite.tables.TableAcademicYear;
-import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 import com.kian.butba.database.sqlite.tables.TableRankingStatus;
 import com.kian.butba.database.sqlite.tables.TableStudentStatus;
 
@@ -61,10 +59,10 @@ public class ProfileFragment extends Fragment {
             public void onProcessResults(List<?> results) {
                 if(bowlerId != 0) {
                     List<BowlersSeasonStats> bowlersSeasonStats = (List<BowlersSeasonStats>) results;
-                    List<BowlerSeason> bowlersSeason = new TableBowlerSeason(getActivity().getBaseContext()).getBowlersSeason(bowlerId);
+                    int bowlersSeasonStatsSize = bowlersSeasonStats.size();
+//                    List<BowlerSeason> bowlersSeason = new TableBowlerSeason(getActivity().getBaseContext()).getBowlersSeason(bowlerId);
 //                    List<OverallAverage> bowlersAverage = new TableEventAverage(getActivity().getBaseContext()).getOverallAverageOverAllSeasons(bowlerId);
 //                    int bowlersSeasonSize = bowlersSeason.size();
-                    int bowlersSeasonStatsSize = bowlersSeasonStats.size();
 //                    int bowlersAverageSize = bowlersAverage.size();
 
                     //TODO: Bit hacky, need to neaten up.
@@ -105,10 +103,8 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-
         bowlersSeasonStatsFetcher.execute(bowlerId);
     }
-
 
     public ArrayList<HashMap<String, String>> getProfiles() {
         return profiles;
