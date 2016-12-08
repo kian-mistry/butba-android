@@ -2,6 +2,8 @@ package com.kian.butba.database.server;
 
 import android.os.AsyncTask;
 
+import com.kian.butba.file.AsyncDelegate;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
