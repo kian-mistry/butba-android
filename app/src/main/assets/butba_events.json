@@ -65,6 +65,17 @@
       "facebookEvent": "https://www.facebook.com/events/1646533352305341/",
       "results": "",
       "tags": "S;X;BTBA;"
+    },
+    {
+      "id": "STOP 3",
+      "date": "05-02-2017",
+      "time": "09:00:00",
+      "name": "Sheffield Trios",
+      "venue": "MFA Bowl, Sheffield",
+      "entryForm": "",
+      "facebookEvent": "",
+      "results": "",
+      "tags": "S;"
     }
   ]
 }

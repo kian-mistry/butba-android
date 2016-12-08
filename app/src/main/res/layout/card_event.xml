@@ -98,7 +98,7 @@
             android:paddingBottom="16dp"
             android:layout_toRightOf="@id/event_day_of_month"
             android:text="Venue: "
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <ImageButton

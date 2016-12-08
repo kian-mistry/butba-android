@@ -1,17 +1,24 @@
 package com.kian.butba.events;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.kian.butba.R;
 import com.kian.butba.events.EventCardsAdapter.EventDetailsHolder;
+import com.kian.butba.file.AsyncDelegate;
+import com.kian.butba.file.FileDownloader;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +62,7 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
 
         holder.getEventVenue().setText(current.get("venue"));
 
+        //Handles the downloading and displaying of the entry form, when available.
         final String entryForm = current.get("entry_form");
         if(!entryForm.equals("")) {
             holder.getEventEntryForm().setImageResource(R.mipmap.ic_pdf);
@@ -62,6 +70,37 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
         else {
             holder.getEventEntryForm().setImageResource(android.R.color.transparent);
         }
+
+        holder.getEventEntryForm().setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!entryForm.equals("")) {
+                    /*
+                     * If file exists, open file.
+                     * If not: download file; open file.
+                     */
+                    final String fileName = entryForm.substring(entryForm.lastIndexOf("/") + 1);
+                    File file = new File(FileDownloader.ENTRY_FORMS_DIR, fileName);
+                    if(!file.exists()) {
+                        FileDownloader fileDownloader = new FileDownloader(new AsyncDelegate() {
+                            @Override
+                            public void onProcessResults(Boolean success) {
+                                if(success) {
+                                    inflater.getContext().startActivity(openFileActivity(FileDownloader.ENTRY_FORMS_DIR, fileName, "application/pdf"));
+                                }
+                            }
+                        });
+                        fileDownloader.execute(entryForm, fileName, FileDownloader.ENTRY_FORMS_DIR);
+                    }
+                    else {
+                        inflater.getContext().startActivity(openFileActivity(FileDownloader.ENTRY_FORMS_DIR, fileName, "application/pdf"));
+                    }
+                }
+                else {
+                    Snackbar.make(v, "Entry form not available", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -71,6 +110,24 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
 
     public void setEventsList(List<HashMap<String, String>> eventsList) {
         this.eventsList = eventsList;
+    }
+
+    /**
+     * Creates an intent which can be used to open files of any type.
+     * @param fileDirectory The directory of the file.
+     * @param fileName The name of the file.
+     * @param fileType The file extension.
+     * @return An intent which can be started.
+     */
+    private Intent openFileActivity(String fileDirectory, String fileName, String fileType) {
+        File file = new File(fileDirectory + fileName);
+        Uri filePath = Uri.fromFile(file);
+
+        Intent fileIntent = new Intent(Intent.ACTION_VIEW);
+        fileIntent.setDataAndType(filePath, fileType);
+        fileIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        return fileIntent;
     }
 
     class EventDetailsHolder extends ViewHolder {

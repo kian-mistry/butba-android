@@ -1,11 +1,9 @@
 package com.kian.butba.file;
 
-import java.util.List;
-
 /**
- * Created by Kian Mistry on 03/11/16.
+ * Created by Kian Mistry on 08/11/16.
  */
 
 public interface AsyncDelegate {
-    void onProcessResults(List<?> results);
+    void onProcessResults(Boolean success);
 }
