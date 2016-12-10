@@ -110,7 +110,7 @@
             android:layout_alignLeft="@id/event_name"
             android:paddingLeft="16dp"
             android:paddingBottom="16dp"
-            android:src="@mipmap/ic_pdf"
+            android:src="@mipmap/ic_pdf_square"
             android:background="@android:color/white" />
 
     </RelativeLayout>

@@ -1,8 +1,18 @@
 package com.kian.butba.file;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v7.app.NotificationCompat.Builder;
 import android.util.Log;
+
+import com.kian.butba.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,21 +37,66 @@ public class FileDownloader extends AsyncTask<String, Integer, Boolean> {
     private static final int BYTE_SIZE = 1024 * 1024;
 
     private AsyncDelegate delegate = null;
+    private Context context;
+
+    private Builder notificationBuilder;
+    private NotificationManager notificationManager;
+    private int notificationId;
+    private String notificationTitle;
+    private Bitmap notificationIcon;
+
+    String fileUrl = null;
+    String fileName = null;
+    String fileDirectory = null;
+    String fileType = null;
 
     public FileDownloader(AsyncDelegate delegate) {
         this.delegate = delegate;
     }
 
+    public FileDownloader(Context context) {
+        this.context = context;
+        this.notificationId = -1;
+        this.notificationTitle = "File";
+        this.notificationIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_logo_circle);
+    }
+
+    public FileDownloader(Context context, int notificationId, String notificationTitle) {
+        this.context = context;
+        this.notificationId = notificationId;
+        this.notificationTitle = notificationTitle;
+        this.notificationIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_logo_circle);
+    }
+
+    public FileDownloader(Context context, int notificationId, String notificationTitle, int notificationIcon) {
+        this.context = context;
+        this.notificationId = notificationId;
+        this.notificationTitle = notificationTitle;
+        this.notificationIcon = BitmapFactory.decodeResource(context.getResources(), notificationIcon);
+    }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+
+        //Set up notification.
+        notificationBuilder = new Builder(context);
+        notificationBuilder.setAutoCancel(true);
+        notificationBuilder.setSmallIcon(R.mipmap.ic_logo_launcher);
+        notificationBuilder.setLargeIcon(notificationIcon);
+        notificationBuilder.setTicker("BUTBA: " + notificationTitle + " downloading");
+        notificationBuilder.setWhen(System.currentTimeMillis());
+        notificationBuilder.setContentTitle("BUTBA: " + notificationTitle + " downloading");
+
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @Override
     protected Boolean doInBackground(String... params) {
-        String fileUrl = params[0];
-        String fileName = params[1];
-        String fileDirectory = params[2];
+        fileUrl = params[0];
+        fileName = params[1];
+        fileDirectory = params[2];
+        fileType = params[3];
 
         File folder = new File(fileDirectory);
         boolean isFolderCreated = folder.exists() || folder.mkdirs();
@@ -89,8 +144,25 @@ public class FileDownloader extends AsyncTask<String, Integer, Boolean> {
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
 
+        notificationBuilder.setProgress(100, values[0], false);
+        notificationBuilder.setContentTitle("BUTBA: " + notificationTitle + " downloading");
+        notificationManager.notify(notificationId, notificationBuilder.build());
+
         if(values[0] == 100) {
-            Log.d("FILE DL", values[0].toString());
+            //Removes progress bar from the notification.
+            notificationBuilder.setProgress(0, 0, false);
+            notificationBuilder.setTicker("BUTBA: " + notificationTitle);
+            notificationBuilder.setContentTitle("BUTBA: " + notificationTitle);
+
+            //Open the downloaded file when the download has completed.
+            notificationBuilder.setContentIntent(PendingIntent.getActivity(
+                    context,
+                    0,
+                    openFileActivity(fileDirectory, fileName, fileType),
+                    PendingIntent.FLAG_UPDATE_CURRENT));
+
+            //Update the notification.
+            notificationManager.notify(notificationId, notificationBuilder.build());
         }
     }
 
@@ -99,7 +171,27 @@ public class FileDownloader extends AsyncTask<String, Integer, Boolean> {
         super.onPostExecute(result);
 
         //Passes result back to the class which called it.
-        delegate.onProcessResults(result);
+        if(delegate != null) {
+            delegate.onProcessResults(result);
+        }
+    }
+
+    /**
+     * Creates an intent which can be used to open files of any type.
+     * @param fileDirectory The directory of the file.
+     * @param fileName The name of the file.
+     * @param fileType The file extension.
+     * @return An intent which can be started.
+     */
+    public static Intent openFileActivity(String fileDirectory, String fileName, String fileType) {
+        File file = new File(fileDirectory + fileName);
+        Uri filePath = Uri.fromFile(file);
+
+        Intent fileIntent = new Intent(Intent.ACTION_VIEW);
+        fileIntent.setDataAndType(filePath, fileType);
+        fileIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        return fileIntent;
     }
 }
 

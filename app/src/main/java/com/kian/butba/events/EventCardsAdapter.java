@@ -1,8 +1,6 @@
 package com.kian.butba.events;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -15,7 +13,6 @@ import android.widget.TextView;
 
 import com.kian.butba.R;
 import com.kian.butba.events.EventCardsAdapter.EventDetailsHolder;
-import com.kian.butba.file.AsyncDelegate;
 import com.kian.butba.file.FileDownloader;
 
 import java.io.File;
@@ -46,10 +43,11 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
     }
 
     @Override
-    public void onBindViewHolder(EventDetailsHolder holder, int position) {
+    public void onBindViewHolder(EventDetailsHolder holder, final int position) {
         final HashMap<String, String> current = eventsList.get(position);
 
-        holder.getEventName().setText(current.get("name"));
+        final String name = current.get("name");
+        holder.getEventName().setText(name);
 
         //Display each part of the event date.
         String date = current.get("date");
@@ -65,7 +63,7 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
         //Handles the downloading and displaying of the entry form, when available.
         final String entryForm = current.get("entry_form");
         if(!entryForm.equals("")) {
-            holder.getEventEntryForm().setImageResource(R.mipmap.ic_pdf);
+            holder.getEventEntryForm().setImageResource(R.mipmap.ic_pdf_square);
         }
         else {
             holder.getEventEntryForm().setImageResource(android.R.color.transparent);
@@ -81,19 +79,21 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
                      */
                     final String fileName = entryForm.substring(entryForm.lastIndexOf("/") + 1);
                     File file = new File(FileDownloader.ENTRY_FORMS_DIR, fileName);
+                    String fileType = "application/pdf";
+
                     if(!file.exists()) {
-                        FileDownloader fileDownloader = new FileDownloader(new AsyncDelegate() {
-                            @Override
-                            public void onProcessResults(Boolean success) {
-                                if(success) {
-                                    inflater.getContext().startActivity(openFileActivity(FileDownloader.ENTRY_FORMS_DIR, fileName, "application/pdf"));
-                                }
-                            }
-                        });
-                        fileDownloader.execute(entryForm, fileName, FileDownloader.ENTRY_FORMS_DIR);
+                        FileDownloader fileDownloader = new FileDownloader(
+                                inflater.getContext(),
+                                position,
+                                name + " Entry Form",
+                                R.mipmap.ic_pdf_circle);
+                        fileDownloader.execute(entryForm, fileName, FileDownloader.ENTRY_FORMS_DIR, fileType);
                     }
                     else {
-                        inflater.getContext().startActivity(openFileActivity(FileDownloader.ENTRY_FORMS_DIR, fileName, "application/pdf"));
+                        inflater.getContext().startActivity(
+                                FileDownloader.openFileActivity(FileDownloader.ENTRY_FORMS_DIR,
+                                fileName,
+                                fileType));
                     }
                 }
                 else {
@@ -110,24 +110,6 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
 
     public void setEventsList(List<HashMap<String, String>> eventsList) {
         this.eventsList = eventsList;
-    }
-
-    /**
-     * Creates an intent which can be used to open files of any type.
-     * @param fileDirectory The directory of the file.
-     * @param fileName The name of the file.
-     * @param fileType The file extension.
-     * @return An intent which can be started.
-     */
-    private Intent openFileActivity(String fileDirectory, String fileName, String fileType) {
-        File file = new File(fileDirectory + fileName);
-        Uri filePath = Uri.fromFile(file);
-
-        Intent fileIntent = new Intent(Intent.ACTION_VIEW);
-        fileIntent.setDataAndType(filePath, fileType);
-        fileIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        return fileIntent;
     }
 
     class EventDetailsHolder extends ViewHolder {
