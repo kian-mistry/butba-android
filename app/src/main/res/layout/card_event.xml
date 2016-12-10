@@ -14,7 +14,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/event_day"
@@ -41,7 +41,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:text="01"
-            android:textSize="48sp"
+            android:textSize="54sp"
             android:textStyle="bold"
             android:textColor="@color/colourAccent" />
 
@@ -50,13 +50,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/event_day_of_month"
-            android:paddingLeft="8dp"
+            android:paddingLeft="10dp"
             android:paddingRight="8dp"
             android:paddingBottom="16dp"
             android:text="Dec"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="@color/colourAccent" />
+            android:textColor="@color/colourAccent"
+            android:layout_toLeftOf="@+id/event_year"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:id="@+id/event_year"
@@ -64,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/event_day_of_month"
             android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:paddingRight="10dp"
             android:paddingBottom="16dp"
             android:text="2016"
             android:textSize="14sp"
@@ -77,26 +80,29 @@
             android:id="@+id/event_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/event_day_of_month"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="-8dp"
+            android:layout_toRightOf="@id/event_day_of_month"
             android:paddingTop="16dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:layout_toRightOf="@id/event_day_of_month"
             android:text="Name: "
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_above="@+id/event_day_of_month"
-            android:layout_alignParentTop="true" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/event_venue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/event_name"
-            android:paddingTop="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/event_day_of_month"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:paddingBottom="16dp"
-            android:layout_toRightOf="@id/event_day_of_month"
+            android:paddingBottom="8dp"
             android:text="Venue: "
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -111,6 +117,17 @@
             android:paddingLeft="16dp"
             android:paddingBottom="16dp"
             android:src="@mipmap/ic_pdf_square"
+            android:background="@android:color/white" />
+
+        <ImageButton
+            android:id="@+id/event_facebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_venue"
+            android:layout_toRightOf="@id/event_entry_form"
+            android:paddingLeft="16dp"
+            android:paddingBottom="16dp"
+            android:src="@mipmap/ic_facebook_square"
             android:background="@android:color/white" />
 
     </RelativeLayout>

@@ -1,6 +1,8 @@
 package com.kian.butba.events;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -102,6 +104,28 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
                 }
             }
         });
+
+	    //Handles opening the item in Facebook (or other applications if the user does not have Facebook).
+	    final String facebookEvent = current.get("facebook_event");
+	    if(!facebookEvent.equals("")) {
+		    holder.getEventFacebook().setImageResource(R.mipmap.ic_facebook_square);
+	    }
+	    else {
+		    holder.getEventFacebook().setImageResource(android.R.color.transparent);
+	    }
+
+	    holder.getEventFacebook().setOnClickListener(new OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+				if(!facebookEvent.equals("")) {
+					//If Facebook Event exists, open in Facebook app or other recommended apps.
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(Uri.parse(facebookEvent));
+					inflater.getContext().startActivity(intent);
+				}
+		    }
+	    });
+
     }
 
     @Override
@@ -135,6 +159,7 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
             eventYear = (TextView) itemView.findViewById(R.id.event_year);
             eventVenue = (TextView) itemView.findViewById(R.id.event_venue);
             eventEntryForm = (ImageButton) itemView.findViewById(R.id.event_entry_form);
+	        eventFacebook = (ImageButton) itemView.findViewById(R.id.event_facebook);
         }
 
         public TextView getEventName() {
