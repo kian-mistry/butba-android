@@ -83,10 +83,11 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
 
                     if(!file.exists()) {
                         FileDownloader fileDownloader = new FileDownloader(
-                                inflater.getContext(),
-                                position,
-                                name + " Entry Form",
-                                R.mipmap.ic_pdf_circle);
+		                        inflater.getContext(),
+		                        v,
+		                        position,
+		                        name + " Entry Form",
+		                        R.mipmap.ic_pdf_circle);
                         fileDownloader.execute(entryForm, fileName, FileDownloader.ENTRY_FORMS_DIR, fileType);
                     }
                     else {
