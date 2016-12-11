@@ -148,9 +148,9 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
                      * If file exists, open file.
                      * If not: download file; open file.
                      */
-				    final String fileName = entryForm.substring(entryForm.lastIndexOf("/") + 1);
+				    final String fileName = results.substring(results.lastIndexOf("/") + 1);
 				    File file = new File(FileDownloader.RESULTS_DIR, fileName);
-				    String fileType = "application/vnd.ms-excel";
+				    String fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 				    if(!file.exists()) {
 					    FileDownloader fileDownloader = new FileDownloader(
