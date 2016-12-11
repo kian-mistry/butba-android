@@ -37,6 +37,7 @@ public class FileDownloader extends AsyncTask<String, Integer, Boolean> {
 
     public static final String STORAGE_DIR = Environment.getExternalStorageDirectory().toString();
     public static final String ENTRY_FORMS_DIR = STORAGE_DIR + "/BUTBA/Entry Forms/";
+	public static final String RESULTS_DIR = STORAGE_DIR + "/BUTBA/Results/";
     private static final int BYTE_SIZE = 1024 * 1024;
 
     private AsyncDelegate delegate = null;

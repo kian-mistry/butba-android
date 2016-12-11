@@ -95,8 +95,10 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
                     else {
                         inflater.getContext().startActivity(
                                 FileDownloader.openFileActivity(FileDownloader.ENTRY_FORMS_DIR,
-                                fileName,
-                                fileType));
+		                                fileName,
+                                        fileType
+                                )
+                        );
                     }
                 }
                 else {
@@ -123,9 +125,56 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
 					intent.setData(Uri.parse(facebookEvent));
 					inflater.getContext().startActivity(intent);
 				}
+				else {
+					Snackbar.make(v, "Facebook event not available", Snackbar.LENGTH_SHORT).show();
+				}
 		    }
 	    });
 
+	    //Handles the downloading and displaying of the entry form, when available.
+	    final String results = current.get("results");
+	    if(!results.equals("")) {
+		    holder.getEventResults().setImageResource(R.mipmap.ic_excel_square);
+	    }
+	    else {
+		    holder.getEventResults().setImageResource(android.R.color.transparent);
+	    }
+
+	    holder.getEventResults().setOnClickListener(new OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+			    if(!results.equals("")) {
+                    /*
+                     * If file exists, open file.
+                     * If not: download file; open file.
+                     */
+				    final String fileName = entryForm.substring(entryForm.lastIndexOf("/") + 1);
+				    File file = new File(FileDownloader.RESULTS_DIR, fileName);
+				    String fileType = "application/vnd.ms-excel";
+
+				    if(!file.exists()) {
+					    FileDownloader fileDownloader = new FileDownloader(
+							    inflater.getContext(),
+							    v,
+							    position,
+							    name + " Results",
+							    R.mipmap.ic_excel_circle);
+					    fileDownloader.execute(entryForm, fileName, FileDownloader.RESULTS_DIR, fileType);
+				    }
+				    else {
+					    inflater.getContext().startActivity(
+							    FileDownloader.openFileActivity(FileDownloader.RESULTS_DIR,
+										fileName,
+										fileType
+							    )
+					    );
+				    }
+			    }
+			    else {
+				    Snackbar.make(v, "Results not available", Snackbar.LENGTH_SHORT).show();
+			    }
+		    }
+	    });
     }
 
     @Override
@@ -160,6 +209,7 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
             eventVenue = (TextView) itemView.findViewById(R.id.event_venue);
             eventEntryForm = (ImageButton) itemView.findViewById(R.id.event_entry_form);
 	        eventFacebook = (ImageButton) itemView.findViewById(R.id.event_facebook);
+	        eventResults = (ImageButton) itemView.findViewById(R.id.event_results);
         }
 
         public TextView getEventName() {
