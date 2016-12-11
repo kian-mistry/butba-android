@@ -159,7 +159,7 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
 							    position,
 							    name + " Results",
 							    R.mipmap.ic_excel_circle);
-					    fileDownloader.execute(entryForm, fileName, FileDownloader.RESULTS_DIR, fileType);
+					    fileDownloader.execute(results, fileName, FileDownloader.RESULTS_DIR, fileType);
 				    }
 				    else {
 					    inflater.getContext().startActivity(
