@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private ActionBarDrawerToggle toggle;
     private NavigationView navigationView;
     private View navigationHeader;
+    private Menu navigationMenu;
 
     private TextView tvBowlerName;
     private TextView tvBowlerStatus;
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         //Initialise the navigation view.
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+	    navigationMenu = navigationView.getMenu();
 
         //Display ProfileFragment on startup.
         if (savedInstanceState == null) {
@@ -82,6 +85,14 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         if(bowlerId == 0 || bowlerName == null) {
             tvBowlerName.setText("Guest");
             tvBowlerStatus.setText("");
+
+	        /*
+	         * If user is a Guest, remove the Profile item from the navigation menu and display the
+	         * EventsFragment on startup.
+	         */
+	        navigationMenu.findItem(R.id.nav_profile).setVisible(false);
+	        manager.beginTransaction().replace(R.id.content_main, new EventsFragment()).commit();
+	        navigationView.setCheckedItem(R.id.nav_events);
         }
         else {
             tvBowlerName.setText(bowlerName);
@@ -145,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             case R.id.nav_events:
                 EventsFragment eventsFragment = new EventsFragment();
                 manager.beginTransaction().replace(R.id.content_main, eventsFragment, eventsFragment.getTag()).commit();
-                Snackbar.make(this.getCurrentFocus(), "Events", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_settings:
                 Intent iSettings = new Intent(MainActivity.this, SettingsActivity.class);
