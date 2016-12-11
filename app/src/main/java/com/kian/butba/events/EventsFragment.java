@@ -45,10 +45,9 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
     private boolean exStudentEvents;
     private boolean btbaEvents;
 
-    private ArrayList<HashMap<String, String>> events;
-
     private RecyclerView recyclerView;
     private EventCardsAdapter eventDetailsAdapter;
+	private ArrayList<HashMap<String, String>> events;
 
 
     public EventsFragment() {
@@ -81,7 +80,6 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
         //Initialise recycler view.
         recyclerView = (RecyclerView) layout.findViewById(R.id.event_cards_container);
         eventDetailsAdapter = new EventCardsAdapter(getActivity(), getEvents());
-//        eventDetailsAdapter.onAttachedToRecyclerView(recyclerView);
         recyclerView.setAdapter(eventDetailsAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 

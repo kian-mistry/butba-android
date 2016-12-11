@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -28,6 +30,8 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
+	private ActionBar toolbar;
+
     private SharedPreferences prefBowlerDetails;
 
     private RecyclerView recyclerView;
@@ -40,10 +44,16 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.profile_cards_container);
+        View layout = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        return view;
+	    //Obtain toolbar.
+	    toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+	    toolbar.setTitle("Profile");
+
+	    //Initialise recycler view.
+        recyclerView = (RecyclerView) layout.findViewById(R.id.profile_cards_container);
+
+        return layout;
     }
 
     @Override

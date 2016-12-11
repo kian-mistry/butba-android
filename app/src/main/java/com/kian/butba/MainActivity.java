@@ -143,8 +143,9 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         switch(id) {
             case R.id.nav_profile:
                 ProfileFragment profileFragment = new ProfileFragment();
-                manager.beginTransaction().replace(R.id.content_main, profileFragment, profileFragment.getTag()).commit();
-                Snackbar.make(this.getCurrentFocus(), "Profile", Snackbar.LENGTH_SHORT).show();
+                manager.beginTransaction()
+		                .replace(R.id.content_main, profileFragment, profileFragment.getTag())
+		                .commit();
                 break;
             case R.id.nav_committee:
                 CommitteeFragment committeeFragment = new CommitteeFragment();
@@ -155,12 +156,13 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                 break;
             case R.id.nav_events:
                 EventsFragment eventsFragment = new EventsFragment();
-                manager.beginTransaction().replace(R.id.content_main, eventsFragment, eventsFragment.getTag()).commit();
+                manager.beginTransaction()
+		                .replace(R.id.content_main, eventsFragment, eventsFragment.getTag())
+		                .commit();
                 break;
             case R.id.nav_settings:
                 Intent iSettings = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(iSettings);
-                Snackbar.make(this.getCurrentFocus(), "Settings", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.nav_help:
                 Snackbar.make(this.getCurrentFocus(), "Help", Snackbar.LENGTH_SHORT).show();
