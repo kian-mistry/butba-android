@@ -64,16 +64,12 @@ public class ProfileFragment extends Fragment {
         prefBowlerDetails = getActivity().getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
         final int bowlerId = prefBowlerDetails.getInt("bowler_id", 0);
 
-        BowlersSeasonStatsFetcher bowlersSeasonStatsFetcher = new BowlersSeasonStatsFetcher(new AsyncDelegate() {
+        BowlersSeasonStatsFetcher bowlersSeasonStatsFetcher = new BowlersSeasonStatsFetcher(getActivity(), new AsyncDelegate() {
             @Override
             public void onProcessResults(List<?> results) {
                 if(bowlerId != 0) {
                     List<BowlersSeasonStats> bowlersSeasonStats = (List<BowlersSeasonStats>) results;
                     int bowlersSeasonStatsSize = bowlersSeasonStats.size();
-//                    List<BowlerSeason> bowlersSeason = new TableBowlerSeason(getActivity().getBaseContext()).getBowlersSeason(bowlerId);
-//                    List<OverallAverage> bowlersAverage = new TableEventAverage(getActivity().getBaseContext()).getOverallAverageOverAllSeasons(bowlerId);
-//                    int bowlersSeasonSize = bowlersSeason.size();
-//                    int bowlersAverageSize = bowlersAverage.size();
 
                     //TODO: Bit hacky, need to neaten up.
                     profiles = new ArrayList<>();
@@ -86,9 +82,6 @@ public class ProfileFragment extends Fragment {
                         String rankingStatus = new TableRankingStatus(getActivity().getBaseContext()).getRankingStatus(bowlersSeasonStats.get(i).getRankingStatus());
                         String studentStatus = new TableStudentStatus(getActivity().getBaseContext()).getStudentStatus(bowlersSeasonStats.get(i).getStudentStatus());
                         String university = bowlersSeasonStats.get(i).getUniversity();
-//                        String university = new TableUniversity(getActivity().getBaseContext()).getUniversity(bowlersSeason.get(i).getUniversityId());
-//                        String average = String.valueOf(bowlersAverage.get(i).getAverage());
-//                        String games = String.valueOf(bowlersAverage.get(i).getTotalGames());
                         String average = String.valueOf(bowlersSeasonStats.get(i).getOverallAverage());
                         String games = String.valueOf(bowlersSeasonStats.get(i).getTotalGames());
                         String points = String.valueOf(bowlersSeasonStats.get(i).getTotalPoints());
@@ -113,7 +106,7 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-        bowlersSeasonStatsFetcher.execute(bowlerId);
+        bowlersSeasonStatsFetcher.execute();
     }
 
     public ArrayList<HashMap<String, String>> getProfiles() {

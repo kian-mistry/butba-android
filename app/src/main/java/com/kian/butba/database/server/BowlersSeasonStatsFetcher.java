@@ -1,19 +1,16 @@
 package com.kian.butba.database.server;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.kian.butba.database.sqlite.entities.BowlersSeasonStats;
+import com.kian.butba.file.FileOperations;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +18,13 @@ import java.util.List;
  * Created by Kian Mistry on 02/12/16.
  */
 
-public class BowlersSeasonStatsFetcher extends AsyncTask<Integer, Void, List<BowlersSeasonStats>> {
+public class BowlersSeasonStatsFetcher extends AsyncTask<Void, Void, List<BowlersSeasonStats>> {
 
+	private Context context = null;
     private AsyncDelegate delegate = null;
 
-    private URL urlQuery = null;
-    private HttpURLConnection urlConnection = null;
-
-    public BowlersSeasonStatsFetcher(AsyncDelegate delegate) {
+    public BowlersSeasonStatsFetcher(Context context, AsyncDelegate delegate) {
+	    this.context = context;
         this.delegate = delegate;
     }
 
@@ -38,21 +34,16 @@ public class BowlersSeasonStatsFetcher extends AsyncTask<Integer, Void, List<Bow
     }
 
     @Override
-    protected List<BowlersSeasonStats> doInBackground(Integer... params) {
-        int bowlerId = params[0];
-
+    protected List<BowlersSeasonStats> doInBackground(Void... params) {
         try {
-            urlQuery = new URL(QueriesUrl.get_particular_bowlers_ranking(bowlerId));
-
-            urlConnection = (HttpURLConnection) urlQuery.openConnection();
-            urlConnection.setDoInput(true);
-
-            //Set up input stream so the output echoed from the PHP file can be read.
-            InputStream inputStream = urlConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
             //PHP echoes a JSON encoded array which is decoded here.
-            JSONObject outerJsonObject = new JSONObject(bufferedReader.readLine());
+	        String jsonString = FileOperations.readFile(
+			        context.getFilesDir() + FileOperations.INTERNAL_SERVER_DIR,
+			        FileOperations.BOWLERS_SEASON_STATS_FILE,
+			        ".json");
+
+			JSONObject outerJsonObject = new JSONObject(jsonString);
+
             ArrayList<BowlersSeasonStats> bowlersSeasonStatsList = new ArrayList<>();
 
             for(int i = 0; i < outerJsonObject.length(); i++) {
@@ -116,10 +107,6 @@ public class BowlersSeasonStatsFetcher extends AsyncTask<Integer, Void, List<Bow
                     bowlersSeasonStatsList.add(bowlersSeasonStats);
                 }
             }
-
-            bufferedReader.close();
-            inputStream.close();
-            urlConnection.disconnect();
 
             return bowlersSeasonStatsList;
         }
