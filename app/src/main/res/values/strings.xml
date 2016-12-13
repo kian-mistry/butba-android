@@ -13,4 +13,11 @@
         <item>Executive</item>
         <item>Non-Executive</item>
     </string-array>
+
+    <string-array name="tab_averages">
+        <item>SM</item>
+        <item>SF</item>
+        <item>XM</item>
+        <item>XF</item>
+    </string-array>
 </resources>

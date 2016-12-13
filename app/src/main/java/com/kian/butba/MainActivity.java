@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.kian.butba.averages.AveragesFragment;
 import com.kian.butba.committee.CommitteeFragment;
 import com.kian.butba.database.sqlite.DatabaseOperations;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
@@ -160,6 +161,14 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 		                .replace(R.id.content_main, eventsFragment, eventsFragment.getTag())
 		                .commit();
                 break;
+	        case R.id.nav_averages:
+		        AveragesFragment averagesFragment = new AveragesFragment();
+		        manager.beginTransaction()
+				        .replace(R.id.content_main, averagesFragment, averagesFragment.getTag())
+				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+				        .commit();
+	            Snackbar.make(this.getCurrentFocus(), "Averages", Snackbar.LENGTH_SHORT).show();
+		        break;
             case R.id.nav_settings:
                 Intent iSettings = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(iSettings);
