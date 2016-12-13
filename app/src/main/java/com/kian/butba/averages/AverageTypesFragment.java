@@ -12,6 +12,7 @@ import com.kian.butba.R;
 import com.kian.butba.database.server.QueriesUrl;
 import com.kian.butba.file.AsyncDelegate;
 import com.kian.butba.file.FileOperations;
+import com.kian.butba.file.MapComparator;
 import com.kian.butba.file.ServerFileDownloader;
 
 import org.json.JSONArray;
@@ -20,6 +21,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -150,6 +152,8 @@ public class AverageTypesFragment extends Fragment {
 
 				averages.add(averageDetails);
 			}
+
+			Collections.sort(averages, new MapComparator("average", MapComparator.Sort.DESCENDING));
 		}
 		catch(IOException | JSONException e) {
 			e.printStackTrace();
