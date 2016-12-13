@@ -78,7 +78,6 @@ public class AverageTypesFragment extends Fragment {
 		ServerFileDownloader fileDownloader = new ServerFileDownloader(getContext(), new AsyncDelegate() {
 			@Override
 			public void onProcessResults(Boolean success) {
-				//Obtains the averages of each BUTBA member.
 				getAveragesList();
 
 				cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
@@ -87,16 +86,29 @@ public class AverageTypesFragment extends Fragment {
 			}
 		});
 
-		fileDownloader.execute(
-				QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
-				FileOperations.LATEST_AVERAGES
-		);
+		//If file does not exist, download file from server, else read saved file.
+		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES, ".json")) {
+			fileDownloader.execute(
+					QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
+					FileOperations.LATEST_AVERAGES
+			);
+		}
+		else {
+			getAveragesList();
+
+			cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
+			recyclerView.setAdapter(cardsAdapter);
+			recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+		}
 	}
 
 	public ArrayList<HashMap<String, String>> getAverages() {
 		return averages;
 	}
 
+	/**
+	 * Obtains the average and other related stats of each BUTBA member.
+	 */
 	private void getAveragesList() {
 		Bundle args = getArguments();
 

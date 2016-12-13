@@ -33,4 +33,10 @@ public class FileOperations {
 		return builder.toString();
 	}
 
+	public static boolean fileExists(String directory, String fileName, String fileExt) {
+		File file = new File(directory + fileName + fileExt);
+
+		//f.exists() will return true if directory exists as well.
+		return (file.exists() && !file.isDirectory());
+	}
 }
