@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="android.com.kian.butba.AveragesFragment" >
+
+    <item
+        android:id="@+id/cb_qualified"
+        android:title="Qualified"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/cb_unqualified"
+        android:title="Unqualified"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+</menu>

@@ -92,7 +92,7 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
 
         //Add custom buttons to the toolbar.
         menu.clear();
-        inflater.inflate(R.menu.toolbar_events_items, menu);
+        inflater.inflate(R.menu.toolbar_items_events, menu);
     }
 
     @Override
@@ -105,9 +105,9 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
         btbaEvents = prefShownEvents.getBoolean("btba_events", true);
 
         switch(id) {
-            case R.id.action_filter:
+            case R.id.toolbar_events_action_filter:
                 //Add popup menu.
-                View menuActionFilter = getActivity().findViewById(R.id.action_filter);
+                View menuActionFilter = getActivity().findViewById(R.id.toolbar_events_action_filter);
                 popupMenu = new PopupMenu(getActivity(), menuActionFilter);
                 popupMenu.inflate(R.menu.menu_events);
 

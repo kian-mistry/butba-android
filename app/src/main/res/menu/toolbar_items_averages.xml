@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="android.com.kian.butba.EventsFragment" >
+    tools:context="android.com.kian.butba.AveragesFragment" >
 
     <item
-        android:id="@+id/action_filter"
+        android:id="@+id/toolbar_averages_action_filter"
         android:title="Filter"
         android:icon="@drawable/ic_toolbar_filter_list"
         app:showAsAction="always" />

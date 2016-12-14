@@ -117,6 +117,10 @@ public class AverageCardsAdapter extends Adapter<AverageHolder> {
 		return averagesList.size();
 	}
 
+	public void setAveragesList(List<HashMap<String, String>> averagesList) {
+		this.averagesList = averagesList;
+	}
+
 	class AverageHolder extends ViewHolder {
 
 		private CardView card;
