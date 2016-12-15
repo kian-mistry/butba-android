@@ -20,4 +20,14 @@
         <item>XM</item>
         <item>XF</item>
     </string-array>
+
+    <string-array name="tab_rankings">
+        <item>SSM</item>
+        <item>SSF</item>
+        <item>SH</item>
+        <item>XSM</item>
+        <item>XSF</item>
+        <item>XH</item>
+        <item>Uni</item>
+    </string-array>
 </resources>

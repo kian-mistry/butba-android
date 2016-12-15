@@ -18,6 +18,11 @@
             android:id="@+id/nav_averages"
             android:icon="@drawable/ic_menu_chart"
             android:title="Averages" />
+
+        <item
+            android:id="@+id/nav_rankings"
+            android:icon="@drawable/ic_menu_chart"
+            android:title="Rankings" />
     </group>
     <group android:id="@+id/nav_grp_2" android:checkableBehavior="single">
             <item

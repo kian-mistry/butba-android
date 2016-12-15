@@ -26,6 +26,7 @@ import com.kian.butba.database.sqlite.entities.BowlerSeason;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 import com.kian.butba.events.EventsFragment;
 import com.kian.butba.profile.ProfileFragment;
+import com.kian.butba.rankings.RankingsFragment;
 import com.kian.butba.settings.SettingsActivity;
 
 /**
@@ -168,6 +169,14 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 				        .commit();
 	            Snackbar.make(this.getCurrentFocus(), "Averages", Snackbar.LENGTH_SHORT).show();
+		        break;
+	        case R.id.nav_rankings:
+		        RankingsFragment rankingsFragment = new RankingsFragment();
+		        manager.beginTransaction()
+				        .replace(R.id.content_main, rankingsFragment, rankingsFragment.getTag())
+				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+				        .commit();
+		        Snackbar.make(this.getCurrentFocus(), "Rankings", Snackbar.LENGTH_SHORT).show();
 		        break;
             case R.id.nav_settings:
                 Intent iSettings = new Intent(MainActivity.this, SettingsActivity.class);
