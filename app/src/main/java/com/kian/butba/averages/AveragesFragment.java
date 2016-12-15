@@ -5,16 +5,19 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import io.karim.MaterialTabs;
 
@@ -22,7 +25,7 @@ import io.karim.MaterialTabs;
  * Created by Kian Mistry on 12/12/16.
  */
 
-public class AveragesFragment extends Fragment implements ViewPager.OnPageChangeListener {
+public class AveragesFragment extends Fragment implements OnPageChangeListener {
 	public static final int STUDENT_MALE = 0;
 	public static final int STUDENT_FEMALE = 1;
 	public static final int EX_STUDENT_MALE = 2;
@@ -33,6 +36,10 @@ public class AveragesFragment extends Fragment implements ViewPager.OnPageChange
 	private ActionBar toolbar;
 	private ViewPager viewPager;
 	private MaterialTabs tabs;
+
+	private SharedPreferences prefShownBowlers;
+	private boolean qualifiedBowlers;
+	private boolean unQualifiedBowlers;
 
 	public AveragesFragment() {
 		//Required: Empty public constructor.
@@ -61,42 +68,62 @@ public class AveragesFragment extends Fragment implements ViewPager.OnPageChange
 
 	@Override
 	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+		onPageSelected(position);
 	}
 
 	@Override
 	public void onPageSelected(int position) {
-		Log.d("PS", position+"");
-		viewPagerAdapter.getItem(position);
-//		view
-	}
+		AverageTypesFragment fragment = (AverageTypesFragment) ((ViewPagerAdapter) viewPager.getAdapter()).getFragment(position);
 
-	@Override
-	public void onPageScrollStateChanged(int state) {
-	}
-
-	private class ViewPagerAdapter extends FragmentStatePagerAdapter {
-
-		private final String[] tabTitles = getResources().getStringArray(R.array.tab_averages);
-
-		private SharedPreferences prefShownBowlers;
-		private boolean qualifiedBowlers;
-		private boolean unQualifiedBowlers;
-
-		public ViewPagerAdapter(FragmentManager fragmentManager) {
-			super(fragmentManager);
-		}
-
-		@Override
-		public Fragment getItem(int position) {
-			Fragment fragment = null;
-
+		if(fragment != null) {
 			//Obtain the preferences which indicate the types of bowlers shown on the averages list.
 			prefShownBowlers = getActivity().getSharedPreferences("bowlers_shown", Context.MODE_PRIVATE);
 			qualifiedBowlers = prefShownBowlers.getBoolean("qual_bowlers", true);
 			unQualifiedBowlers = prefShownBowlers.getBoolean("unqual_bowlers", false);
 
-			Log.d("FRAG SWITCH", position + ", " + qualifiedBowlers + ", " + unQualifiedBowlers);
+			fragment.getAveragesList(qualifiedBowlers, unQualifiedBowlers);
+
+			//Update recycler view with list of bowlers if a checkbox has been altered.
+			fragment.getCardsAdapter().setAveragesList(fragment.getAverages());
+			fragment.getCardsAdapter().notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int state) {
+
+	}
+
+	private class ViewPagerAdapter extends FragmentPagerAdapter {
+
+		private final String[] tabTitles = getResources().getStringArray(R.array.tab_averages);
+
+		private FragmentManager fragmentManager;
+		private Map<Integer, String> fragmentTags;
+
+		public ViewPagerAdapter(FragmentManager fragmentManager) {
+			super(fragmentManager);
+
+			this.fragmentManager = fragmentManager;
+			fragmentTags = new HashMap<>();
+		}
+
+		@Override
+		public Object instantiateItem(ViewGroup container, int position) {
+			Object object = super.instantiateItem(container, position);
+
+			if(object instanceof Fragment) {
+				//Add the fragment tag.
+				Fragment fragment = (Fragment) object;
+				fragmentTags.put(position, fragment.getTag());
+			}
+
+			return object;
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			Fragment fragment = null;
 
 			switch(position) {
 				case STUDENT_MALE:
@@ -126,6 +153,16 @@ public class AveragesFragment extends Fragment implements ViewPager.OnPageChange
 		@Override
 		public CharSequence getPageTitle(int position) {
 			return tabTitles[position];
+		}
+
+		public Fragment getFragment(int position) {
+			String tag = fragmentTags.get(position);
+
+			if(tag != null) {
+				return fragmentManager.findFragmentByTag(tag);
+			}
+
+			return null;
 		}
 	}
 }

@@ -11,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -106,13 +105,13 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
+	public void onResume() {
+		super.onResume();
 
 		ServerFileDownloader fileDownloader = new ServerFileDownloader(getContext(), new AsyncDelegate() {
 			@Override
 			public void onProcessResults(Boolean success) {
-				getAveragesList(null);
+				getAveragesList(qualifiedBowlers, unQualifiedBowlers);
 
 				cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
 				recyclerView.setAdapter(cardsAdapter);
@@ -128,7 +127,7 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 			);
 		}
 		else {
-			getAveragesList(null);
+			getAveragesList(qualifiedBowlers, unQualifiedBowlers);
 
 			cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
 			recyclerView.setAdapter(cardsAdapter);
@@ -181,10 +180,6 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 		int id = item.getItemId();
 		boolean status = toggleCheckBox(item);
 
-		//Prevent popup menu from closing when an option is selected.
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-		item.setActionView(new View(getContext()));
-
 		Editor editor = prefShownBowlers.edit();
 
 		switch(id) {
@@ -206,7 +201,7 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 		cardsAdapter.setAveragesList(getAverages());
 		cardsAdapter.notifyDataSetChanged();
 
-		return false;
+		return true;
 	}
 
 	private boolean toggleCheckBox(MenuItem item) {
@@ -220,6 +215,10 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 		}
 	}
 
+	public AverageCardsAdapter getCardsAdapter() {
+		return cardsAdapter;
+	}
+
 	public ArrayList<HashMap<String, String>> getAverages() {
 		return averages;
 	}
@@ -229,7 +228,7 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 	 *
 	 * @param qualifiedTypes The shared preference values of qualified and unqualified bowlers.
 	 */
-	private void getAveragesList(Boolean... qualifiedTypes) {
+	public void getAveragesList(Boolean... qualifiedTypes) {
 		Bundle args = getArguments();
 		boolean qualBowlers;
 		boolean unqualBowlers;
