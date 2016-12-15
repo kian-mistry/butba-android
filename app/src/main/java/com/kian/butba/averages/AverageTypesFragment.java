@@ -2,19 +2,11 @@ package com.kian.butba.averages;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -38,7 +30,7 @@ import java.util.HashMap;
  * Created by Kian Mistry on 12/12/16.
  */
 
-public class AverageTypesFragment extends Fragment implements OnMenuItemClickListener {
+public class AverageTypesFragment extends Fragment {
 
 	public static final String AVERAGES_TYPE = "averagesType";
 	private static final String QUAL_BOWLERS = "qual_bowlers";
@@ -46,9 +38,6 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 
 	//Will hold the value of parameter passed through when the new fragment instance is created.
 	private int averagesType = 0;
-
-	private ActionBar toolbar;
-	private PopupMenu popupMenu;
 
 	private String result;
 	private JSONObject jsonObject;
@@ -92,13 +81,6 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View layout = inflater.inflate(R.layout.fragment_average_cards, container, false);
-
-		//Obtain toolbar.
-		toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-		toolbar.setTitle("Averages");
-		toolbar.invalidateOptionsMenu();
-		setHasOptionsMenu(true);
-
 		recyclerView = (RecyclerView) layout.findViewById(R.id.average_cards_container);
 
 		return layout;
@@ -132,86 +114,6 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 			cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
 			recyclerView.setAdapter(cardsAdapter);
 			recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-		}
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-
-		//Add custom buttons to the toolbar.
-		menu.clear();
-		inflater.inflate(R.menu.toolbar_items_averages, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-
-		//Obtian shared preferences.
-		qualifiedBowlers = prefShownBowlers.getBoolean("qual_bowlers", true);
-		unQualifiedBowlers = prefShownBowlers.getBoolean("unqual_bowlers", false);
-
-		switch(id) {
-			case R.id.toolbar_averages_action_filter:
-				//Add popup menu.
-				View menuActionFilter = getActivity().findViewById(R.id.toolbar_averages_action_filter);
-				popupMenu = new PopupMenu(getActivity(), menuActionFilter);
-				popupMenu.inflate(R.menu.menu_averages);
-
-				//Attach item click listener.
-				popupMenu.setOnMenuItemClickListener(this);
-
-				//Initialise the checked values of the menu items.
-				popupMenu.getMenu().getItem(0).setChecked(qualifiedBowlers);
-				popupMenu.getMenu().getItem(1).setChecked(unQualifiedBowlers);
-				popupMenu.show();
-
-				break;
-			default:
-				break;
-		}
-
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public boolean onMenuItemClick(MenuItem item) {
-		int id = item.getItemId();
-		boolean status = toggleCheckBox(item);
-
-		Editor editor = prefShownBowlers.edit();
-
-		switch(id) {
-			case R.id.cb_qualified:
-				editor.putBoolean("qual_bowlers", status);
-				getAveragesList(status, unQualifiedBowlers);
-				break;
-			case R.id.cb_unqualified:
-				editor.putBoolean("unqual_bowlers", status);
-				getAveragesList(qualifiedBowlers, status);
-				break;
-			default:
-				break;
-		}
-
-		editor.commit();
-
-		//Update recycler view with list of bowlers if a checkbox has been altered.
-		cardsAdapter.setAveragesList(getAverages());
-		cardsAdapter.notifyDataSetChanged();
-
-		return true;
-	}
-
-	private boolean toggleCheckBox(MenuItem item) {
-		if(item.isChecked()) {
-			item.setChecked(false);
-			return false;
-		}
-		else {
-			item.setChecked(true);
-			return true;
 		}
 	}
 
