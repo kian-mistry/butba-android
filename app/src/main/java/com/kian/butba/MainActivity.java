@@ -28,6 +28,7 @@ import com.kian.butba.events.EventsFragment;
 import com.kian.butba.profile.ProfileFragment;
 import com.kian.butba.rankings.RankingsFragment;
 import com.kian.butba.settings.SettingsActivity;
+import com.kian.butba.social.SocialFragment;
 
 /**
  * Created by Kian Mistry on 25/10/16.
@@ -177,6 +178,14 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 				        .commit();
 		        Snackbar.make(this.getCurrentFocus(), "Rankings", Snackbar.LENGTH_SHORT).show();
+		        break;
+	        case R.id.nav_social:
+		        SocialFragment socialFragment = new SocialFragment();
+		        manager.beginTransaction()
+				        .replace(R.id.content_main, socialFragment, socialFragment.getTag())
+				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+				        .commit();
+		        Snackbar.make(this.getCurrentFocus(), "Social", Snackbar.LENGTH_SHORT).show();
 		        break;
             case R.id.nav_settings:
                 Intent iSettings = new Intent(MainActivity.this, SettingsActivity.class);

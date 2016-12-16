@@ -11,7 +11,7 @@
     <color name="colourDivider">#BDBDBD</color>
 
     <!-- Tab -->
-    <color name="colourInactiveTab">#B3B3B3</color>
+    <color name="colourInactiveTab">#B3FFFFFF</color> <!-- 70% -->
 
     <!-- Misc -->
     <color name="blueGrey">#607D8B</color>

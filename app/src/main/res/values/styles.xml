@@ -16,6 +16,24 @@
         <item name="android:itemBackground">@color/blueGrey</item>
         <item name="android:textAppearanceListItem">@color/colourPrimaryText</item>
     </style>
+    <!-- Tab Theme -->
+    <style name="TabTheme" parent="Base.Widget.Design.TabLayout">
+        <item name="android:layout_height">@dimen/tab_height</item>
+        <item name="tabMaxWidth">@dimen/tab_max_width</item>
+        <item name="tabIndicatorColor">@color/colourAccent</item>
+        <item name="tabIndicatorHeight">@dimen/tab_indicator_height</item>
+        <item name="tabPaddingStart">@dimen/tab_padding</item>
+        <item name="tabPaddingEnd">@dimen/tab_padding</item>
+        <item name="tabBackground">@color/colourPrimary</item>
+        <item name="tabTextAppearance">@style/TabTextTheme</item>
+        <item name="tabSelectedTextColor">@android:color/white</item>
+    </style>
+    <!-- Tab Text -->
+    <style name="TabTextTheme" parent="TextAppearance.Design.Tab">
+        <item name="android:textColor">@color/colourInactiveTab</item>
+        <item name="android:textSize">@dimen/tab_text_size</item>
+        <item name="textAllCaps">true</item>
+    </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
