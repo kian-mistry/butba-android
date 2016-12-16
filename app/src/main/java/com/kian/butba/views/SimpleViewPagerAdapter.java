@@ -5,7 +5,7 @@ import android.graphics.PorterDuff;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 
 import com.kian.butba.R;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Created by Kian Mistry on 16/12/16.
  */
 
-public class SimpleViewPagerAdapter extends FragmentPagerAdapter {
+public class SimpleViewPagerAdapter extends FragmentStatePagerAdapter {
 
 	private Context context;
 	private TabLayout tabLayout;
