@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kian.butba.R;
+import com.kian.butba.database.sqlite.tables.TableAcademicYear;
 import com.kian.butba.profile.ProfileCardsAdapter.ProfileHolder;
 
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class ProfileCardsAdapter extends Adapter<ProfileHolder>{
     public void onBindViewHolder(ProfileHolder holder, int position) {
         final HashMap<String, String> current = profiles.get(position);
 
-        String academicYear = current.get("academic_year");
+        String academicYear = new TableAcademicYear(inflater.getContext()).getAcademicYear(Integer.valueOf(current.get("academic_year")));
         holder.getProfileSeason().setText(academicYear);
 
         String studentStatus = current.get("student_status");
@@ -60,7 +61,6 @@ public class ProfileCardsAdapter extends Adapter<ProfileHolder>{
         else {
             holder.getProfileRankingPoints().setText("Total Points: " + current.get("points") + " // Best 5: " + current.get("best_n"));
         }
-
     }
 
     @Override

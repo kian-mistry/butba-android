@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
+import com.kian.butba.file.FileOperations;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -125,8 +126,9 @@ public class AveragesFragment extends Fragment implements OnPageChangeListener, 
 	@Override
 	public void onPageSelected(int position) {
 		fragment = (AverageTypesFragment) ((ViewPagerAdapter) viewPager.getAdapter()).getFragment(position);
+		boolean fileExists = FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES, ".json");
 
-		if(fragment != null) {
+		if(fragment != null && fileExists) {
 			//Obtain the preferences which indicate the types of bowlers shown on the averages list.
 			prefShownBowlers = getActivity().getSharedPreferences("bowlers_shown", Context.MODE_PRIVATE);
 			qualifiedBowlers = prefShownBowlers.getBoolean("qual_bowlers", true);
