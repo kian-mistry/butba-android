@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/facebook_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginBottom="4dp"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="8dp" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp" >
+
+        <com.pkmmte.view.CircularImageView
+            android:id="@+id/facebook_profile_picture"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp"
+            android:src="@mipmap/ic_logo_circle"
+            app:border="true" />
+
+        <TextView
+            android:id="@+id/facebook_story"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:paddingBottom="8dp"
+            android:text="Story: "
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_toRightOf="@+id/facebook_profile_picture"
+            android:layout_toEndOf="@+id/facebook_profile_picture"/>
+
+        <TextView
+            android:id="@+id/facebook_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/facebook_profile_picture"
+            android:paddingTop="8dp"
+            android:text="Message: "
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
