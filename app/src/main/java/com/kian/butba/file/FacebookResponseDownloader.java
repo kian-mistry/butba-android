@@ -51,7 +51,6 @@ public class FacebookResponseDownloader extends AsyncTask<GraphResponse, Integer
 			if(isFolderCreated) {
 				File file = new File(folder, fileName + ".json");
 
-
 				BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
 				bufferedWriter.write(response.getRawResponse());
 				bufferedWriter.close();

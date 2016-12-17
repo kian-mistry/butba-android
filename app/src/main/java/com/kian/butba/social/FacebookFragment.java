@@ -1,7 +1,10 @@
 package com.kian.butba.social;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,22 +34,21 @@ import java.util.HashMap;
  * Created by Kian Mistry on 16/12/16.
  */
 
-public class FacebookFragment extends Fragment {
+public class FacebookFragment extends Fragment implements OnRefreshListener {
 
 	private String result;
 	private JSONObject jsonObject;
 	private JSONObject postsObject;
 	private JSONObject taggedPostsObject;
-	private JSONObject pictureObject;
 	private JSONArray jsonArray;
 
 	private ArrayList<HashMap<String, String>> statuses;
 
 	//Facebook
 	private AccessToken accessToken;
-	private FacebookResponseDownloader responseDownloader;
 	private GraphRequest graphRequest;
 
+	private SwipeRefreshLayout swipeRefreshLayout;
 	private RecyclerView recyclerView;
 	private FacebookCardsAdapter cardsAdapter;
 
@@ -71,19 +73,6 @@ public class FacebookFragment extends Fragment {
 				null, null, null, null, null
 		);
 
-		responseDownloader = new FacebookResponseDownloader(getContext(), new AsyncDelegate() {
-			@Override
-			public void onProcessResults(Boolean success) {
-				if(success) {
-					getStatusList();
-
-					cardsAdapter = new FacebookCardsAdapter(getActivity(), getStatuses());
-					recyclerView.setAdapter(cardsAdapter);
-					recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-				}
-			}
-		});
-
 		graphRequest = GraphRequest.newGraphPathRequest(accessToken, SocialConstants.FACEBOOK_GRAPH_PATH, new Callback() {
 			@Override
 			public void onCompleted(GraphResponse response) {
@@ -92,7 +81,24 @@ public class FacebookFragment extends Fragment {
 				 * save the response to a JSON file so that it can be used when the
 				 * device is offline.
 				 */
-				responseDownloader.execute(response);
+
+				//Allows to execute AsyncTask more than once.
+		        new FacebookResponseDownloader(getContext(), new AsyncDelegate() {
+					@Override
+					public void onProcessResults(Boolean success) {
+						if(success) {
+							getStatusList();
+
+							cardsAdapter = new FacebookCardsAdapter(getActivity(), getStatuses());
+							recyclerView.setAdapter(cardsAdapter);
+							recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+						}
+
+						if(swipeRefreshLayout.isRefreshing()) {
+							swipeRefreshLayout.setRefreshing(false);
+						}
+					}
+				}).execute(response);
 			}
 		});
 	}
@@ -101,7 +107,9 @@ public class FacebookFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View layout = inflater.inflate(R.layout.fragment_social_facebook, container, false);
 
-		//Initialise recycler view.
+		//Initialise the swipe refresh layout and the recycler view.
+		swipeRefreshLayout = (SwipeRefreshLayout) layout.findViewById(R.id.facebook_swipe_refresh);
+		swipeRefreshLayout.setOnRefreshListener(this);
 		recyclerView = (RecyclerView) layout.findViewById(R.id.facebook_cards_container);
 
 		return layout;
@@ -112,7 +120,12 @@ public class FacebookFragment extends Fragment {
 		super.onStart();
 
 		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.FACEBOOK_RESPONSE, ".json")) {
-			GraphRequest.executeBatchAsync(graphRequest);
+			if(FileOperations.hasInternetConnection(getContext())) {
+				graphRequest.executeAsync();
+			}
+			else {
+				Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
+			}
 		}
 		else {
 			getStatusList();
@@ -174,6 +187,17 @@ public class FacebookFragment extends Fragment {
 		}
 		catch(IOException | JSONException e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onRefresh() {
+		if(FileOperations.hasInternetConnection(getContext())) {
+			graphRequest.executeAsync();
+		}
+		else {
+			swipeRefreshLayout.setRefreshing(false);
+			Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
 		}
 	}
 }

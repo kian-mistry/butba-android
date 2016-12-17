@@ -1,5 +1,9 @@
 package com.kian.butba.file;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,6 +44,13 @@ public class FileOperations {
 		File file = new File(directory + fileName + fileExt);
 
 		//f.exists() will return true if directory exists as well.
-		return (file.exists() && !file.isDirectory());
+		return file.exists() && !file.isDirectory();
+	}
+
+	public static boolean hasInternetConnection(Context context) {
+		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+
+		return (activeNetwork != null) && (activeNetwork.isConnectedOrConnecting());
 	}
 }
