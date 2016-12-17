@@ -48,6 +48,83 @@
             android:paddingTop="8dp"
             android:text="Message: "
             android:textSize="14sp" />
+        
+        <ImageView
+            android:id="@+id/facebook_reaction_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/facebook_message"
+            android:paddingTop="8dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="8dp"
+            android:src="@drawable/ic_action_like" />
+
+        <TextView
+            android:id="@+id/facebook_reactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/facebook_message"
+            android:layout_toRightOf="@id/facebook_reaction_icon"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:gravity="center"
+            android:text="0"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_alignBottom="@id/facebook_reaction_icon"/>
+
+        <ImageView
+            android:id="@+id/facebook_comment_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/facebook_message"
+            android:layout_toRightOf="@id/facebook_reactions"
+            android:paddingTop="8dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="8dp"
+            android:src="@drawable/ic_action_comment" />
+
+        <TextView
+            android:id="@+id/facebook_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/facebook_message"
+            android:layout_toRightOf="@id/facebook_comment_icon"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:gravity="center"
+            android:text="0"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_alignBottom="@+id/facebook_comment_icon"/>
+
+        <ImageView
+            android:id="@+id/facebook_share_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/facebook_message"
+            android:layout_toRightOf="@id/facebook_comments"
+            android:paddingTop="8dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="8dp"
+            android:src="@drawable/ic_action_share" />
+
+        <TextView
+            android:id="@+id/facebook_shares"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/facebook_message"
+            android:layout_toRightOf="@id/facebook_share_icon"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:gravity="center"
+            android:text="0"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_alignBottom="@+id/facebook_share_icon"/>
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>

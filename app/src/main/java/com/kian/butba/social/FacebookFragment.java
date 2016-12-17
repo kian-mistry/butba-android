@@ -39,7 +39,6 @@ public class FacebookFragment extends Fragment implements OnRefreshListener {
 	private String result;
 	private JSONObject jsonObject;
 	private JSONObject postsObject;
-	private JSONObject taggedPostsObject;
 	private JSONArray jsonArray;
 
 	private ArrayList<HashMap<String, String>> statuses;
@@ -156,7 +155,6 @@ public class FacebookFragment extends Fragment implements OnRefreshListener {
 
 			jsonObject = new JSONObject(result);
 			postsObject = jsonObject.getJSONObject("posts");
-			taggedPostsObject = jsonObject.getJSONObject("tagged");
 
 			statuses = new ArrayList<>();
 
@@ -175,11 +173,18 @@ public class FacebookFragment extends Fragment implements OnRefreshListener {
 					String story = (status.has("story")) ? status.getString("story") : "British University Tenpin Bowling Association";
 					String message = status.getString("message");
 
+					String reactions = (status.has("reactions")) ? String.valueOf(status.getJSONObject("reactions").getJSONArray("data").length()) : "0";
+					String comments = (status.has("comments")) ? String.valueOf(status.getJSONObject("comments").getJSONArray("data").length()) : "0";
+					String shares = (status.has("shares")) ? String.valueOf(status.getJSONObject("shares").getInt("count")) : "0";
+
 					statusDetails = new HashMap<>();
 					statusDetails.put("facebook_id", id);
 					statusDetails.put("facebook_profile_picture", profilePictureUrl);
 					statusDetails.put("facebook_story", story);
 					statusDetails.put("facebook_message", message);
+					statusDetails.put("facebook_reactions", reactions);
+					statusDetails.put("facebook_comments", comments);
+					statusDetails.put("facebook_shares", shares);
 
 					statuses.add(statusDetails);
 				}

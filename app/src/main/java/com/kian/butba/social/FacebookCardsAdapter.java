@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kian.butba.R;
@@ -51,6 +52,40 @@ public class FacebookCardsAdapter extends Adapter<FacebookHolder> {
 
 		holder.getFacebookStory().setText(current.get("facebook_story"));
 		holder.getFacebookMessage().setText(current.get("facebook_message"));
+
+		//Display the interactions with each post (reactions, comments, shares).
+		Integer reactions = Integer.parseInt(current.get("facebook_reactions"));
+		if(reactions != 0) {
+			holder.getFacebookReactionIcon().setVisibility(View.VISIBLE);
+			holder.getFacebookReactions().setVisibility(View.VISIBLE);
+			holder.getFacebookReactions().setText(reactions.toString());
+		}
+		else {
+			holder.getFacebookReactionIcon().setVisibility(View.GONE);
+			holder.getFacebookReactions().setVisibility(View.GONE);
+		}
+
+		Integer comments = Integer.parseInt(current.get("facebook_comments"));
+		if(comments != 0) {
+			holder.getFacebookCommentIcon().setVisibility(View.VISIBLE);
+			holder.getFacebookComments().setVisibility(View.VISIBLE);
+			holder.getFacebookComments().setText(comments.toString());
+		}
+		else {
+			holder.getFacebookCommentIcon().setVisibility(View.GONE);
+			holder.getFacebookComments().setVisibility(View.GONE);
+		}
+
+		Integer shares = Integer.parseInt(current.get("facebook_shares"));
+		if(shares != 0) {
+			holder.getFacebookShareIcon().setVisibility(View.VISIBLE);
+			holder.getFacebookShares().setVisibility(View.VISIBLE);
+			holder.getFacebookShares().setText(shares.toString());
+		}
+		else {
+			holder.getFacebookShareIcon().setVisibility(View.GONE);
+			holder.getFacebookShares().setVisibility(View.GONE);
+		}
 	}
 
 	@Override
@@ -64,12 +99,28 @@ public class FacebookCardsAdapter extends Adapter<FacebookHolder> {
 		private TextView facebookStory;
 		private TextView facebookMessage;
 
+		private ImageView facebookReactionIcon;
+		private ImageView facebookCommentIcon;
+		private ImageView facebookShareIcon;
+
+		private TextView facebookReactions;
+		private TextView facebookComments;
+		private TextView facebookShares;
+
 		public FacebookHolder(View itemView) {
 			super(itemView);
 
 			facebookProfilePicture = (CircularImageView) itemView.findViewById(R.id.facebook_profile_picture);
 			facebookStory = (TextView) itemView.findViewById(R.id.facebook_story);
 			facebookMessage = (TextView) itemView.findViewById(R.id.facebook_message);
+
+			facebookReactionIcon = (ImageView) itemView.findViewById(R.id.facebook_reaction_icon);
+			facebookCommentIcon = (ImageView) itemView.findViewById(R.id.facebook_comment_icon);
+			facebookShareIcon = (ImageView) itemView.findViewById(R.id.facebook_share_icon);
+
+			facebookReactions = (TextView) itemView.findViewById(R.id.facebook_reactions);
+			facebookComments = (TextView) itemView.findViewById(R.id.facebook_comments);
+			facebookShares = (TextView) itemView.findViewById(R.id.facebook_shares);
 		}
 
 		public CircularImageView getFacebookProfilePicture() {
@@ -82,6 +133,30 @@ public class FacebookCardsAdapter extends Adapter<FacebookHolder> {
 
 		public TextView getFacebookMessage() {
 			return facebookMessage;
+		}
+
+		public ImageView getFacebookReactionIcon() {
+			return facebookReactionIcon;
+		}
+
+		public ImageView getFacebookCommentIcon() {
+			return facebookCommentIcon;
+		}
+
+		public ImageView getFacebookShareIcon() {
+			return facebookShareIcon;
+		}
+
+		public TextView getFacebookReactions() {
+			return facebookReactions;
+		}
+
+		public TextView getFacebookComments() {
+			return facebookComments;
+		}
+
+		public TextView getFacebookShares() {
+			return facebookShares;
 		}
 	}
 }
