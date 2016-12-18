@@ -5,12 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <!-- Main Content -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/twitter_cards_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="32sp"
-        android:text="Twitter"
-        android:textAlignment="center"
-        android:layout_gravity="center"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
