@@ -1,11 +1,15 @@
 package com.kian.butba.social;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,7 +46,7 @@ public class FacebookCardsAdapter extends Adapter<FacebookHolder> {
 
 	@Override
 	public void onBindViewHolder(FacebookHolder holder, int position) {
-		HashMap<String, String> current = statusList.get(position);
+		final HashMap<String, String> current = statusList.get(position);
 
 		//Use Picasso library to load image from URL.
 		Picasso.with(inflater.getContext())
@@ -86,6 +90,24 @@ public class FacebookCardsAdapter extends Adapter<FacebookHolder> {
 			holder.getFacebookShareIcon().setVisibility(View.GONE);
 			holder.getFacebookShares().setVisibility(View.GONE);
 		}
+
+		/*
+		 * Opens post in a web browser.
+		 * May give the option to open in Facebook if the user has the app installed.
+		 */
+		holder.getFacebookViewPost().setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String id = current.get("facebook_id");
+				String[] ids = id.split("[_]");
+
+				String url = "https://www.facebook.com/" + ids[1];
+				Uri uri = Uri.parse(url);
+
+				Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+				inflater.getContext().startActivity(intent);
+			}
+		});
 	}
 
 	@Override
@@ -107,6 +129,8 @@ public class FacebookCardsAdapter extends Adapter<FacebookHolder> {
 		private TextView facebookComments;
 		private TextView facebookShares;
 
+		private Button facebookViewPost;
+
 		public FacebookHolder(View itemView) {
 			super(itemView);
 
@@ -121,6 +145,8 @@ public class FacebookCardsAdapter extends Adapter<FacebookHolder> {
 			facebookReactions = (TextView) itemView.findViewById(R.id.facebook_reactions);
 			facebookComments = (TextView) itemView.findViewById(R.id.facebook_comments);
 			facebookShares = (TextView) itemView.findViewById(R.id.facebook_shares);
+
+			facebookViewPost = (Button) itemView.findViewById(R.id.facebook_view_post);
 		}
 
 		public CircularImageView getFacebookProfilePicture() {
@@ -157,6 +183,10 @@ public class FacebookCardsAdapter extends Adapter<FacebookHolder> {
 
 		public TextView getFacebookShares() {
 			return facebookShares;
+		}
+
+		public Button getFacebookViewPost() {
+			return facebookViewPost;
 		}
 	}
 }

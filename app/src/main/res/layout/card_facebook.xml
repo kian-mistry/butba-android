@@ -48,12 +48,24 @@
             android:paddingTop="8dp"
             android:text="Message: "
             android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/facebook_view_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/facebook_message"
+            android:layout_alignParentRight="true"
+            android:padding="8dp"
+            android:text="View Post"
+            android:autoLink="web"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"/>
         
         <ImageView
             android:id="@+id/facebook_reaction_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/facebook_message"
+            android:layout_alignBottom="@+id/facebook_view_post"
             android:paddingTop="8dp"
             android:paddingRight="4dp"
             android:paddingBottom="8dp"
@@ -65,14 +77,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/facebook_message"
             android:layout_toRightOf="@id/facebook_reaction_icon"
+            android:layout_alignBottom="@+id/facebook_view_post"
             android:paddingTop="8dp"
             android:paddingRight="16dp"
             android:paddingBottom="8dp"
             android:gravity="center"
             android:text="0"
-            android:textSize="14sp"
             android:textStyle="bold"
-            android:layout_alignBottom="@id/facebook_reaction_icon"/>
+            style="@style/CardView" />
 
         <ImageView
             android:id="@+id/facebook_comment_icon"
@@ -80,6 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/facebook_message"
             android:layout_toRightOf="@id/facebook_reactions"
+            android:layout_alignBottom="@+id/facebook_view_post"
             android:paddingTop="8dp"
             android:paddingRight="4dp"
             android:paddingBottom="8dp"
@@ -91,14 +104,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/facebook_message"
             android:layout_toRightOf="@id/facebook_comment_icon"
+            android:layout_alignBottom="@+id/facebook_view_post"
             android:paddingTop="8dp"
             android:paddingRight="16dp"
             android:paddingBottom="8dp"
             android:gravity="center"
             android:text="0"
-            android:textSize="14sp"
             android:textStyle="bold"
-            android:layout_alignBottom="@+id/facebook_comment_icon"/>
+            style="@style/CardView" />
 
         <ImageView
             android:id="@+id/facebook_share_icon"
@@ -106,6 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/facebook_message"
             android:layout_toRightOf="@id/facebook_comments"
+            android:layout_alignBottom="@+id/facebook_view_post"
             android:paddingTop="8dp"
             android:paddingRight="4dp"
             android:paddingBottom="8dp"
@@ -117,14 +131,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/facebook_message"
             android:layout_toRightOf="@id/facebook_share_icon"
+            android:layout_alignBottom="@+id/facebook_view_post"
             android:paddingTop="8dp"
             android:paddingRight="16dp"
             android:paddingBottom="8dp"
             android:gravity="center"
             android:text="0"
-            android:textSize="14sp"
             android:textStyle="bold"
-            android:layout_alignBottom="@+id/facebook_share_icon"/>
+            style="@style/CardView" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>
