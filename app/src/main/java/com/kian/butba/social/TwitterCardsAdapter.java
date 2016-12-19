@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kian.butba.R;
+import com.pkmmte.view.CircularImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,6 +45,13 @@ public class TwitterCardsAdapter extends RecyclerView.Adapter<TwitterCardsAdapte
 	public void onBindViewHolder(TwitterHolder holder, int position) {
 		final HashMap<String, String> current = statusList.get(position);
 
+		//Use Picasso library to load image from URL.
+		Picasso.with(holder.itemView.getContext())
+				.load(current.get("twitter_profile_picture"))
+				.error(R.mipmap.ic_logo_circle)
+				.placeholder(R.mipmap.ic_logo_circle)
+				.into(holder.getTwitterProfilePicture());
+
 		holder.getTwitterName().setText(current.get("twitter_name"));
 		holder.getTwitterHandle().setText("@" + current.get("twitter_handle"));
 		holder.getTwitterMessage().setText(current.get("twitter_message"));
@@ -70,10 +79,9 @@ public class TwitterCardsAdapter extends RecyclerView.Adapter<TwitterCardsAdapte
 		return statusList.size();
 	}
 
-
 	class TwitterHolder extends RecyclerView.ViewHolder {
 
-//		private CircularImageView twitterProfilePicture;
+		private CircularImageView twitterProfilePicture;
 		private TextView twitterName;
 		private TextView twitterHandle;
 		private TextView twitterMessage;
@@ -84,11 +92,16 @@ public class TwitterCardsAdapter extends RecyclerView.Adapter<TwitterCardsAdapte
 		public TwitterHolder(View itemView) {
 			super(itemView);
 
+			twitterProfilePicture = (CircularImageView) itemView.findViewById(R.id.twitter_profile_picture);
 			twitterName = (TextView) itemView.findViewById(R.id.twitter_name);
 			twitterHandle = (TextView) itemView.findViewById(R.id.twitter_handle);
 			twitterMessage = (TextView) itemView.findViewById(R.id.twitter_message);
 
 			twitterViewTweet = (Button) itemView.findViewById(R.id.twitter_view_tweet);
+		}
+
+		public CircularImageView getTwitterProfilePicture() {
+			return twitterProfilePicture;
 		}
 
 		public TextView getTwitterName() {

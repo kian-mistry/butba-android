@@ -3,6 +3,8 @@ package com.kian.butba.social;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -38,7 +40,7 @@ import retrofit2.Call;
  * Created by Kian Mistry on 16/12/16.
  */
 
-public class TwitterFragment extends Fragment {
+public class TwitterFragment extends Fragment implements OnRefreshListener {
 
 	private static final String TWITTER_HANDLE = "ukunibowling";
 
@@ -48,6 +50,7 @@ public class TwitterFragment extends Fragment {
 
 	private ArrayList<HashMap<String, String>> tweets;
 
+	private SwipeRefreshLayout swipeRefreshLayout;
 	private RecyclerView recyclerView;
 	private TwitterCardsAdapter cardsAdapter;
 
@@ -76,7 +79,10 @@ public class TwitterFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View layout = inflater.inflate(R.layout.fragment_social_twitter, container, false);
 
-		//Initialise recycler view.
+		//Initialise the swipe refresh layout and the recycler view.
+		swipeRefreshLayout = (SwipeRefreshLayout) layout.findViewById(R.id.twitter_swipe_refresh);
+		swipeRefreshLayout.setOnRefreshListener(this);
+
 		recyclerView = (RecyclerView) layout.findViewById(R.id.twitter_cards_container);
 		return layout;
 	}
@@ -126,13 +132,23 @@ public class TwitterFragment extends Fragment {
 						JSONObject tweetData = new JSONObject();
 						Tweet tweet = result.data.get(i);
 
-						tweetData.put("id", tweet.idStr);
-						tweetData.put("name", tweet.user.name);
-						tweetData.put("handle", tweet.user.screenName);
-						tweetData.put("message", tweet.text);
+						boolean isRetweeted = (tweet.retweetedStatus != null);
+						tweetData.put("retweeted_status", String.valueOf(isRetweeted));
 
-						Log.d("TWEET ID", String.valueOf(tweet.retweetedStatus != null));
-						Log.d("TWEET MSG", tweet.text);
+						if(!isRetweeted) {
+							tweetData.put("id", tweet.idStr);
+							tweetData.put("profile_picture", tweet.user.profileImageUrlHttps);
+							tweetData.put("name", tweet.user.name);
+							tweetData.put("handle", tweet.user.screenName);
+							tweetData.put("message", tweet.text);
+						}
+						else {
+							tweetData.put("id", tweet.retweetedStatus.idStr);
+							tweetData.put("profile_picture", tweet.retweetedStatus.user.profileImageUrlHttps);
+							tweetData.put("name", tweet.retweetedStatus.user.name);
+							tweetData.put("handle", tweet.retweetedStatus.user.screenName);
+							tweetData.put("message", tweet.retweetedStatus.text);
+						}
 
 						data.put(tweetData);
 					}
@@ -154,6 +170,9 @@ public class TwitterFragment extends Fragment {
 					recyclerView.setAdapter(cardsAdapter);
 					recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+					if(swipeRefreshLayout.isRefreshing()) {
+						swipeRefreshLayout.setRefreshing(false);
+					}
 				}
 				catch(IOException | JSONException e) {
 					e.printStackTrace();
@@ -190,12 +209,18 @@ public class TwitterFragment extends Fragment {
 				for(int i = 0; i < jsonArray.length(); i++) {
 					JSONObject tweet = jsonArray.getJSONObject(i);
 
+					String profilePictureUrl = tweet.getString("profile_picture");
+					profilePictureUrl = profilePictureUrl.replace("_normal", "");
+
+					String retweetedStatus = tweet.getString("retweeted_status");
 					String id = tweet.getString("id");
 					String name = tweet.getString("name");
 					String handle = tweet.getString("handle");
 					String message = tweet.getString("message");
 
 					tweetDetails = new HashMap<>();
+					tweetDetails.put("twitter_profile_picture", profilePictureUrl);
+					tweetDetails.put("twitter_retweeted_status", retweetedStatus);
 					tweetDetails.put("twitter_id", id);
 					tweetDetails.put("twitter_name", name);
 					tweetDetails.put("twitter_handle", handle);
@@ -207,6 +232,16 @@ public class TwitterFragment extends Fragment {
 		}
 		catch(IOException | JSONException e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onRefresh() {
+		if(FileOperations.hasInternetConnection(getContext())) {
+			getTweetsOnline(TWITTER_HANDLE, 10, true);
+		}
+		else {
+			swipeRefreshLayout.setRefreshing(false);
 		}
 	}
 }
