@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 
@@ -25,17 +24,17 @@ public class SimpleViewPagerAdapter extends FragmentStatePagerAdapter {
 	private ArrayList<String> tabTitles;
 	private ArrayList<Integer> tabIcons;
 
-	public SimpleViewPagerAdapter(Context context, FragmentManager fragmentManager) {
-		super(fragmentManager);
+	public SimpleViewPagerAdapter(Fragment fragment) {
+		super(fragment.getActivity().getSupportFragmentManager());
 
-		this.context = context;
+		this.context = fragment.getContext();
 
 		fragments = new ArrayList<>();
 		tabTitles = new ArrayList<>();
 	}
 
-	public SimpleViewPagerAdapter(Context context, FragmentManager fragmentManager, TabLayout tabLayout) {
-		this(context, fragmentManager);
+	public SimpleViewPagerAdapter(Fragment fragment, TabLayout tabLayout) {
+		this(fragment);
 
 		this.tabLayout = tabLayout;
 		this.tabIcons = new ArrayList<>();
@@ -52,7 +51,7 @@ public class SimpleViewPagerAdapter extends FragmentStatePagerAdapter {
 	}
 
 	public TabLayout getTabLayout() {
-		if(tabIcons.size() != 0) {
+		if(tabIcons != null || tabIcons.size() != 0) {
 			for(int i = 0; i < fragments.size(); i++) {
 				tabLayout.getTabAt(i).setIcon(tabIcons.get(i));
 

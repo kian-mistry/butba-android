@@ -46,7 +46,7 @@ public class SocialFragment extends Fragment implements OnTabSelectedListener {
 
 		//Initialise view pager and view pager adapter.
 		viewPager = (ViewPager) layout.findViewById(R.id.social_view_pager);
-		viewPagerAdapter = new SimpleViewPagerAdapter(getContext(), getActivity().getSupportFragmentManager(), tabLayout);
+		viewPagerAdapter = new SimpleViewPagerAdapter(this, tabLayout);
 
 		//Add tabs using the view pager adapter.
 		viewPagerAdapter.addFragments(new FacebookFragment(), R.drawable.ic_tab_facebook);

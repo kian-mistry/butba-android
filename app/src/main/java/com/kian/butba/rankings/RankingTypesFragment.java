@@ -128,8 +128,6 @@ public class RankingTypesFragment extends Fragment {
 				jsonObject = new JSONObject(result);
 			}
 
-			Log.d("PG", rankingsType+"");
-
 			switch(rankingsType) {
 				case 0: //Student Scratch Male
 					jsonArray = jsonObject.getJSONArray("SSM");
