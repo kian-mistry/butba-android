@@ -141,6 +141,8 @@ public class TwitterFragment extends Fragment implements OnRefreshListener {
 							tweetData.put("name", tweet.user.name);
 							tweetData.put("handle", tweet.user.screenName);
 							tweetData.put("message", tweet.text);
+							tweetData.put("retweets", tweet.retweetCount);
+							tweetData.put("likes", tweet.favoriteCount);
 						}
 						else {
 							tweetData.put("id", tweet.retweetedStatus.idStr);
@@ -148,6 +150,8 @@ public class TwitterFragment extends Fragment implements OnRefreshListener {
 							tweetData.put("name", tweet.retweetedStatus.user.name);
 							tweetData.put("handle", tweet.retweetedStatus.user.screenName);
 							tweetData.put("message", tweet.retweetedStatus.text);
+							tweetData.put("retweets", tweet.retweetedStatus.retweetCount);
+							tweetData.put("likes", tweet.retweetedStatus.favoriteCount);
 						}
 
 						data.put(tweetData);
@@ -217,6 +221,8 @@ public class TwitterFragment extends Fragment implements OnRefreshListener {
 					String name = tweet.getString("name");
 					String handle = tweet.getString("handle");
 					String message = tweet.getString("message");
+					String retweets = tweet.getString("retweets");
+					String likes = tweet.getString("likes");
 
 					tweetDetails = new HashMap<>();
 					tweetDetails.put("twitter_profile_picture", profilePictureUrl);
@@ -225,6 +231,8 @@ public class TwitterFragment extends Fragment implements OnRefreshListener {
 					tweetDetails.put("twitter_name", name);
 					tweetDetails.put("twitter_handle", handle);
 					tweetDetails.put("twitter_message", message);
+					tweetDetails.put("twitter_retweets", retweets);
+					tweetDetails.put("twitter_likes", likes);
 
 					tweets.add(tweetDetails);
 				}
@@ -242,6 +250,7 @@ public class TwitterFragment extends Fragment implements OnRefreshListener {
 		}
 		else {
 			swipeRefreshLayout.setRefreshing(false);
+			Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
 		}
 	}
 }

@@ -25,7 +25,25 @@
             android:paddingRight="8dp"
             android:paddingBottom="8dp"
             android:src="@mipmap/ic_logo_circle"
-            app:border="true" />
+            app:border="true"/>
+
+        <ImageView
+            android:id="@+id/twitter_retweeted_icon"
+            android:layout_width="24dp"
+            android:layout_height="12dp"
+            android:layout_toRightOf="@id/twitter_profile_picture"
+            android:layout_toEndOf="@id/twitter_profile_picture"
+            android:src="@drawable/ic_action_retweet"/>
+
+        <TextView
+            android:id="@+id/twitter_retweeted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/twitter_retweeted_icon"
+            android:layout_toEndOf="@id/twitter_retweeted_icon"
+            android:text="BUTBA Retweeted"
+            android:fontFamily="sans-serif"
+            android:textSize="10sp"/>
 
         <TextView
             android:id="@+id/twitter_name"
@@ -33,6 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/twitter_profile_picture"
             android:layout_toEndOf="@+id/twitter_profile_picture"
+            android:layout_below="@id/twitter_retweeted"
             android:paddingLeft="8dp"
             android:text="Name: "
             android:fontFamily="sans-serif"
@@ -72,6 +91,59 @@
             android:text="View Tweet"
             android:autoLink="web"
             style="@style/Base.Widget.AppCompat.Button.Borderless"/>
+
+        <ImageView
+            android:id="@+id/twitter_retweet_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/twitter_message"
+            android:layout_alignBottom="@+id/twitter_view_tweet"
+            android:paddingTop="8dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="8dp"
+            android:src="@drawable/ic_action_retweet" />
+
+        <TextView
+            android:id="@+id/twitter_retweets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/twitter_message"
+            android:layout_toRightOf="@id/twitter_retweet_icon"
+            android:layout_alignBottom="@+id/twitter_view_tweet"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:gravity="center"
+            android:text="0"
+            android:textStyle="bold"
+            style="@style/CardView" />
+
+        <ImageView
+            android:id="@+id/twitter_like_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/twitter_message"
+            android:layout_toRightOf="@id/twitter_retweets"
+            android:layout_alignBottom="@+id/twitter_view_tweet"
+            android:paddingTop="8dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="8dp"
+            android:src="@drawable/ic_action_favourite" />
+
+        <TextView
+            android:id="@+id/twitter_likes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/twitter_message"
+            android:layout_toRightOf="@id/twitter_like_icon"
+            android:layout_alignBottom="@+id/twitter_view_tweet"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:gravity="center"
+            android:text="0"
+            android:textStyle="bold"
+            style="@style/CardView" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>
