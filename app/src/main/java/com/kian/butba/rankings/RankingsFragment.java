@@ -19,14 +19,6 @@ import com.kian.butba.views.SimpleViewPagerAdapter;
 
 public class RankingsFragment extends Fragment {
 
-	public static final int STUDENT_SCRATCH_MALE = 0;
-	public static final int STUDENT_SCRATCH_FEMALE = 1;
-	public static final int STUDENT_HANDICAP = 2;
-	public static final int EX_STUDENT_SCRATCH_MALE = 3;
-	public static final int EX_STUDENT_SCRATCH_FEMALE = 4;
-	public static final int EX_STUDENT_HANDICAP = 5;
-	public static final int UNIVERSITY = 6;
-
 	private ActionBar toolbar;
 	private TabLayout tabLayout;
 
@@ -54,10 +46,11 @@ public class RankingsFragment extends Fragment {
 		viewPagerAdapter = new SimpleViewPagerAdapter(this);
 
 		//Add tabs using the view pager adapter.
-		String[] tabNames = getResources().getStringArray(R.array.tab_rankings);
-
-		for(int i = 0; i < tabNames.length; i++) {
-			viewPagerAdapter.addFragments(RankingTypesFragment.newInstance(i), tabNames[i]);
+		for(RankingCategories category : RankingCategories.values()) {
+			viewPagerAdapter.addFragments(
+					RankingTypesFragment.newInstance(category.getId()),
+					category.getTitle()
+			);
 		}
 
 		//Add the adapter to the view pager.

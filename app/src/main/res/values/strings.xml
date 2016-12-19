@@ -20,14 +20,4 @@
         <item>XM</item>
         <item>XF</item>
     </string-array>
-
-    <string-array name="tab_rankings">
-        <item>Student Scratch Male</item>
-        <item>Student Scratch Female</item>
-        <item>Student Handicap</item>
-        <item>Ex-Student Scratch Male</item>
-        <item>Ex-Student Scratch Female</item>
-        <item>Ex-Student Handicap</item>
-        <item>University</item>
-    </string-array>
 </resources>
