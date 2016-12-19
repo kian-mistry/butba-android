@@ -40,6 +40,8 @@ import retrofit2.Call;
 
 public class TwitterFragment extends Fragment {
 
+	private static final String TWITTER_HANDLE = "ukunibowling";
+
 	private String result;
 	private JSONObject jsonObject;
 	private JSONArray jsonArray;
@@ -85,8 +87,7 @@ public class TwitterFragment extends Fragment {
 
 		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.TWITTER_RESPONSE, ".json")) {
 			if(FileOperations.hasInternetConnection(getContext())) {
-				//TODO: Execute getTweetsOnline() in an AsyncTask.
-				getTweetsOnline();
+				getTweetsOnline(TWITTER_HANDLE, 10, true);
 			}
 			else {
 				Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
@@ -102,8 +103,19 @@ public class TwitterFragment extends Fragment {
 
 	}
 
-	private void getTweetsOnline() {
-		Call<List<Tweet>> listCall = statusesService.userTimeline(null, "ukunibowling", 10, null, null, null, null, null, true);
+	/**
+	 * Retrieve tweets from the Fabric API.
+	 *
+	 * @param twitterHandle The twitter handle of the account
+	 * @param tweetsToRetrieve How many tweets to retrieve. Maximum 20.
+	 * @param includeRetweets Whether the number of tweets retrieved includes retweets.
+	 */
+	private void getTweetsOnline(String twitterHandle, int tweetsToRetrieve, boolean includeRetweets) {
+		if(tweetsToRetrieve < 0 || tweetsToRetrieve > 20) {
+			tweetsToRetrieve = 20;
+		}
+
+		Call<List<Tweet>> listCall = statusesService.userTimeline(null, twitterHandle, tweetsToRetrieve, null, null, null, null, null, includeRetweets);
 		listCall.enqueue(new Callback<List<Tweet>>() {
 			@Override
 			public void success(Result<List<Tweet>> result) {
@@ -134,6 +146,14 @@ public class TwitterFragment extends Fragment {
 							".json",
 							jsonObject.toString()
 					);
+
+					//Display cards.
+					getTweetsList();
+
+					cardsAdapter = new TwitterCardsAdapter(getActivity(), getTweets());
+					recyclerView.setAdapter(cardsAdapter);
+					recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
 				}
 				catch(IOException | JSONException e) {
 					e.printStackTrace();
