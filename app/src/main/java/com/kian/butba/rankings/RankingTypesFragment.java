@@ -2,12 +2,17 @@ package com.kian.butba.rankings;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,12 +31,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Kian Mistry on 14/12/16.
  */
 
-public class RankingTypesFragment extends Fragment {
+public class RankingTypesFragment extends Fragment implements OnQueryTextListener {
 
 	public static final String RANKINGS_TYPE = "rankingsType";
 
@@ -69,10 +75,25 @@ public class RankingTypesFragment extends Fragment {
 		//Obtain toolbar.
 		toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 		toolbar.setTitle("Rankings");
+		toolbar.invalidateOptionsMenu();
+		setHasOptionsMenu(true);
 
 		recyclerView = (RecyclerView) layout.findViewById(R.id.ranking_cards_container);
 
 		return layout;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+
+		menu.clear();
+		inflater.inflate(R.menu.toolbar_items_rankings, menu);
+
+		//Add a query listener to the search view.
+		MenuItem itemActionSearch = menu.findItem(R.id.toolbar_rankings_action_search);
+		SearchView searchView = (SearchView) MenuItemCompat.getActionView(itemActionSearch);
+		searchView.setOnQueryTextListener(this);
 	}
 
 	@Override
@@ -193,5 +214,42 @@ public class RankingTypesFragment extends Fragment {
 		catch(IOException | JSONException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		//Convert queried text to lowercase.
+		String queriedText = newText.toLowerCase();
+		List<HashMap<String, String>> queriedList = new ArrayList<>();
+
+		for(HashMap<String, String> member : rankings) {
+			if(member.containsKey("name") && member.get("name") != null) {
+				//Convert obtained name to lowercase.
+				String name = member.get("name").toLowerCase();
+
+				//Check if the queried text is contained within the member's name.
+				if(name.contains(queriedText)) {
+					queriedList.add(member);
+				}
+			}
+			else if(member.containsKey("university") && member.get("university") != null) {
+				//Convert obtained university name to lowercase.
+				String university = member.get("university").toLowerCase();
+
+				//Check if the queried text is contained with the university name.
+				if(university.contains(queriedText)) {
+					queriedList.add(member);
+				}
+			}
+		}
+
+		//Display the list of members which match the query.
+		cardsAdapter.setList(queriedList);
+		return true;
 	}
 }

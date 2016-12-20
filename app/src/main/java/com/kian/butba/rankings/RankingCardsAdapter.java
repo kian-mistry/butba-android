@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.kian.butba.R;
 import com.kian.butba.rankings.RankingCardsAdapter.RankingHolder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +74,17 @@ public class RankingCardsAdapter extends Adapter<RankingHolder> {
 	@Override
 	public int getItemCount() {
 		return rankingsList.size();
+	}
+
+	/**
+	 * Replaces current list with new list.
+	 *
+	 * @param list The new list to replace the old list.
+	 */
+	public void setList(List<HashMap<String, String>> list) {
+		rankingsList = new ArrayList<>();
+		rankingsList.addAll(list);
+		notifyDataSetChanged();
 	}
 
 	class RankingHolder extends ViewHolder {
