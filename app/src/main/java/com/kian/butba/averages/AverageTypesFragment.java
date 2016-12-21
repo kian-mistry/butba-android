@@ -56,13 +56,11 @@ public class AverageTypesFragment extends Fragment {
 		//Required: Empty public constructor.
 	}
 
-	public static AverageTypesFragment newInstance(int averagesType, Boolean... qualifiedTypes) {
+	public static AverageTypesFragment newInstance(int averagesType) {
 		AverageTypesFragment fragment = new AverageTypesFragment();
 
 		Bundle args = new Bundle();
 		args.putInt(AVERAGES_TYPE, averagesType);
-		args.putBoolean(QUAL_BOWLERS, qualifiedTypes[0]);
-		args.putBoolean(UNQUAL_BOWLERS, qualifiedTypes[1]);
 		fragment.setArguments(args);
 
 		return fragment;
