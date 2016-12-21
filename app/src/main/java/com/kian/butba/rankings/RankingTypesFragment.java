@@ -1,8 +1,11 @@
 package com.kian.butba.rankings;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,7 +40,7 @@ import java.util.List;
  * Created by Kian Mistry on 14/12/16.
  */
 
-public class RankingTypesFragment extends Fragment implements OnQueryTextListener {
+public class RankingTypesFragment extends Fragment implements OnQueryTextListener, OnRefreshListener {
 
 	public static final String RANKINGS_TYPE = "rankingsType";
 
@@ -52,6 +55,7 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 
 	private ArrayList<HashMap<String, String>> rankings;
 
+	private SwipeRefreshLayout swipeRefreshLayout;
 	private RecyclerView recyclerView;
 	private RankingCardsAdapter cardsAdapter;
 
@@ -78,6 +82,9 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 		toolbar.invalidateOptionsMenu();
 		setHasOptionsMenu(true);
 
+		//Initialise the swipe refresh layout and the recycler view.
+		swipeRefreshLayout = (SwipeRefreshLayout) layout.findViewById(R.id.ranking_swipe_refresh);
+		swipeRefreshLayout.setOnRefreshListener(this);
 		recyclerView = (RecyclerView) layout.findViewById(R.id.ranking_cards_container);
 
 		return layout;
@@ -100,23 +107,20 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 	public void onStart() {
 		super.onStart();
 
-		ServerFileDownloader fileDownloader = new ServerFileDownloader(getContext(), new AsyncDelegate() {
-			@Override
-			public void onProcessResults(Boolean success) {
-				getRankingsList();
-
-				cardsAdapter = new RankingCardsAdapter(getActivity(), getRankings());
-				recyclerView.setAdapter(cardsAdapter);
-				recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-			}
-		});
-
-		//If file does not exist, download file from server, else read saved file.
+		/*
+		 * If file does not exist, download file from server (providing the device is connected to
+		 * the Internet), else read saved file.
+		 */
 		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_RANKINGS, ".json")) {
-			fileDownloader.execute(
-					QueriesUrl.URL_GET_LATEST_EVENT_RANKINGS,
-					FileOperations.LATEST_RANKINGS
-			);
+			if(FileOperations.hasInternetConnection(getContext())) {
+				getFileDownloader().execute(
+						QueriesUrl.URL_GET_LATEST_EVENT_RANKINGS,
+						FileOperations.LATEST_RANKINGS
+				);
+			}
+			else {
+				Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
+			}
 		}
 		else {
 			getRankingsList();
@@ -216,6 +220,31 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 		}
 	}
 
+	/**
+	 * Creates a new AsyncTask to download the JSON file from the server.
+	 * (AsyncTasks can not be executed more than once).
+	 *
+	 * @return A new ServerFileDownloader object.
+	 */
+	private ServerFileDownloader getFileDownloader() {
+		return new ServerFileDownloader(getContext(), new AsyncDelegate() {
+			@Override
+			public void onProcessResults(Boolean success) {
+				if(success) {
+					getRankingsList();
+
+					cardsAdapter = new RankingCardsAdapter(getActivity(), getRankings());
+					recyclerView.setAdapter(cardsAdapter);
+					recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+					if(swipeRefreshLayout.isRefreshing()) {
+						swipeRefreshLayout.setRefreshing(false);
+					}
+				}
+			}
+		});
+	}
+
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		return false;
@@ -251,5 +280,19 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 		//Display the list of members which match the query.
 		cardsAdapter.setList(queriedList);
 		return true;
+	}
+
+	@Override
+	public void onRefresh() {
+		if(FileOperations.hasInternetConnection(getContext())) {
+			getFileDownloader().execute(
+					QueriesUrl.URL_GET_LATEST_EVENT_RANKINGS,
+					FileOperations.LATEST_RANKINGS
+			);
+		}
+		else {
+			swipeRefreshLayout.setRefreshing(false);
+			Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
+		}
 	}
 }
