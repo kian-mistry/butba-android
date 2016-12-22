@@ -1,9 +1,10 @@
 package com.kian.butba.averages;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,11 +34,11 @@ import java.util.HashMap;
 public class AverageTypesFragment extends Fragment {
 
 	public static final String AVERAGES_TYPE = "averagesType";
-	private static final String QUAL_BOWLERS = "qual_bowlers";
-	private static final String UNQUAL_BOWLERS = "unqual_bowlers";
 
 	//Will hold the value of parameter passed through when the new fragment instance is created.
 	private int averagesType = 0;
+
+	private ActionBar toolbar;
 
 	private String result;
 	private JSONObject jsonObject;
@@ -47,10 +48,6 @@ public class AverageTypesFragment extends Fragment {
 
 	private RecyclerView recyclerView;
 	private AverageCardsAdapter cardsAdapter;
-
-	private SharedPreferences prefShownBowlers;
-	private boolean qualifiedBowlers = true;
-	private boolean unQualifiedBowlers = false;
 
 	public AverageTypesFragment() {
 		//Required: Empty public constructor.
@@ -62,61 +59,51 @@ public class AverageTypesFragment extends Fragment {
 		Bundle args = new Bundle();
 		args.putInt(AVERAGES_TYPE, averagesType);
 		fragment.setArguments(args);
-
 		return fragment;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		//Obtain the preferences which indicate the types of bowlers shown on the averages list.
-		prefShownBowlers = getActivity().getSharedPreferences("bowlers_shown", Context.MODE_PRIVATE);
-		qualifiedBowlers = prefShownBowlers.getBoolean("qual_bowlers", true);
-		unQualifiedBowlers = prefShownBowlers.getBoolean("unqual_bowlers", false);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View layout = inflater.inflate(R.layout.fragment_average_cards, container, false);
+
+		//Obtain toolbar.
+		toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+		toolbar.setTitle("Averages");
+		toolbar.invalidateOptionsMenu();
+		setHasOptionsMenu(true);
+
+		//Initialise recycler view.
 		recyclerView = (RecyclerView) layout.findViewById(R.id.average_cards_container);
 
 		return layout;
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
+	public void onStart() {
+		super.onStart();
 
-		ServerFileDownloader fileDownloader = new ServerFileDownloader(getContext(), new AsyncDelegate() {
-			@Override
-			public void onProcessResults(Boolean success) {
-				getAveragesList(qualifiedBowlers, unQualifiedBowlers);
-
-				cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
-				recyclerView.setAdapter(cardsAdapter);
-				recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-			}
-		});
-
-		//If file does not exist, download file from server, else read saved file.
+		/*
+		 * If file does not exist, download file from server (providing the device is connected to
+		 * the Internet), else read saved file.
+		 */
 		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES, ".json")) {
-			fileDownloader.execute(
-					QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
-					FileOperations.LATEST_AVERAGES
-			);
+			if(FileOperations.hasInternetConnection(getContext())) {
+				getFileDownloader().execute(
+						QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
+						FileOperations.LATEST_AVERAGES
+				);
+			}
+			else {
+				Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
+			}
 		}
 		else {
-			getAveragesList(qualifiedBowlers, unQualifiedBowlers);
+			getAveragesList();
 
 			cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
 			recyclerView.setAdapter(cardsAdapter);
 			recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 		}
-	}
-
-	public AverageCardsAdapter getCardsAdapter() {
-		return cardsAdapter;
 	}
 
 	public ArrayList<HashMap<String, String>> getAverages() {
@@ -125,22 +112,11 @@ public class AverageTypesFragment extends Fragment {
 
 	/**
 	 * Obtains the average and other related stats of each BUTBA member.
-	 *
-	 * @param qualifiedTypes The shared preference values of qualified and unqualified bowlers.
 	 */
-	public void getAveragesList(Boolean... qualifiedTypes) {
+	public void getAveragesList() {
 		Bundle args = getArguments();
-		boolean qualBowlers;
-		boolean unqualBowlers;
-
-		if(qualifiedTypes != null) {
-			qualBowlers = qualifiedTypes[0];
-			unqualBowlers = qualifiedTypes[1];
-		}
-		else {
-			qualBowlers = args.getBoolean(QUAL_BOWLERS);
-			unqualBowlers = args.getBoolean(UNQUAL_BOWLERS);
-		}
+		boolean qualBowlers = true;
+		boolean unqualBowlers = true;
 
 		try {
 			if(args != null) {
@@ -205,5 +181,24 @@ public class AverageTypesFragment extends Fragment {
 		catch(IOException | JSONException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Creates a new AsyncTask to download the JSON file from the server.
+	 * (AsyncTasks can not be executed more than once).
+	 *
+	 * @return A new ServerFileDownloader object.
+	 */
+	private ServerFileDownloader getFileDownloader() {
+		return new ServerFileDownloader(getContext(), new AsyncDelegate() {
+			@Override
+			public void onProcessResults(Boolean success) {
+				getAveragesList();
+
+				cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
+				recyclerView.setAdapter(cardsAdapter);
+				recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+			}
+		});
 	}
 }
