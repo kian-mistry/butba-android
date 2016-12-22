@@ -3,11 +3,19 @@ package com.kian.butba.averages;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,12 +34,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Kian Mistry on 12/12/16.
  */
 
-public class AverageTypesFragment extends Fragment {
+public class AverageTypesFragment extends Fragment implements OnQueryTextListener, OnRefreshListener {
 
 	public static final String AVERAGES_TYPE = "averagesType";
 
@@ -46,6 +55,7 @@ public class AverageTypesFragment extends Fragment {
 
 	private ArrayList<HashMap<String, String>> averages;
 
+	private SwipeRefreshLayout swipeRefreshLayout;
 	private RecyclerView recyclerView;
 	private AverageCardsAdapter cardsAdapter;
 
@@ -72,10 +82,25 @@ public class AverageTypesFragment extends Fragment {
 		toolbar.invalidateOptionsMenu();
 		setHasOptionsMenu(true);
 
-		//Initialise recycler view.
+		//Initialise the swipe refresh layout and recycler view.
+		swipeRefreshLayout = (SwipeRefreshLayout) layout.findViewById(R.id.averages_swipe_refresh);
+		swipeRefreshLayout.setOnRefreshListener(this);
 		recyclerView = (RecyclerView) layout.findViewById(R.id.average_cards_container);
 
 		return layout;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+
+		menu.clear();
+		inflater.inflate(R.menu.toolbar_items_averages, menu);
+
+		//Add a query listener to the search view.
+		MenuItem itemActionSearch = menu.findItem(R.id.toolbar_averages_action_search);
+		SearchView searchView = (SearchView) MenuItemCompat.getActionView(itemActionSearch);
+		searchView.setOnQueryTextListener(this);
 	}
 
 	@Override
@@ -193,12 +218,60 @@ public class AverageTypesFragment extends Fragment {
 		return new ServerFileDownloader(getContext(), new AsyncDelegate() {
 			@Override
 			public void onProcessResults(Boolean success) {
-				getAveragesList();
+				if(success) {
+					getAveragesList();
 
-				cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
-				recyclerView.setAdapter(cardsAdapter);
-				recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+					cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
+					recyclerView.setAdapter(cardsAdapter);
+					recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+					if(swipeRefreshLayout.isRefreshing()) {
+						swipeRefreshLayout.setRefreshing(false);
+					}
+				}
 			}
 		});
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		//Convert queried text to lowercase.
+		String queriedText = newText.toLowerCase();
+		List<HashMap<String, String>> queriedList = new ArrayList<>();
+
+		for(HashMap<String, String> member : averages) {
+			if(member.containsKey("name") && member.get("name") != null) {
+				//Convert obtained name to lowercase.
+				String name = member.get("name").toLowerCase();
+
+				//Check if the queried text is contained within the member's name.
+				if(name.contains(queriedText)) {
+					queriedList.add(member);
+				}
+			}
+		}
+
+		//Display the list of members which match the query.
+		cardsAdapter.setList(queriedList);
+		return true;
+	}
+
+	@Override
+	public void onRefresh() {
+		if(FileOperations.hasInternetConnection(getContext())) {
+			getFileDownloader().execute(
+					QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
+					FileOperations.LATEST_AVERAGES
+			);
+		}
+		else {
+			swipeRefreshLayout.setRefreshing(false);
+			Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
+		}
 	}
 }

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.kian.butba.R;
 import com.kian.butba.averages.AverageCardsAdapter.AverageHolder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -117,8 +118,15 @@ public class AverageCardsAdapter extends Adapter<AverageHolder> {
 		return averagesList.size();
 	}
 
-	public void setAveragesList(List<HashMap<String, String>> averagesList) {
-		this.averagesList = averagesList;
+	/**
+	 * Replaces current list with new list.
+	 *
+	 * @param list The new list to replace the old list.
+	 */
+	public void setList(List<HashMap<String, String>> list) {
+		averagesList = new ArrayList<>();
+		averagesList.addAll(list);
+		notifyDataSetChanged();
 	}
 
 	class AverageHolder extends ViewHolder {
