@@ -101,6 +101,26 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 		MenuItem itemActionSearch = menu.findItem(R.id.toolbar_averages_action_search);
 		SearchView searchView = (SearchView) MenuItemCompat.getActionView(itemActionSearch);
 		searchView.setOnQueryTextListener(this);
+
+		final MenuItem itemActionFilter = menu.findItem(R.id.toolbar_averages_action_filter);
+
+		//Set click listeners to the search view.
+		searchView.setOnSearchClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//Hides filter icon from the toolbar when the search view is in use.
+				itemActionFilter.setVisible(false);
+			}
+		});
+
+		searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+			@Override
+			public boolean onClose() {
+				//Shows filter icon on the toolbar when the search view is not in use.
+				itemActionFilter.setVisible(true);
+				return false;
+			}
+		});
 	}
 
 	@Override
