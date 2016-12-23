@@ -8,6 +8,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -38,6 +40,8 @@ public class CommitteeFragment extends Fragment {
 	    //Obtain toolbar.
 	    toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 	    toolbar.setTitle("Committee");
+	    toolbar.invalidateOptionsMenu();
+	    setHasOptionsMenu(true);
 
         //Initialise view pager and set up adapter.
         viewPager = (ViewPager) layout.findViewById(R.id.committee_view_pager);
@@ -49,6 +53,14 @@ public class CommitteeFragment extends Fragment {
 
         return layout;
     }
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+
+		//Remove icons from the toolbar.
+		menu.clear();
+	}
 
     private class ViewPagerAdapter extends FragmentStatePagerAdapter {
 

@@ -11,6 +11,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -40,6 +42,8 @@ public class SocialFragment extends Fragment implements OnTabSelectedListener {
 		//Obtain toolbar.
 		toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 		toolbar.setTitle("Social");
+		toolbar.invalidateOptionsMenu();
+		setHasOptionsMenu(true);
 
 		//Initialise tab layout.
 		tabLayout = (TabLayout) layout.findViewById(R.id.social_tab_layout);
@@ -59,6 +63,14 @@ public class SocialFragment extends Fragment implements OnTabSelectedListener {
 		tabLayout.addOnTabSelectedListener(this);
 
 		return layout;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+
+		//Remove icons from the toolbar.
+		menu.clear();
 	}
 
 	@Override

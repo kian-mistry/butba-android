@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -56,12 +58,22 @@ public class ProfileFragment extends Fragment {
 	    //Obtain toolbar.
 	    toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 	    toolbar.setTitle("Profile");
+	    toolbar.invalidateOptionsMenu();
+	    setHasOptionsMenu(true);
 
 	    //Initialise recycler view.
         recyclerView = (RecyclerView) layout.findViewById(R.id.profile_cards_container);
 
         return layout;
     }
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+
+		//Remove icons from the toolbar.
+		menu.clear();
+	}
 
     @Override
     public void onStart() {
