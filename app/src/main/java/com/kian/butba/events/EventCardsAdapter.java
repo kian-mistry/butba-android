@@ -18,6 +18,7 @@ import com.kian.butba.events.EventCardsAdapter.EventDetailsHolder;
 import com.kian.butba.file.FileDownloader;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -182,8 +183,15 @@ public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
         return eventsList.size();
     }
 
-    public void setEventsList(List<HashMap<String, String>> eventsList) {
-        this.eventsList = eventsList;
+	/**
+	 * Replaces current list with new list.
+	 *
+	 * @param list The new list to replace the old list.
+	 */
+    public void setList(List<HashMap<String, String>> list) {
+	    eventsList = new ArrayList<>();
+	    eventsList.addAll(list);
+	    notifyDataSetChanged();
     }
 
     class EventDetailsHolder extends ViewHolder {

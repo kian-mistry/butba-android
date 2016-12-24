@@ -40,34 +40,33 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
     private ActionBar toolbar;
     private PopupMenu popupMenu;
 
-    private SharedPreferences prefShownEvents;
-    private boolean studentEvents;
-    private boolean exStudentEvents;
-    private boolean btbaEvents;
-
     private RecyclerView recyclerView;
-    private EventCardsAdapter eventDetailsAdapter;
+    private EventCardsAdapter cardsAdapter;
 	private ArrayList<HashMap<String, String>> events;
 
+	private SharedPreferences prefShownEvents;
+	private boolean studentEvents;
+	private boolean exStudentEvents;
+	private boolean btbaEvents;
 
     public EventsFragment() {
         //Required: Empty public constructor.
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        //Obtain which events are shown from the shared preferences.
-        prefShownEvents = getActivity().getSharedPreferences("events_shown", Context.MODE_PRIVATE);
-        studentEvents = prefShownEvents.getBoolean("student_events", true);
-        exStudentEvents = prefShownEvents.getBoolean("ex_student_events", true);
-        btbaEvents = prefShownEvents.getBoolean("btba_events", true);
+		//Obtain shared preferences for the filter.
+		prefShownEvents = getActivity().getSharedPreferences("events_shown", Context.MODE_PRIVATE);
+		studentEvents = prefShownEvents.getBoolean("student_events", true);
+		exStudentEvents = prefShownEvents.getBoolean("ex_student_events", true);
+		btbaEvents = prefShownEvents.getBoolean("btba_events", true);
 
-        getEventDetails(new boolean[]{studentEvents, exStudentEvents, btbaEvents});
-    }
+		getEventDetails(studentEvents, exStudentEvents, btbaEvents);
+	}
 
-    @Override
+	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_events, container, false);
 
@@ -79,8 +78,8 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
 
         //Initialise recycler view.
         recyclerView = (RecyclerView) layout.findViewById(R.id.event_cards_container);
-        eventDetailsAdapter = new EventCardsAdapter(getActivity(), getEvents());
-        recyclerView.setAdapter(eventDetailsAdapter);
+        cardsAdapter = new EventCardsAdapter(getActivity(), getEvents());
+        recyclerView.setAdapter(cardsAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return layout;
@@ -125,62 +124,19 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
                 break;
         }
 
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        int id = item.getItemId();
-        boolean status = toggleCheckBox(item);
-
-        //Prevent popup menu from closing when an option is selected.
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-        item.setActionView(new View(getContext()));
-
-        Editor editor = prefShownEvents.edit();
-
-        switch(id) {
-            case R.id.cb_students:
-                editor.putBoolean("student_events", status);
-                getEventDetails(new boolean[]{status, exStudentEvents, btbaEvents});
-                break;
-            case R.id.cb_ex_students:
-                editor.putBoolean("ex_student_events", status);
-                getEventDetails(new boolean[]{studentEvents, status, btbaEvents});
-                break;
-            case R.id.cb_btba:
-                editor.putBoolean("btba_events", status);
-                getEventDetails(new boolean[]{studentEvents, exStudentEvents, status});
-                break;
-            default:
-                break;
-        }
-
-        editor.commit();
-
-        //Update recycler view with list of events if a checkbox has been altered.
-        eventDetailsAdapter.setEventsList(getEvents());
-        eventDetailsAdapter.notifyDataSetChanged();
-
-        return false;
-    }
-
-    private boolean toggleCheckBox(MenuItem item) {
-        if(item.isChecked()) {
-            item.setChecked(false);
-            return false;
-        }
-        else {
-            item.setChecked(true);
-            return true;
-        }
+        return true;
     }
 
     private ArrayList<HashMap<String, String>> getEvents() {
         return events;
     }
 
-    private void getEventDetails(boolean[] eventTypes) {
+	/**
+	 * Obtains the details of each event.
+	 *
+	 * @param eventTypes The checked state of the types of events to display: Student; Ex-Student; BTBA.
+	 */
+    private void getEventDetails(Boolean... eventTypes) {
         boolean studentEvents = eventTypes[0];
         boolean exStudentEvents = eventTypes[1];
         boolean btbaEvents = eventTypes[2];
@@ -230,4 +186,46 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
             e.printStackTrace();
         }
     }
+
+	private boolean toggleCheckBox(MenuItem item) {
+		if(item.isChecked()) {
+			item.setChecked(false);
+			return false;
+		}
+		else {
+			item.setChecked(true);
+			return true;
+		}
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		int id = item.getItemId();
+		boolean status = toggleCheckBox(item);
+
+		Editor editor = prefShownEvents.edit();
+
+		switch(id) {
+			case R.id.cb_students:
+				editor.putBoolean("student_events", status).apply();
+				studentEvents = status;
+				break;
+			case R.id.cb_ex_students:
+				editor.putBoolean("ex_student_events", status).apply();
+				exStudentEvents = status;
+				break;
+			case R.id.cb_btba:
+				editor.putBoolean("btba_events", status).apply();
+				btbaEvents = status;
+				break;
+			default:
+				break;
+		}
+
+		getEventDetails(studentEvents, exStudentEvents, btbaEvents);
+
+		//Display the list of events.
+		cardsAdapter.setList(events);
+		return false;
+	}
 }
