@@ -1,5 +1,8 @@
 package com.kian.butba.averages;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -9,14 +12,18 @@ import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnCloseListener;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
@@ -40,7 +47,7 @@ import java.util.List;
  * Created by Kian Mistry on 12/12/16.
  */
 
-public class AverageTypesFragment extends Fragment implements OnQueryTextListener, OnRefreshListener {
+public class AverageTypesFragment extends Fragment implements OnMenuItemClickListener, OnQueryTextListener, OnRefreshListener {
 
 	public static final String AVERAGES_TYPE = "averagesType";
 
@@ -48,6 +55,7 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 	private int averagesType = 0;
 
 	private ActionBar toolbar;
+	private PopupMenu popupMenu;
 
 	private String result;
 	private JSONObject jsonObject;
@@ -58,6 +66,10 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 	private SwipeRefreshLayout swipeRefreshLayout;
 	private RecyclerView recyclerView;
 	private AverageCardsAdapter cardsAdapter;
+
+	private SharedPreferences prefShownBowlers;
+	private boolean qualifiedBowlers;
+	private boolean unqualifiedBowlers;
 
 	public AverageTypesFragment() {
 		//Required: Empty public constructor.
@@ -87,6 +99,11 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 		swipeRefreshLayout.setOnRefreshListener(this);
 		recyclerView = (RecyclerView) layout.findViewById(R.id.average_cards_container);
 
+		//Obtain shared preferences for the filter.
+		prefShownBowlers = getContext().getSharedPreferences("pref_shown_bowlers", Context.MODE_PRIVATE);
+		qualifiedBowlers = prefShownBowlers.getBoolean("qual_bowlers", true);
+		unqualifiedBowlers = prefShownBowlers.getBoolean("unqual_bowlers", false);
+
 		return layout;
 	}
 
@@ -105,7 +122,7 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 		final MenuItem itemActionFilter = menu.findItem(R.id.toolbar_averages_action_filter);
 
 		//Set click listeners to the search view.
-		searchView.setOnSearchClickListener(new View.OnClickListener() {
+		searchView.setOnSearchClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				//Hides filter icon from the toolbar when the search view is in use.
@@ -113,7 +130,7 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 			}
 		});
 
-		searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+		searchView.setOnCloseListener(new OnCloseListener() {
 			@Override
 			public boolean onClose() {
 				//Shows filter icon on the toolbar when the search view is not in use.
@@ -121,6 +138,36 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 				return false;
 			}
 		});
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+
+		qualifiedBowlers = prefShownBowlers.getBoolean("qual_bowlers", true);
+		unqualifiedBowlers = prefShownBowlers.getBoolean("unqual_bowlers", false);
+
+		switch(id) {
+			case R.id.toolbar_averages_action_filter:
+				//Add popup menu.
+				View menuActionFilter = getActivity().findViewById(R.id.toolbar_averages_action_filter);
+				popupMenu = new PopupMenu(getActivity(), menuActionFilter);
+				popupMenu.inflate(R.menu.menu_averages);
+
+				//Attach item click listener.
+				popupMenu.setOnMenuItemClickListener(this);
+
+				//Set the checked values for the menu items.
+				popupMenu.getMenu().getItem(0).setChecked(qualifiedBowlers);
+				popupMenu.getMenu().getItem(1).setChecked(unqualifiedBowlers);
+				popupMenu.show();
+
+				break;
+			default:
+				break;
+		}
+
+		return true;
 	}
 
 	@Override
@@ -143,7 +190,7 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 			}
 		}
 		else {
-			getAveragesList();
+			getAveragesList(qualifiedBowlers, unqualifiedBowlers);
 
 			cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
 			recyclerView.setAdapter(cardsAdapter);
@@ -157,11 +204,14 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 
 	/**
 	 * Obtains the average and other related stats of each BUTBA member.
+	 *
+	 * @param qualifiedStates The checked state of each qualified/unqualified checkbox.
 	 */
-	public void getAveragesList() {
+	public void getAveragesList(Boolean... qualifiedStates) {
 		Bundle args = getArguments();
-		boolean qualBowlers = true;
-		boolean unqualBowlers = true;
+
+		boolean qualified = qualifiedStates[0];
+		boolean unqualified = qualifiedStates[1];
 
 		try {
 			if(args != null) {
@@ -200,8 +250,8 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 
 				String totalGames = detail.getString("Games");
 				if(
-						(Integer.parseInt(totalGames) >= 12 && qualBowlers) ||
-						(Integer.parseInt(totalGames) < 12 && unqualBowlers)
+						(Integer.parseInt(totalGames) >= 12 && qualified) ||
+						(Integer.parseInt(totalGames) < 12 && unqualified)
 				) {
 					String name = detail.getString("Name");
 					String university = detail.getString("University");
@@ -239,7 +289,7 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 			@Override
 			public void onProcessResults(Boolean success) {
 				if(success) {
-					getAveragesList();
+					getAveragesList(qualifiedBowlers, unqualifiedBowlers);
 
 					cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
 					recyclerView.setAdapter(cardsAdapter);
@@ -251,6 +301,44 @@ public class AverageTypesFragment extends Fragment implements OnQueryTextListene
 				}
 			}
 		});
+	}
+
+	private boolean toggleCheckBox(MenuItem item) {
+		if(item.isChecked()) {
+			item.setChecked(false);
+			return false;
+		}
+		else {
+			item.setChecked(true);
+			return true;
+		}
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		int id = item.getItemId();
+		boolean status = toggleCheckBox(item);
+
+		Editor editor = prefShownBowlers.edit();
+
+		switch(id) {
+			case R.id.cb_qualified:
+				editor.putBoolean("qual_bowlers", status).apply();
+				qualifiedBowlers = status;
+				break;
+			case R.id.cb_unqualified:
+				editor.putBoolean("unqual_bowlers", status).apply();
+				unqualifiedBowlers = status;
+				break;
+			default:
+				break;
+		}
+
+		getAveragesList(qualifiedBowlers, unqualifiedBowlers);
+
+		//Display the list of members.
+		cardsAdapter.setList(averages);
+		return true;
 	}
 
 	@Override
