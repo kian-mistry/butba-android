@@ -1,9 +1,8 @@
 package com.kian.butba.database.sqlite;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.design.widget.Snackbar;
 
 import com.kian.butba.database.server.AsyncDelegate;
 import com.kian.butba.database.server.QueryTag;
@@ -11,7 +10,6 @@ import com.kian.butba.database.server.TablesFetcher;
 import com.kian.butba.database.sqlite.entities.AcademicYear;
 import com.kian.butba.database.sqlite.entities.Bowler;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
-import com.kian.butba.database.sqlite.entities.EventAverage;
 import com.kian.butba.database.sqlite.entities.EventCode;
 import com.kian.butba.database.sqlite.entities.RankingStatus;
 import com.kian.butba.database.sqlite.entities.StudentStatus;
@@ -19,7 +17,6 @@ import com.kian.butba.database.sqlite.entities.University;
 import com.kian.butba.database.sqlite.tables.TableAcademicYear;
 import com.kian.butba.database.sqlite.tables.TableBowler;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
-import com.kian.butba.database.sqlite.tables.TableEventAverage;
 import com.kian.butba.database.sqlite.tables.TableEventCode;
 import com.kian.butba.database.sqlite.tables.TableRankingStatus;
 import com.kian.butba.database.sqlite.tables.TableStudentStatus;
@@ -33,21 +30,29 @@ import java.util.List;
 
 public class DatabaseOperations {
 
-    public static void getAllAcademicYears(final Activity activity) {
+	public static final boolean[] isCompleted = {false, false, false, false, false, false, false};
+
+	/**
+	 * Set up a query fetcher to retrieve all academic years, starting from the 2015/16 academic year
+	 * and store in a local SQLite database.
+	 * @param context
+	 */
+    public static void getAllAcademicYears(final Context context) {
+
         TablesFetcher academicYearsFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
             public void onProcessResults(List<?> results) {
                 List<String[]> res = (List<String[]>) results;
 
                 for(int i = 0; i < results.size(); i++) {
-                    TableAcademicYear tableAcademicYear = new TableAcademicYear(activity);
+                    TableAcademicYear tableAcademicYear = new TableAcademicYear(context);
                     tableAcademicYear.addAcademicYear(new AcademicYear(
                             Integer.valueOf(res.get(i)[0]),
                             res.get(i)[1]
                     ));
                 }
 
-                Snackbar.make(activity.getCurrentFocus(), "Retrieved all academic years", Snackbar.LENGTH_SHORT).show();
+	            isCompleted[0] = true;
             }
         });
 
@@ -61,17 +66,17 @@ public class DatabaseOperations {
     }
 
     /**
-     * Set up a query fetcher to retrieve all the BUTBA members and to store in a local SQLite database.
-     * @param activity
+     * Set up a query fetcher to retrieve all the BUTBA members and store in a local SQLite database.
+     * @param context
      */
-    public static void getAllBowlers(final Activity activity) {
+    public static void getAllBowlers(final Context context) {
         TablesFetcher bowlersFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
             public void onProcessResults(List<?> results) {
                 List<String[]> res = (List<String[]>) results;
 
                 for(int i = 0; i < results.size(); i++) {
-                    TableBowler tableBowler = new TableBowler(activity);
+                    TableBowler tableBowler = new TableBowler(context);
                     tableBowler.addBowler(new Bowler(
                             Integer.valueOf(res.get(i)[0]),
                             res.get(i)[1],
@@ -80,7 +85,7 @@ public class DatabaseOperations {
                     ));
                 }
 
-                Snackbar.make(activity.getCurrentFocus(), "Retrieved all bowlers", Snackbar.LENGTH_SHORT).show();
+	            isCompleted[1] = true;
             }
         });
 
@@ -96,16 +101,16 @@ public class DatabaseOperations {
     /**
      * Set up a query fetcher to retrieve all the BUTBA members bowled in each season, starting from the 2015/16 season,
      * and store in a local SQLite database.
-     * @param activity
+     * @param context
      */
-    public static void getAllBowlersSeasons(final Activity activity) {
+    public static void getAllBowlersSeasons(final Context context) {
         TablesFetcher bowlersSeasonsFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
             public void onProcessResults(List<?> results) {
                 List<String[]> res = (List<String[]>) results;
 
                 for(int i = 0; i < results.size(); i++) {
-                    TableBowlerSeason tableBowlerSeason = new TableBowlerSeason(activity);
+                    TableBowlerSeason tableBowlerSeason = new TableBowlerSeason(context);
                     tableBowlerSeason.addBowlerToSeason(new BowlerSeason(
                             i + 1,
                             Integer.valueOf(res.get(i)[1]),
@@ -116,7 +121,7 @@ public class DatabaseOperations {
                     ));
                 }
 
-                Snackbar.make(activity.getCurrentFocus(), "Retrieved all bowlers seasons", Snackbar.LENGTH_SHORT).show();
+	            isCompleted[2] = true;
             }
         });
 
@@ -129,57 +134,25 @@ public class DatabaseOperations {
         }
     }
 
-    public static void getAllEventAverages(final Activity activity) {
-        TablesFetcher eventAveragesFetcher = new TablesFetcher(new AsyncDelegate() {
-            @Override
-            public void onProcessResults(List<?> results) {
-                List<String[]> res = (List<String[]>) results;
-
-                for(int i = 0; i < results.size(); i++) {
-                    Integer rankingPinfall = (res.get(i)[4] == "") ? 0 : Integer.valueOf(res.get(i)[4]);
-                    Integer hcpRankingPinfall = (res.get(i)[5] == "") ? 0 : Integer.valueOf(res.get(i)[5]);
-
-                    TableEventAverage tableEventAverage = new TableEventAverage(activity);
-                    tableEventAverage.addEventAverage(new EventAverage(
-                            i + 1,
-                            Integer.valueOf(res.get(i)[1]),
-                            Integer.valueOf(res.get(i)[2]),
-                            Integer.valueOf(res.get(i)[3]),
-                            rankingPinfall,
-                            hcpRankingPinfall,
-                            Integer.valueOf(res.get(i)[6]),
-                            Integer.valueOf(res.get(i)[7])
-                    ));
-                }
-
-                Snackbar.make(activity.getCurrentFocus(), "Retrieved all event averages", Snackbar.LENGTH_SHORT).show();
-            }
-        });
-
-        //Run this thread in parallel with the next thread.
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            eventAveragesFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, QueryTag.GET_EVENT_AVERAGES);
-        }
-        else {
-            eventAveragesFetcher.execute(QueryTag.GET_EVENT_AVERAGES);
-        }
-    }
-
-    public static void getAllEvents(final Activity activity) {
+	/**
+	 * Set up a query fetcher to all the BUTBA events and store in a local SQLite database.
+	 * @param context
+	 */
+    public static void getAllEvents(final Context context) {
         TablesFetcher eventsFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
             public void onProcessResults(List<?> results) {
                 List<String[]> res = (List<String[]>) results;
 
                 for(int i = 0; i < results.size(); i++) {
-                    TableEventCode tableEventCode = new TableEventCode(activity);
+                    TableEventCode tableEventCode = new TableEventCode(context);
                     tableEventCode.addEvent(new EventCode(
                             Integer.valueOf(res.get(i)[0]),
                             res.get(i)[1]
                     ));
                 }
 
-                Snackbar.make(activity.getCurrentFocus(), "Retrieved all events", Snackbar.LENGTH_SHORT).show();
+	            isCompleted[3] = true;
             }
         });
 
@@ -192,21 +165,25 @@ public class DatabaseOperations {
         }
     }
 
-    public static void getAllRankingStatuses(final Activity activity) {
+	/**
+	 * Set up a query fetcher to retrieve all the ranking statuses and store in a local SQLite database.
+	 * @param context
+	 */
+    public static void getAllRankingStatuses(final Context context) {
         TablesFetcher rankingsFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
             public void onProcessResults(List<?> results) {
                 List<String[]> res = (List<String[]>) results;
 
                 for(int i = 0; i < results.size(); i++) {
-                    TableRankingStatus tableRankingStatus = new TableRankingStatus(activity);
+                    TableRankingStatus tableRankingStatus = new TableRankingStatus(context);
                     tableRankingStatus.addRankingStatus(new RankingStatus(
                             Integer.valueOf(res.get(i)[0]),
                             res.get(i)[1]
                     ));
                 }
 
-                Snackbar.make(activity.getCurrentFocus(), "Retrieved all ranking statuses", Snackbar.LENGTH_SHORT).show();
+	            isCompleted[4] = true;
             }
         });
 
@@ -219,21 +196,25 @@ public class DatabaseOperations {
         }
     }
 
-    public static void getAllStudentStatuses(final Activity activity) {
+	/**
+	 * Set up a query fetcher to retrieve all the student statuses and store in a local SQLite database.
+	 * @param context
+	 */
+    public static void getAllStudentStatuses(final Context context) {
         TablesFetcher studentsFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
             public void onProcessResults(List<?> results) {
                 List<String[]> res = (List<String[]>) results;
 
                 for(int i = 0; i < results.size(); i++) {
-                    TableStudentStatus tableStudentStatus = new TableStudentStatus(activity);
+                    TableStudentStatus tableStudentStatus = new TableStudentStatus(context);
                     tableStudentStatus.addStudentStatus(new StudentStatus(
                             Integer.valueOf(res.get(i)[0]),
                             res.get(i)[1]
                     ));
                 }
 
-                Snackbar.make(activity.getCurrentFocus(), "Retrieved all student statuses", Snackbar.LENGTH_SHORT).show();
+	            isCompleted[5] = true;
             }
         });
 
@@ -246,21 +227,26 @@ public class DatabaseOperations {
         }
     }
 
-    public static void getAllUniversities(final Activity activity) {
+	/**
+	 * Set up a query fetcher to retrieve all the universities bowling on the BUTBA tour and store
+	 * in a local SQLite database.
+	 * @param context
+	 */
+    public static void getAllUniversities(final Context context) {
         TablesFetcher universityFetcher = new TablesFetcher(new AsyncDelegate() {
             @Override
             public void onProcessResults(List<?> results) {
                 List<String[]> res = (List<String[]>) results;
 
                 for(int i = 0; i < results.size(); i++) {
-                    TableUniversity tableUniversity = new TableUniversity(activity);
+                    TableUniversity tableUniversity = new TableUniversity(context);
                     tableUniversity.addUniversity(new University(
                             Integer.valueOf(res.get(i)[0]),
                             res.get(i)[1]
                     ));
                 }
 
-                Snackbar.make(activity.getCurrentFocus(), "Retrieved all universities", Snackbar.LENGTH_SHORT).show();
+	            isCompleted[6] = true;
             }
         });
 

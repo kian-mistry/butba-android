@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.kian.butba.averages.AveragesFragment;
 import com.kian.butba.committee.CommitteeFragment;
-import com.kian.butba.database.sqlite.DatabaseOperations;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 import com.kian.butba.events.EventsFragment;
@@ -120,14 +119,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        //Check whether table exists, if not create and populate table.
-        prefCheckTablesExists();
-    }
-
-    @Override
     public void onBackPressed() {
         //Will close the navigation drawer if the back button is pressed.
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -200,54 +191,5 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    /**
-     * Use a preference to check whether a table exists.
-     */
-    private void prefCheckTablesExists() {
-        SharedPreferences prefDatabase = getSharedPreferences("butba_database", Context.MODE_PRIVATE);
-        boolean tableAcademicYearExists = prefDatabase.getBoolean("pref_table_academic_year", false);
-        boolean tableBowlerExists = prefDatabase.getBoolean("pref_table_bowlers", false);
-        boolean tableBowlerSeasonsExists = prefDatabase.getBoolean("pref_table_bowlers_seasons", false);
-//        boolean tableEventAverageExists = prefDatabase.getBoolean("pref_table_event_average", false);
-        boolean tableEventCodesExists = prefDatabase.getBoolean("pref_table_event_code", false);
-        boolean tableRankingStatusExists = prefDatabase.getBoolean("pref_table_ranking_status", false);
-        boolean tableStudentStatusExists = prefDatabase.getBoolean("pref_table_student_status", false);
-        boolean tableUniversityExists = prefDatabase.getBoolean("pref_table_university", false);
-
-        //TODO: Create threads for each operation.
-        //TODO: Sort of solved using parallel pools of AsyncTasks.
-        if(!tableAcademicYearExists) {
-            DatabaseOperations.getAllAcademicYears(this);
-        }
-
-        if(!tableEventCodesExists) {
-            DatabaseOperations.getAllEvents(this);
-        }
-
-        if(!tableRankingStatusExists) {
-            DatabaseOperations.getAllRankingStatuses(this);
-        }
-
-        if(!tableStudentStatusExists) {
-            DatabaseOperations.getAllStudentStatuses(this);
-        }
-
-        if(!tableUniversityExists) {
-            DatabaseOperations.getAllUniversities(this);
-        }
-
-        if(!tableBowlerExists) {
-            DatabaseOperations.getAllBowlers(this);
-        }
-
-        if(!tableBowlerSeasonsExists) {
-            DatabaseOperations.getAllBowlersSeasons(this);
-        }
-
-//        if(!tableEventAverageExists) {
-//            DatabaseOperations.getAllEventAverages(this);
-//        }
     }
 }
