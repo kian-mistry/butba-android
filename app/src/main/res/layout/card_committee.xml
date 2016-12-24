@@ -14,27 +14,26 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingTop="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="8dp">
 
         <ImageView
             android:id="@+id/committee_image"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
             android:src="@mipmap/ic_launcher"
-            android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:paddingTop="16dp"
-            android:paddingRight="16dp" />
+            android:layout_alignParentEnd="true"/>
 
         <TextView
             android:id="@+id/committee_position"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="24dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/committee_image"
+            android:layout_toStartOf="@id/committee_image"
             android:text="Position"
             android:fontFamily="sans-serif"
             android:textSize="24sp"
@@ -45,10 +44,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/committee_position"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
             android:text="Name: "
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -56,11 +53,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/committee_name"
-            android:layout_alignLeft="@id/committee_name"
             android:layout_toLeftOf="@id/committee_image"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp"
+            android:layout_toStartOf="@id/committee_image"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:paddingTop="8dp"
+            android:paddingRight="8dp"
             android:text="University: "
             android:textSize="14sp" />
 
@@ -69,8 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/committee_uni"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingRight="8dp"
             android:text="High Game: "
             android:textSize="14sp" />
 
@@ -79,8 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/committee_high_game"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingRight="8dp"
             android:text="High Series: "
             android:textSize="14sp" />
 
@@ -90,7 +86,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/committee_high_series"
             android:padding="8dp"
-            android:layout_margin="8dp"
             android:text="Email"
             android:autoLink="email"
             style="@style/Base.Widget.AppCompat.Button.Borderless"/>
