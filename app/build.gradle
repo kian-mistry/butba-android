@@ -64,9 +64,6 @@ dependencies {
     //Circular Image View
     compile 'com.pkmmte.view:circularimageview:1.1'
 
-    //Tabs
-    compile 'io.karim:materialtabs:2.0.5'
-
     //Picasso
     compile 'com.squareup.picasso:picasso:2.5.2'
 

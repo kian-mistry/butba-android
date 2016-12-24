@@ -24,10 +24,10 @@ import java.util.HashMap;
 
 public class CommitteeTypesFragment extends Fragment {
 
-    public static final String ARG_1 = "arg1";
+    public static final String COMMITTEE_TYPE = "committeeType";
 
     //Will hold the value of parameter passed through when the new fragment instance is created.
-    private int arg1 = 0;
+    private int committeeType = 0;
 
     private JSONObject jsonObject;
     private JSONArray jsonArray;
@@ -46,7 +46,7 @@ public class CommitteeTypesFragment extends Fragment {
         CommitteeTypesFragment fragment = new CommitteeTypesFragment();
 
         Bundle args = new Bundle();
-        args.putInt(ARG_1, committeeType);
+        args.putInt(COMMITTEE_TYPE, committeeType);
         fragment.setArguments(args);
 
         return fragment;
@@ -80,15 +80,15 @@ public class CommitteeTypesFragment extends Fragment {
     private void getCommitteeProfiles() {
         Bundle args = getArguments();
         if(args != null) {
-            arg1 = args.getInt(ARG_1, 0);
+            committeeType = args.getInt(COMMITTEE_TYPE, 0);
             jsonObject = JSONHandler.loadJson(getContext(), "committee_members.json");
         }
 
         try {
-            if (arg1 == 0) {
+            if (committeeType == 0) {
                 jsonArray = jsonObject.getJSONArray("exec");
             }
-            else if (arg1 == 1) {
+            else if (committeeType == 1) {
                 jsonArray = jsonObject.getJSONArray("non-exec");
             }
 
