@@ -4,13 +4,11 @@
     <string name="nav_drawer_open">Open</string>
     <string name="nav_drawer_close">Close</string>
 
-    <string-array name="nav_items">
-        <item>Profile</item>
-        <item>Committee</item>
-    </string-array>
-
     <string-array name="tab_committees">
         <item>Executive</item>
         <item>Non-Executive</item>
     </string-array>
+
+    <!-- Transitions -->
+    <string name="transition_expand_card">expand</string>
 </resources>

@@ -1,4 +1,9 @@
 <resources>
+    <!-- Base Theme -->
+    <style name="AppTheme" parent="AppTheme.Base">
+        <item name="android:windowContentTransitions">true</item>
+    </style>
+    <!-- Popup Theme -->
     <style name="PopupTheme" parent="Widget.AppCompat.Light.PopupMenu">
         <item name="android:textColor">@color/colourPrimaryText</item>
         <item name="android:itemBackground">@android:color/white</item>
