@@ -60,13 +60,13 @@ public class ProfileCardsAdapter extends Adapter<ProfileHolder> {
         }
 
         holder.getProfileAverage().setText("Overall Average: " + current.get("average"));
-        holder.getProfileGames().setText("Games: " + current.get("games"));
+        holder.getProfileGames().setText("Total Games: " + current.get("games"));
 
         if(academicYear.equals("2016/17") && studentStatus.equals("Student")) {
-            holder.getProfileRankingPoints().setText("Total Points: " + current.get("points") + " // Best 4: " + current.get("best_n"));
+            holder.getProfileRankingPoints().setText("Total Ranking Points: " + current.get("points") + " // Best 4: " + current.get("best_n"));
         }
         else {
-            holder.getProfileRankingPoints().setText("Total Points: " + current.get("points") + " // Best 5: " + current.get("best_n"));
+            holder.getProfileRankingPoints().setText("Total Ranking Points: " + current.get("points") + " // Best 5: " + current.get("best_n"));
         }
 
 	    /*

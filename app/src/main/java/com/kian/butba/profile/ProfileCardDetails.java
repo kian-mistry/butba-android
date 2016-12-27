@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -53,6 +52,10 @@ public class ProfileCardDetails extends AppCompatActivity {
 	private HashMap<String, String> profileSeasonPoints = new HashMap<>();
 
 	private TextView profileDetailsSeason;
+	private TextView profileDetailsStatus;
+	private TextView profileDetailsAverage;
+	private TextView profileDetailsGames;
+	private TextView profileDetailsPoints;
 	private TableLayout profileDetailsTable;
 
 	@Override
@@ -88,8 +91,10 @@ public class ProfileCardDetails extends AppCompatActivity {
 
 		//Initialise the views on the layout.
 		profileDetailsSeason = (TextView) findViewById(R.id.profile_details_season);
-		profileDetailsSeason.setText(academicYear);
-
+		profileDetailsStatus = (TextView) findViewById(R.id.profile_details_status);
+		profileDetailsAverage = (TextView) findViewById(R.id.profile_details_average);
+		profileDetailsGames = (TextView) findViewById(R.id.profile_details_games);
+		profileDetailsPoints = (TextView) findViewById(R.id.profile_details_points);
 
 		//Set up table layout.
 		profileDetailsTable = (TableLayout) findViewById(R.id.profile_details_table);
@@ -100,13 +105,35 @@ public class ProfileCardDetails extends AppCompatActivity {
 
 		//Populate views with data.
 		if(isDataRetrieved) {
+			profileDetailsSeason.setText(academicYear);
+
+			String rankingStatus = profileSeasonDetails.get("ranking_status");
+			String studentStatus = profileSeasonDetails.get("student_status");
+			String university = profileSeasonDetails.get("university");
+
+			if(studentStatus.equals("Student")) {
+				profileDetailsStatus.setText(studentStatus + " // " + rankingStatus + " // " + university);
+			}
+			else {
+				profileDetailsStatus.setText(studentStatus + " // " + rankingStatus);
+			}
+
+			profileDetailsAverage.setText("Overall Average: " + profileSeasonDetails.get("average"));
+			profileDetailsGames.setText("Total Games: " + profileSeasonDetails.get("games"));
+
+			if(academicYear.equals("2016/17") && studentStatus.equals("Student")) {
+				profileDetailsPoints.setText("Total Ranking Points: " + profileSeasonDetails.get("points") + " // " + "Best 4: " + profileSeasonDetails.get("best_n"));
+			}
+			else {
+				profileDetailsPoints.setText("Total Ranking Points: " + profileSeasonDetails.get("points") + " // " + "Best 5: " + profileSeasonDetails.get("best_n"));
+			}
+
+			//Populate table.
 			for(String stop : stopsList) {
 				TableRow tableRow = new TableRow(this);
 				TextView stopName = new TextView(this);
 				TextView average = new TextView(this);
 				TextView points = new TextView(this);
-
-				tableRow.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
 
 				//Set layout parameters for each text view.
 				stopName.setLayoutParams(layoutParamsStops);

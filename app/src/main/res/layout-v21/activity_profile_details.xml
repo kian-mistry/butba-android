@@ -56,11 +56,28 @@
                 android:paddingTop="8dp"
                 android:textSize="14sp"/>
 
+            <TextView
+                android:id="@+id/profile_details_games"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profile_details_average"
+                android:paddingTop="4dp"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/profile_details_points"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profile_details_games"
+                android:paddingTop="4dp"
+                android:textSize="14sp"/>
+
             <TableLayout
                 android:id="@+id/profile_details_table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/profile_details_average">
+                android:layout_below="@id/profile_details_points"
+                android:paddingTop="8dp">
 
                 <TableRow>
                     <TextView
