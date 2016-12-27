@@ -56,6 +56,36 @@
                 android:paddingTop="8dp"
                 android:textSize="14sp"/>
 
+            <TableLayout
+                android:id="@+id/profile_details_table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profile_details_average">
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="0.75"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:padding="4dp"
+                        android:text="Averages"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textAlignment="center"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:padding="4dp"
+                        android:text="Ranking Points"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textAlignment="center"/>
+                </TableRow>
+            </TableLayout>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>
