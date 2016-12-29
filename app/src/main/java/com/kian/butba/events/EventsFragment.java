@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Created by Kian Mistry on 04/12/16.
@@ -78,7 +79,7 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
 
         //Initialise recycler view.
         recyclerView = (RecyclerView) layout.findViewById(R.id.event_cards_container);
-        cardsAdapter = new EventCardsAdapter(getActivity(), getEvents());
+        cardsAdapter = new EventCardsAdapter(this, getEvents());
         recyclerView.setAdapter(cardsAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -159,8 +160,8 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
                 ) {
                     String name = event.getString("name");
 
-                    SimpleDateFormat oldDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-                    SimpleDateFormat newDateFormat = new SimpleDateFormat("EEE dd MMM yyyy");
+                    SimpleDateFormat oldDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.UK);
+                    SimpleDateFormat newDateFormat = new SimpleDateFormat("EEE dd MMM yyyy", Locale.UK);
                     String date = event.getString("date");
                     Date parsedDate = oldDateFormat.parse(date);
                     String formattedDate = newDateFormat.format(parsedDate);
