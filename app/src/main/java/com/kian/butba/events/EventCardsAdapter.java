@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,10 +16,9 @@ import android.widget.TextView;
 
 import com.kian.butba.R;
 import com.kian.butba.events.EventCardsAdapter.EventDetailsHolder;
-import com.kian.butba.file.FileDownloader;
-import com.kian.butba.permissions.RequestPermissionsAdapter;
+import com.kian.butba.permissions.PermissionConstants;
+import com.kian.butba.permissions.RequestPermissionsAdapterFragment;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,16 +28,15 @@ import java.util.List;
  * Created by Kian Mistry on 06/12/16.
  */
 
-public class EventCardsAdapter extends RequestPermissionsAdapter<EventDetailsHolder> {
+public class EventCardsAdapter extends Adapter<EventDetailsHolder> {
 
+	private RequestPermissionsAdapterFragment fragment;
     private Context context;
-
-	private View view;
 
     private List<HashMap<String, String>> eventsList = Collections.emptyList();
 
-    public EventCardsAdapter(Fragment fragment, List<HashMap<String, String>> eventsList) {
-	    super(fragment);
+    public EventCardsAdapter(RequestPermissionsAdapterFragment fragment, List<HashMap<String, String>> eventsList) {
+	    this.fragment = fragment;
 	    this.context = fragment.getContext();
         this.eventsList = eventsList;
     }
@@ -80,8 +78,7 @@ public class EventCardsAdapter extends RequestPermissionsAdapter<EventDetailsHol
         holder.getEventEntryForm().setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-	            view = v;
-	            requestPermission(v, holder, position, Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
+	            fragment.requestPermission(v, holder, position, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
             }
         });
 
@@ -121,8 +118,7 @@ public class EventCardsAdapter extends RequestPermissionsAdapter<EventDetailsHol
 	    holder.getEventResults().setOnClickListener(new OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
-			    view = v;
-			    requestPermission(v, holder, position, Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
+			    fragment.requestPermission(v, holder, position, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
 		    }
 	    });
     }
@@ -142,87 +138,6 @@ public class EventCardsAdapter extends RequestPermissionsAdapter<EventDetailsHol
 	    eventsList.addAll(list);
 	    notifyDataSetChanged();
     }
-
-	@Override
-	protected void executeActions(View view, EventDetailsHolder holder, int position) {
-		int viewId = view.getId();
-
-		HashMap<String, String> current = eventsList.get(position);
-		final String name = current.get("name");
-
-		if(viewId == holder.getEventEntryForm().getId()) {
-			final String entryForm = current.get("entry_form");
-			if(!entryForm.equals("")) {
-                    /*
-                     * If file exists, open file.
-                     * If not: download file; open file.
-                     */
-				final String fileName = entryForm.substring(entryForm.lastIndexOf("/") + 1);
-				File file = new File(FileDownloader.ENTRY_FORMS_DIR, fileName);
-				String fileType = "application/pdf";
-
-				if(!file.exists()) {
-					FileDownloader fileDownloader = new FileDownloader(
-							context,
-							view,
-							position,
-							name + " Entry Form",
-							R.mipmap.ic_pdf_circle);
-					fileDownloader.execute(entryForm, fileName, FileDownloader.ENTRY_FORMS_DIR, fileType);
-				}
-				else {
-					context.startActivity(
-							FileDownloader.openFileActivity(FileDownloader.ENTRY_FORMS_DIR,
-									fileName,
-									fileType
-							)
-					);
-				}
-			}
-			else {
-				Snackbar.make(view, "Entry form not available", Snackbar.LENGTH_SHORT).show();
-			}
-		}
-		else if(viewId == holder.getEventResults().getId()) {
-			final String results = current.get("results");
-
-			if(!results.equals("")) {
-                    /*
-                     * If file exists, open file.
-                     * If not: download file; open file.
-                     */
-				final String fileName = results.substring(results.lastIndexOf("/") + 1);
-				File file = new File(FileDownloader.RESULTS_DIR, fileName);
-				String fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-				if(!file.exists()) {
-					FileDownloader fileDownloader = new FileDownloader(
-							context,
-							view,
-							holder.getAdapterPosition(),
-							name + " Results",
-							R.mipmap.ic_excel_circle);
-					fileDownloader.execute(results, fileName, FileDownloader.RESULTS_DIR, fileType);
-				}
-				else {
-					context.startActivity(
-							FileDownloader.openFileActivity(FileDownloader.RESULTS_DIR,
-									fileName,
-									fileType
-							)
-					);
-				}
-			}
-			else {
-				Snackbar.make(view, "Results not available", Snackbar.LENGTH_SHORT).show();
-			}
-		}
-	}
-
-	@Override
-	protected void executeActionsIfNotGranted() {
-		Snackbar.make(view, "Cannot download file.", Snackbar.LENGTH_SHORT).show();
-	}
 
 	class EventDetailsHolder extends ViewHolder {
 

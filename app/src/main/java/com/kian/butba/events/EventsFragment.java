@@ -4,13 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,12 +20,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
+import com.kian.butba.events.EventCardsAdapter.EventDetailsHolder;
+import com.kian.butba.file.FileDownloader;
 import com.kian.butba.file.JSONHandler;
+import com.kian.butba.permissions.RequestPermissionsAdapterFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,7 +41,7 @@ import java.util.Locale;
  * Created by Kian Mistry on 04/12/16.
  */
 
-public class EventsFragment extends Fragment implements OnMenuItemClickListener {
+public class EventsFragment extends RequestPermissionsAdapterFragment implements OnMenuItemClickListener {
 
     private ActionBar toolbar;
     private PopupMenu popupMenu;
@@ -228,5 +233,88 @@ public class EventsFragment extends Fragment implements OnMenuItemClickListener 
 		//Display the list of events.
 		cardsAdapter.setList(events);
 		return false;
+	}
+
+	@Override
+	protected void executeActions(View view, ViewHolder holder, int position) {
+		EventDetailsHolder eventDetailsHolder = (EventDetailsHolder) holder;
+
+		int viewId = view.getId();
+
+		HashMap<String, String> current = getEvents().get(position);
+		final String name = current.get("name");
+
+		if(viewId == eventDetailsHolder.getEventEntryForm().getId()) {
+			final String entryForm = current.get("entry_form");
+			if(!entryForm.equals("")) {
+                    /*
+                     * If file exists, open file.
+                     * If not: download file; open file.
+                     */
+				final String fileName = entryForm.substring(entryForm.lastIndexOf("/") + 1);
+				File file = new File(FileDownloader.ENTRY_FORMS_DIR, fileName);
+				String fileType = "application/pdf";
+
+				if(!file.exists()) {
+					FileDownloader fileDownloader = new FileDownloader(
+							getContext(),
+							view,
+							position,
+							name + " Entry Form",
+							R.mipmap.ic_pdf_circle);
+					fileDownloader.execute(entryForm, fileName, FileDownloader.ENTRY_FORMS_DIR, fileType);
+				}
+				else {
+					getContext().startActivity(
+							FileDownloader.openFileActivity(FileDownloader.ENTRY_FORMS_DIR,
+									fileName,
+									fileType
+							)
+					);
+				}
+			}
+			else {
+				Snackbar.make(getView(), "Entry form not available", Snackbar.LENGTH_SHORT).show();
+			}
+		}
+		else if(viewId == eventDetailsHolder.getEventResults().getId()) {
+			final String results = current.get("results");
+
+			if(!results.equals("")) {
+                    /*
+                     * If file exists, open file.
+                     * If not: download file; open file.
+                     */
+				final String fileName = results.substring(results.lastIndexOf("/") + 1);
+				File file = new File(FileDownloader.RESULTS_DIR, fileName);
+				String fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+				if(!file.exists()) {
+					FileDownloader fileDownloader = new FileDownloader(
+							getContext(),
+							view,
+							holder.getAdapterPosition(),
+							name + " Results",
+							R.mipmap.ic_excel_circle);
+					fileDownloader.execute(results, fileName, FileDownloader.RESULTS_DIR, fileType);
+				}
+				else {
+					getContext().startActivity(
+							FileDownloader.openFileActivity(FileDownloader.RESULTS_DIR,
+									fileName,
+									fileType
+							)
+					);
+				}
+			}
+			else {
+				Snackbar.make(view, "Results not available", Snackbar.LENGTH_SHORT).show();
+			}
+		}
+	}
+
+	@Override
+	protected void executeActionsIfNotGranted() {
+		Snackbar.make(getView(), "Cannot download/open file.", Snackbar.LENGTH_SHORT).show();
 	}
 }

@@ -10,8 +10,6 @@ import android.support.v4.content.ContextCompat;
 
 public abstract class RequestPermissionsFragment extends Fragment {
 
-	public static final int REQUEST_CODE_RESULT_EXTERNAL_STORAGE = 1;
-
 	protected abstract void executeActions();
 	protected abstract void executeActionsIfNotGranted();
 
@@ -27,7 +25,7 @@ public abstract class RequestPermissionsFragment extends Fragment {
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 		switch(requestCode) {
-			case REQUEST_CODE_RESULT_EXTERNAL_STORAGE:
+			case PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE:
 				if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					executeActions();
 				}
