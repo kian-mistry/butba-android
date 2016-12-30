@@ -55,17 +55,21 @@ public class SettingsActivity extends AppCompatActivity {
 
             //Initialise shared preferences.
             prefBowlerDetails = getActivity().getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
+            prefNotifications = getActivity().getSharedPreferences("notifications", Context.MODE_PRIVATE);
 
             //Initialise preferences.
             spButbaMember = (SwitchPreference) findPreference("pref_is_butba_member");
             lpBowlerGender = (ListPreference) findPreference("pref_gender");
             lpButbaMembers = (ListPreference) findPreference("pref_butba_member");
 
+	        spEventNotification = (SwitchPreference) findPreference("pref_event_notification");
+	        spAvgRnkNotification = (SwitchPreference) findPreference("pref_avg_rnk_notification");
+
             //Set list preference options for bowler's gender.
             setListPreferenceEntries(lpBowlerGender, genderEntryValues, genderEntries);
 
             /* Set up listeners */
-            //Set change listener for the BUTBA member checkbox preference.
+            //Set change listener for the BUTBA member switch preference.
             spButbaMember.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -135,6 +139,34 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
+
+	        //Set change listener for the event notification switch preference.
+	        spEventNotification.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+		        @Override
+		        public boolean onPreferenceChange(Preference preference, Object newValue) {
+			        boolean eventNotification = Boolean.parseBoolean(newValue.toString());
+
+			        Editor editor = prefNotifications.edit();
+			        editor.putBoolean("event_notification", eventNotification);
+			        editor.commit();
+
+			        return true;
+		        }
+	        });
+
+	        //Set change listener for the average/ranking notification switch preference.
+	        spAvgRnkNotification.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+		        @Override
+		        public boolean onPreferenceChange(Preference preference, Object newValue) {
+					boolean avgRnkNotification = Boolean.parseBoolean(newValue.toString());
+
+			        Editor editor = prefNotifications.edit();
+			        editor.putBoolean("avg_rnk_notification", avgRnkNotification);
+			        editor.commit();
+
+			        return true;
+		        }
+	        });
         }
 
         @Override
@@ -145,6 +177,9 @@ public class SettingsActivity extends AppCompatActivity {
             bowlerId = prefBowlerDetails.getInt("bowler_id", 0);
             bowlerName = prefBowlerDetails.getString("bowler_name", null);
             bowlerGender = prefBowlerDetails.getInt("bowler_gender", 0);
+
+	        eventNotification = prefNotifications.getBoolean("event_notification", true);
+	        avgRnkNotification = prefNotifications.getBoolean("avg_rnk_notification", true);
 
             //Set gender list option.
             lpBowlerGender.setValueIndex(bowlerGender);

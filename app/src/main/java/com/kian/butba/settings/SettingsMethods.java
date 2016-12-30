@@ -17,6 +17,7 @@ import java.util.List;
 
 public class SettingsMethods extends PreferenceFragment  {
 
+    /* PROFILE ************************************************************************************/
     protected SharedPreferences prefBowlerDetails;
     protected int bowlerId;
     protected String bowlerName;
@@ -32,11 +33,21 @@ public class SettingsMethods extends PreferenceFragment  {
     protected CharSequence[] bowlerEntries = null;
     protected CharSequence[] bowlerEntryValues = null;
 
+	/* NOTIFICATIONS ******************************************************************************/
+	protected SharedPreferences prefNotifications;
+	protected boolean eventNotification;
+	protected boolean avgRnkNotification;
+
+	protected SwitchPreference spEventNotification;
+	protected SwitchPreference spAvgRnkNotification;
+
+	/* ********************************************************************************************/
+
     /** Set the values and list options for the given list preference.
      *
-     * @param listPreference
-     * @param entryValues
-     * @param entries
+     * @param listPreference The list preference that needs to be set.
+     * @param entryValues The identifiers for each entry value.
+     * @param entries The entries that need to populate the list preference.
      */
     protected void setListPreferenceEntries(ListPreference listPreference, CharSequence[] entryValues, CharSequence[] entries) {
         listPreference.setEntryValues(entryValues);

@@ -22,6 +22,18 @@
             android:defaultValue=""
             android:summary="Select your name."
             android:title="Name" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Notifications">
+        <SwitchPreference
+            android:key="pref_event_notification"
+            android:defaultValue="true"
+            android:summary="Notify when BUTBA events have been updated."
+            android:title="Events" />
 
+        <SwitchPreference
+            android:key="pref_avg_rnk_notification"
+            android:defaultValue="true"
+            android:summary="Notify when averages and ranking points have been updated."
+            android:title="Averages &amp; Ranking Points" />
     </PreferenceCategory>
 </PreferenceScreen>
