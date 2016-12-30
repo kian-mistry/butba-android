@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.Manifest;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,12 +19,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
 import com.kian.butba.events.EventCardsAdapter.EventDetailsHolder;
 import com.kian.butba.file.FileDownloader;
 import com.kian.butba.file.JSONHandler;
+import com.kian.butba.permissions.PermissionConstants;
 import com.kian.butba.permissions.RequestPermissionsAdapterFragment;
 
 import org.json.JSONArray;
@@ -315,6 +319,13 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 
 	@Override
 	protected void executeActionsIfNotGranted() {
-		Snackbar.make(getView(), "Cannot download/open file.", Snackbar.LENGTH_SHORT).show();
+		Snackbar.make(getView(), "Cannot download/open file.", Snackbar.LENGTH_SHORT)
+			.setAction("Request Access", new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
+				}
+			})
+			.show();
 	}
 }
