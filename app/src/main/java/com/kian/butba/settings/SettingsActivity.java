@@ -3,10 +3,10 @@ package com.kian.butba.settings;
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.SwitchPreference;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -57,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity {
             prefBowlerDetails = getActivity().getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
 
             //Initialise preferences.
-            cbpButbaMember = (CheckBoxPreference) findPreference("pref_is_butba_member");
+            spButbaMember = (SwitchPreference) findPreference("pref_is_butba_member");
             lpBowlerGender = (ListPreference) findPreference("pref_gender");
             lpButbaMembers = (ListPreference) findPreference("pref_butba_member");
 
@@ -66,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             /* Set up listeners */
             //Set change listener for the BUTBA member checkbox preference.
-            cbpButbaMember.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            spButbaMember.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean isChecked = Boolean.valueOf(newValue.toString());

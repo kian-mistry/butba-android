@@ -1,9 +1,9 @@
 package com.kian.butba.settings;
 
 import android.content.SharedPreferences;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 
 import com.kian.butba.database.sqlite.entities.Bowler;
 import com.kian.butba.database.sqlite.tables.TableBowler;
@@ -22,7 +22,7 @@ public class SettingsMethods extends PreferenceFragment  {
     protected String bowlerName;
     protected int bowlerGender;
 
-    protected CheckBoxPreference cbpButbaMember;
+    protected SwitchPreference spButbaMember;
     protected ListPreference lpBowlerGender;
     protected ListPreference lpButbaMembers;
 

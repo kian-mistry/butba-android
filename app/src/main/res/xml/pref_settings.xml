@@ -2,7 +2,7 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Profile">
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="pref_is_butba_member"
             android:defaultValue="false"
             android:disableDependentsState="false"
