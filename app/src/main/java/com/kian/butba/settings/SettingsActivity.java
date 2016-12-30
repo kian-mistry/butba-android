@@ -11,7 +11,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.kian.butba.R;
+import com.kian.butba.notifications.NotificationConstants;
 
 /**
  * Created by Kian Mistry on 26/10/16.
@@ -146,6 +148,14 @@ public class SettingsActivity extends AppCompatActivity {
 		        public boolean onPreferenceChange(Preference preference, Object newValue) {
 			        boolean eventNotification = Boolean.parseBoolean(newValue.toString());
 
+			        //Allows the user to subscribe/unsubscribe to/from a particular notification.
+			        if(eventNotification) {
+				        FirebaseMessaging.getInstance().subscribeToTopic(NotificationConstants.NOTIFICATION_EVENTS);
+			        }
+			        else {
+				        FirebaseMessaging.getInstance().unsubscribeFromTopic(NotificationConstants.NOTIFICATION_EVENTS);
+			        }
+
 			        Editor editor = prefNotifications.edit();
 			        editor.putBoolean("event_notification", eventNotification);
 			        editor.commit();
@@ -159,6 +169,16 @@ public class SettingsActivity extends AppCompatActivity {
 		        @Override
 		        public boolean onPreferenceChange(Preference preference, Object newValue) {
 					boolean avgRnkNotification = Boolean.parseBoolean(newValue.toString());
+
+			        //Allows the user to subscribe/unsubscribe to/from a particular notification.
+			        if(avgRnkNotification) {
+				        FirebaseMessaging.getInstance().subscribeToTopic(NotificationConstants.NOTIFICATION_AVERAGES);
+				        FirebaseMessaging.getInstance().subscribeToTopic(NotificationConstants.NOTIFICATION_RANKINGS);
+			        }
+			        else {
+				        FirebaseMessaging.getInstance().unsubscribeFromTopic(NotificationConstants.NOTIFICATION_AVERAGES);
+				        FirebaseMessaging.getInstance().unsubscribeFromTopic(NotificationConstants.NOTIFICATION_RANKINGS);
+			        }
 
 			        Editor editor = prefNotifications.edit();
 			        editor.putBoolean("avg_rnk_notification", avgRnkNotification);

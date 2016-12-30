@@ -14,16 +14,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.kian.butba.averages.AveragesFragment;
 import com.kian.butba.committee.CommitteeFragment;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 import com.kian.butba.events.EventsFragment;
+import com.kian.butba.notifications.NotificationConstants;
 import com.kian.butba.profile.ProfileFragment;
 import com.kian.butba.rankings.RankingsFragment;
 import com.kian.butba.settings.SettingsActivity;
@@ -48,10 +52,40 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
     private FragmentManager manager = getSupportFragmentManager();
 
+	private SharedPreferences prefNotifications;
+	private boolean eventNotification;
+	private boolean avgRnkNotification;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+	    //Obtain the preferences for the notifications.
+	    prefNotifications = getSharedPreferences("notifications", Context.MODE_PRIVATE);
+
+	    //Subscribe to a particular notification topic.
+	    eventNotification = prefNotifications.getBoolean("event_notification", true);
+	    avgRnkNotification = prefNotifications.getBoolean("avg_rnk_notification", true);
+
+	    //Allows the user to subscribe/unsubscribe to/from a particular notification.
+	    if(eventNotification) {
+		    FirebaseMessaging.getInstance().subscribeToTopic(NotificationConstants.NOTIFICATION_EVENTS);
+	    }
+	    else {
+		    FirebaseMessaging.getInstance().unsubscribeFromTopic(NotificationConstants.NOTIFICATION_EVENTS);
+	    }
+
+	    if(avgRnkNotification) {
+		    FirebaseMessaging.getInstance().subscribeToTopic(NotificationConstants.NOTIFICATION_AVERAGES);
+		    FirebaseMessaging.getInstance().subscribeToTopic(NotificationConstants.NOTIFICATION_RANKINGS);
+	    }
+	    else {
+		    FirebaseMessaging.getInstance().unsubscribeFromTopic(NotificationConstants.NOTIFICATION_AVERAGES);
+		    FirebaseMessaging.getInstance().unsubscribeFromTopic(NotificationConstants.NOTIFICATION_RANKINGS);
+	    }
+
+	    Log.d("NOTIF TOKEN", FirebaseInstanceId.getInstance().getToken());
 
         //Set up toolbar.
         toolbar = (Toolbar) findViewById(R.id.app_bar);
@@ -118,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         }
     }
 
-    @Override
+	@Override
     public void onBackPressed() {
         //Will close the navigation drawer if the back button is pressed.
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
