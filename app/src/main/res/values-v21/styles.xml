@@ -1,6 +1,7 @@
 <resources>
     <!-- Base Theme -->
     <style name="AppTheme" parent="AppTheme.Base">
+        <item name="android:windowActivityTransitions">true</item>
         <item name="android:windowContentTransitions">true</item>
     </style>
     <!-- Popup Theme -->

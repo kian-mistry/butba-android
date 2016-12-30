@@ -11,6 +11,7 @@ import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
@@ -61,16 +62,18 @@ public class ProfileCardDetails extends AppCompatActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_profile_details);
 
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			Transition cardCollapseTransition = TransitionInflater.from(this).inflateTransition(R.transition.transition_card_collapse);
 
 			//Set transitions for entering to this activity and returning to the previous activity.
 			//TODO: Doesn't work correctly.
+			getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
 			getWindow().setEnterTransition(cardCollapseTransition);
 			getWindow().setReturnTransition(cardCollapseTransition);
 		}
+
+		setContentView(R.layout.activity_profile_details);
 
 		//Obtain toolbar.
 		setSupportActionBar((Toolbar) findViewById(R.id.profile_details_app_bar));
