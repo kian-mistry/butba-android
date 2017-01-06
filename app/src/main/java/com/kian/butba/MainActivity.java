@@ -212,8 +212,8 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                 Intent iSettings = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(iSettings);
                 break;
-            case R.id.nav_help:
-                Snackbar.make(this.getCurrentFocus(), "Help", Snackbar.LENGTH_SHORT).show();
+            case R.id.nav_feedback:
+                Snackbar.make(this.getCurrentFocus(), "Send feedback", Snackbar.LENGTH_SHORT).show();
                 break;
             default:
                 break;

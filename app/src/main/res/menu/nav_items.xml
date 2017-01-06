@@ -35,8 +35,8 @@
                 android:icon="@drawable/ic_menu_settings"
                 android:title="Settings" />
             <item
-                android:id="@+id/nav_help"
-                android:icon="@drawable/ic_menu_help"
-                android:title="Help" />
+                android:id="@+id/nav_feedback"
+                android:icon="@drawable/ic_menu_feedback"
+                android:title="Feedback" />
     </group>
 </menu>
