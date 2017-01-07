@@ -8,11 +8,9 @@
     <color name="colourText">#FFFFFF</color>
     <color name="colourPrimaryText">#212121</color>
     <color name="colourSecondaryText">#757575</color>
-    <color name="colourDivider">#BDBDBD</color>
+    <color name="colourDividerDark">#1F000000</color>       <!-- 12% -->
+    <color name="colourDividerLight">#1FFFFFFF</color>      <!-- 12% -->
 
     <!-- Tab -->
-    <color name="colourInactiveTab">#B3FFFFFF</color> <!-- 70% -->
-
-    <!-- Misc -->
-    <color name="blueGrey">#607D8B</color>
+    <color name="colourInactiveTab">#B3FFFFFF</color>       <!-- 70% -->
 </resources>

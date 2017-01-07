@@ -9,7 +9,7 @@
         <item name="android:textColor">@color/colourPrimaryText</item>
         <item name="android:itemBackground">@android:color/white</item>
         <item name="android:colorControlActivated">@color/colourAccent</item>
-        <item name="android:colorControlHighlight">@color/colourDivider</item>
+        <item name="android:colorControlHighlight">@color/colourDividerLight</item>
         <item name="android:colorControlNormal">@color/colourInactiveTab</item>
     </style>
 </resources>

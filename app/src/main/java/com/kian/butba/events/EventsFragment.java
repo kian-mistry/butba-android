@@ -2,12 +2,12 @@ package com.kian.butba.events;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.Manifest;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,16 +23,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.kian.butba.R;
-import com.kian.butba.events.EventCardsAdapter.EventDetailsHolder;
 import com.kian.butba.file.FileDownloader;
-import com.kian.butba.file.JSONHandler;
 import com.kian.butba.permissions.PermissionConstants;
 import com.kian.butba.permissions.RequestPermissionsAdapterFragment;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.text.ParseException;
@@ -51,8 +48,9 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
     private ActionBar toolbar;
     private PopupMenu popupMenu;
 
+	private DatabaseReference databaseReference;
     private RecyclerView recyclerView;
-    private EventCardsAdapter cardsAdapter;
+	private FirebaseRecyclerAdapter<Event, EventHolder> adapter;
 	private ArrayList<HashMap<String, String>> events;
 
 	private SharedPreferences prefShownEvents;
@@ -60,7 +58,7 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 	private boolean exStudentEvents;
 	private boolean btbaEvents;
 
-    public EventsFragment() {
+	public EventsFragment() {
         //Required: Empty public constructor.
     }
 
@@ -74,7 +72,8 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 		exStudentEvents = prefShownEvents.getBoolean("ex_student_events", true);
 		btbaEvents = prefShownEvents.getBoolean("btba_events", true);
 
-		getEventDetails(studentEvents, exStudentEvents, btbaEvents);
+		//Establish reference to database.
+		databaseReference = FirebaseDatabase.getInstance().getReference().child("events").child("16-17");
 	}
 
 	@Override
@@ -89,8 +88,6 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 
         //Initialise recycler view.
         recyclerView = (RecyclerView) layout.findViewById(R.id.event_cards_container);
-        cardsAdapter = new EventCardsAdapter(this, getEvents());
-        recyclerView.setAdapter(cardsAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return layout;
@@ -138,64 +135,150 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
         return true;
     }
 
-    private ArrayList<HashMap<String, String>> getEvents() {
-        return events;
-    }
+	@Override
+	public void onStart() {
+		super.onStart();
+		setupAdapter();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		adapter.cleanup();
+	}
 
 	/**
-	 * Obtains the details of each event.
-	 *
-	 * @param eventTypes The checked state of the types of events to display: Student; Ex-Student; BTBA.
+	 * Creates a recycler adapter and will display a list of events according to the content of the
+	 * Firebase database.
 	 */
-    private void getEventDetails(Boolean... eventTypes) {
-        boolean studentEvents = eventTypes[0];
-        boolean exStudentEvents = eventTypes[1];
-        boolean btbaEvents = eventTypes[2];
+	private void setupAdapter() {
+		adapter = new FirebaseRecyclerAdapter<Event, EventHolder>(
+				Event.class,
+				R.layout.card_event,
+				EventHolder.class,
+				databaseReference
+		) {
+			@Override
+			protected void populateViewHolder(final EventHolder viewHolder, Event model, final int position) {
+				//Set name of event.
+				String eventName = model.getName();
+				viewHolder.getEventName().setText(eventName);
 
-        try {
-            JSONObject jsonObject = JSONHandler.loadJson(getContext(), "butba_events.json");
-            JSONArray jsonArray = jsonObject.getJSONArray("events1617");
+				//Convert date into parts.
+				String date = model.getDate();
+				String[] dateParts = convertDateAndSplit(date, "dd-MM-yyyy", "EEE dd MMM yyyy");
 
-            events = new ArrayList<>();
-            HashMap<String, String> eventDetails;
+				if(dateParts != null) {
+					viewHolder.getEventDay().setText(dateParts[0]);
+					viewHolder.getEventDayOfMonth().setText(dateParts[1]);
+					viewHolder.getEventMonth().setText(dateParts[2]);
+					viewHolder.getEventYear().setText(dateParts[3]);
+				}
 
-            for(int i = 0; i < jsonArray.length(); i++) {
-                JSONObject event = jsonArray.getJSONObject(i);
+				viewHolder.getEventVenue().setText(model.getVenue());
 
-                String tags = event.getString("tags");
-                if(
-                        (tags.contains("S") && studentEvents) ||
-                        (tags.contains("X") && exStudentEvents) ||
-                        (tags.contains("BTBA") && btbaEvents)
-                ) {
-                    String name = event.getString("name");
+				//Handles the downloading and displaying of the entry form, when available.
+				String entryForm = model.getEntryForm();
+				if(entryForm != null) {
+					viewHolder.getEventEntryForm().setVisibility(View.VISIBLE);
+					viewHolder.getEventEntryForm().setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							requestPermission(v, viewHolder, position, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
+						}
+					});
+				}
+				else {
+					viewHolder.getEventEntryForm().setVisibility(View.GONE);
+				}
 
-                    SimpleDateFormat oldDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.UK);
-                    SimpleDateFormat newDateFormat = new SimpleDateFormat("EEE dd MMM yyyy", Locale.UK);
-                    String date = event.getString("date");
-                    Date parsedDate = oldDateFormat.parse(date);
-                    String formattedDate = newDateFormat.format(parsedDate);
+				//Handles opening the item in Facebook (or other applications if the user does not have Facebook).
+				final String facebookEvent = model.getFacebookEvent();
+				if(facebookEvent != null) {
+					viewHolder.getEventFacebook().setVisibility(View.VISIBLE);
+					viewHolder.getEventFacebook().setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							//Open in Facebook app or other recommended apps.
+							Intent intent = new Intent(Intent.ACTION_VIEW);
+							intent.setData(Uri.parse(facebookEvent));
+							startActivity(intent);
+						}
+					});
+				}
+				else {
+					viewHolder.getEventFacebook().setVisibility(View.GONE);
+				}
 
-                    String venue = event.getString("venue");
-                    String entryForm = event.getString("entryForm");
-                    String facebookEvent = event.getString("facebookEvent");
-                    String results = event.getString("results");
+				//Handles the downloading and displaying of the entry form, when available.
+				String results = model.getResults();
+				if(results != null) {
+					viewHolder.getEventResults().setVisibility(View.VISIBLE);
+					viewHolder.getEventResults().setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							requestPermission(v, viewHolder, position, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
+						}
+					});
+				}
+				else {
+					viewHolder.getEventResults().setVisibility(View.GONE);
+				}
 
-                    eventDetails = new HashMap<>();
-                    eventDetails.put("name", name);
-                    eventDetails.put("date", formattedDate);
-                    eventDetails.put("venue", venue);
-                    eventDetails.put("entry_form", entryForm);
-                    eventDetails.put("facebook_event", facebookEvent);
-                    eventDetails.put("results", results);
+				//Allows a user to request a tournament entry.
+				Boolean canEnterTournament = (model.getCanEnter() != null) ? model.getCanEnter() : false;
+				int eightDpInPx = dpToPx(8);
+				int sixteenDpInPx = dpToPx(16);
 
-                    events.add(eventDetails);
-                }
-            }
-        }
-        catch(JSONException | ParseException e) {
-            e.printStackTrace();
-        }
+				if(canEnterTournament) {
+					viewHolder.getEventCardLayout().setPadding(eightDpInPx, sixteenDpInPx, eightDpInPx, 0);
+
+					viewHolder.getEventDivider().setVisibility(View.VISIBLE);
+					viewHolder.getEventRequestTournamentEntry().setVisibility(View.VISIBLE);
+				}
+				else {
+					viewHolder.getEventCardLayout().setPadding(eightDpInPx, sixteenDpInPx, eightDpInPx, sixteenDpInPx);
+					viewHolder.getEventDivider().setVisibility(View.GONE);
+					viewHolder.getEventRequestTournamentEntry().setVisibility(View.GONE);
+				}
+			}
+		};
+
+		recyclerView.setAdapter(adapter);
+	}
+
+	/**
+	 * Converts date into a different format and splits into date components according to the new format.
+	 *
+	 * @param date The date to be converted.
+	 * @param odf The current format of the date.
+	 * @param ndf The new format of the date.
+	 *
+	 * @return The components of the date.
+	 */
+	private String[] convertDateAndSplit(String date, String odf, String ndf) {
+		String[] dateParts = null;
+		SimpleDateFormat oldDateFormat = new SimpleDateFormat(odf, Locale.UK);
+		SimpleDateFormat newDateFormat = new SimpleDateFormat(ndf, Locale.UK);
+
+		try {
+			if(date != null) {
+				Date parsedDate = oldDateFormat.parse(date);
+				String formattedDate = newDateFormat.format(parsedDate);
+
+				dateParts = formattedDate.split(" ");
+			}
+		}
+		catch(ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return dateParts;
+	}
+
+	private ArrayList<HashMap<String, String>> getEvents() {
+        return events;
     }
 
 	private boolean toggleCheckBox(MenuItem item) {
@@ -207,6 +290,18 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 			item.setChecked(true);
 			return true;
 		}
+	}
+
+	/**
+	 * Converts density-independent pixel value to screen pixel value.
+	 *
+	 * @param dp The value to convert into screen pixels.
+	 * @return The screen pixel value.
+	 */
+	private int dpToPx(int dp) {
+		float scale = getResources().getDisplayMetrics().density;
+
+		return (int) (dp * scale + 0.5f);
 	}
 
 	@Override
@@ -233,16 +328,16 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 				break;
 		}
 
-		getEventDetails(studentEvents, exStudentEvents, btbaEvents);
+//		getEventDetails(studentEvents, exStudentEvents, btbaEvents);
 
 		//Display the list of events.
-		cardsAdapter.setList(events);
+//		cardsAdapter.setList(events);
 		return false;
 	}
 
 	@Override
 	protected void executeActions(View view, ViewHolder holder, int position) {
-		EventDetailsHolder eventDetailsHolder = (EventDetailsHolder) holder;
+		EventHolder eventDetailsHolder = (EventHolder) holder;
 
 		int viewId = view.getId();
 

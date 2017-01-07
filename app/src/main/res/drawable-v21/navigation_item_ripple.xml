@@ -8,7 +8,7 @@
 
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="@color/colourDivider" />
+            <solid android:color="@color/colourDividerLight" />
         </shape>
     </item>
     <item>

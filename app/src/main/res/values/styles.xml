@@ -13,7 +13,7 @@
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
-        <item name="android:itemBackground">@color/blueGrey</item>
+        <!--<item name="android:itemBackground">@color/blueGrey</item>-->
         <item name="android:textAppearanceListItem">@color/colourPrimaryText</item>
     </style>
     <!-- Tab Theme -->
@@ -33,6 +33,14 @@
         <item name="android:textColor">@color/colourInactiveTab</item>
         <item name="android:textSize">@dimen/tab_text_size</item>
         <item name="textAllCaps">true</item>
+    </style>
+    <!-- Divider -->
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:background">@color/colourDividerDark</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
