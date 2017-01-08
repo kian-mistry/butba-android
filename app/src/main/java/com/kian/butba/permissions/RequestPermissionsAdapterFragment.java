@@ -14,20 +14,20 @@ import android.view.View;
 /**
  * Class used when a permission needs to be requested from a fragment which is populated using a recycler view.
  */
-public abstract class RequestPermissionsAdapterFragment extends Fragment {
+public abstract class RequestPermissionsAdapterFragment<M, VH extends ViewHolder> extends Fragment {
 
 	private View view;
-	private ViewHolder holder;
-	private int position;
+	private M model;
+	private VH viewHolder;
 
 	/**
 	 * Called when the permission requested has been granted.
 	 *
 	 * @param view The view which has been granted the permission.
-	 * @param holder The container of the view which has been granted permission.
-	 * @param position The position of the item which has been granted the permission.
+	 * @param model The object containing the data used to populate the view.
+	 * @param viewHolder The container of the view which has been granted permission.
 	 */
-	protected abstract void executeActions(View view, ViewHolder holder, int position);
+	protected abstract void executeActions(View view, M model, VH viewHolder);
 
 	/**
 	 * Called when the permission requested has been denied.
@@ -38,18 +38,18 @@ public abstract class RequestPermissionsAdapterFragment extends Fragment {
 	 * Check whether the permission requested has been granted.
 	 *
 	 * @param view The view which the request needs to be called from.
-	 * @param holder The container of the view which the request needs to be called from.
-	 * @param position The position of the item which requires the permission.
+	 * @param model The object containing the data used to populate the view.
+	 * @param viewHolder The container of the view which the request needs to be called from.
 	 * @param permission The permission that needs to be requested.
 	 * @param requestCode The unique identifier given to the permission.
 	 */
-	public void requestPermission(View view, ViewHolder holder, int position, String permission, int requestCode) {
+	public void requestPermission(View view, M model, VH viewHolder, String permission, int requestCode) {
 		this.view = view;
-		this.holder = holder;
-		this.position = position;
+		this.model = model;
+		this.viewHolder = viewHolder;
 
 		if(ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
-			executeActions(view, holder, position);
+			executeActions(view, model, viewHolder);
 		}
 		else {
 			requestPermissions(new String[] {permission}, requestCode);
@@ -61,7 +61,7 @@ public abstract class RequestPermissionsAdapterFragment extends Fragment {
 		switch(requestCode) {
 			case PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE:
 				if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					executeActions(view, holder, position);
+					executeActions(view, model, viewHolder);
 				}
 				else {
 					executeActionsIfNotGranted();

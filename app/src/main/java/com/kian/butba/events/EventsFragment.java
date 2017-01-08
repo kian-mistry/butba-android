@@ -14,7 +14,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,22 +27,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.kian.butba.R;
 import com.kian.butba.file.FileDownloader;
+import com.kian.butba.file.FileOperations;
 import com.kian.butba.permissions.PermissionConstants;
 import com.kian.butba.permissions.RequestPermissionsAdapterFragment;
 
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 /**
  * Created by Kian Mistry on 04/12/16.
  */
 
-public class EventsFragment extends RequestPermissionsAdapterFragment implements OnMenuItemClickListener {
+public class EventsFragment extends RequestPermissionsAdapterFragment<Event, EventHolder> implements OnMenuItemClickListener {
 
     private ActionBar toolbar;
     private PopupMenu popupMenu;
@@ -51,7 +49,6 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 	private DatabaseReference databaseReference;
     private RecyclerView recyclerView;
 	private FirebaseRecyclerAdapter<Event, EventHolder> adapter;
-	private ArrayList<HashMap<String, String>> events;
 
 	private SharedPreferences prefShownEvents;
 	private boolean studentEvents;
@@ -159,7 +156,7 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 				databaseReference
 		) {
 			@Override
-			protected void populateViewHolder(final EventHolder viewHolder, Event model, final int position) {
+			protected void populateViewHolder(final EventHolder viewHolder, final Event model, final int position) {
 				//Set name of event.
 				String eventName = model.getName();
 				viewHolder.getEventName().setText(eventName);
@@ -184,7 +181,7 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 					viewHolder.getEventEntryForm().setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							requestPermission(v, viewHolder, position, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
+							requestPermission(v, model, viewHolder, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
 						}
 					});
 				}
@@ -217,7 +214,7 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 					viewHolder.getEventResults().setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							requestPermission(v, viewHolder, position, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
+							requestPermission(v, model, viewHolder, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionConstants.REQUEST_CODE_RESULT_EXTERNAL_STORAGE);
 						}
 					});
 				}
@@ -277,10 +274,6 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 		return dateParts;
 	}
 
-	private ArrayList<HashMap<String, String>> getEvents() {
-        return events;
-    }
-
 	private boolean toggleCheckBox(MenuItem item) {
 		if(item.isChecked()) {
 			item.setChecked(false);
@@ -336,79 +329,74 @@ public class EventsFragment extends RequestPermissionsAdapterFragment implements
 	}
 
 	@Override
-	protected void executeActions(View view, ViewHolder holder, int position) {
-		EventHolder eventDetailsHolder = (EventHolder) holder;
-
+	protected void executeActions(View view, Event model, EventHolder viewHolder) {
 		int viewId = view.getId();
+		final String name = model.getName();
 
-		HashMap<String, String> current = getEvents().get(position);
-		final String name = current.get("name");
+		if(viewId == viewHolder.getEventEntryForm().getId()) {
+			final String entryForm = model.getEntryForm();
+			/*
+             * If file exists, open file.
+             * If not: download file; open file.
+             */
+			final String fileName = entryForm.substring(entryForm.lastIndexOf("/") + 1);
+			File file = new File(FileDownloader.ENTRY_FORMS_DIR, fileName);
+			String fileType = "application/pdf";
 
-		if(viewId == eventDetailsHolder.getEventEntryForm().getId()) {
-			final String entryForm = current.get("entry_form");
-			if(!entryForm.equals("")) {
-                    /*
-                     * If file exists, open file.
-                     * If not: download file; open file.
-                     */
-				final String fileName = entryForm.substring(entryForm.lastIndexOf("/") + 1);
-				File file = new File(FileDownloader.ENTRY_FORMS_DIR, fileName);
-				String fileType = "application/pdf";
-
-				if(!file.exists()) {
+			if(!file.exists()) {
+				if(FileOperations.hasInternetConnection(getContext())) {
 					FileDownloader fileDownloader = new FileDownloader(
 							getContext(),
 							view,
-							position,
+							viewHolder.getAdapterPosition(),
 							name + " Entry Form",
 							R.mipmap.ic_pdf_circle);
 					fileDownloader.execute(entryForm, fileName, FileDownloader.ENTRY_FORMS_DIR, fileType);
 				}
 				else {
-					getContext().startActivity(
-							FileDownloader.openFileActivity(FileDownloader.ENTRY_FORMS_DIR,
-									fileName,
-									fileType
-							)
-					);
+					Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
 				}
 			}
 			else {
-				Snackbar.make(getView(), "Entry form not available", Snackbar.LENGTH_SHORT).show();
+				getContext().startActivity(
+					FileDownloader.openFileActivity(FileDownloader.ENTRY_FORMS_DIR,
+						fileName,
+						fileType
+					)
+				);
 			}
 		}
-		else if(viewId == eventDetailsHolder.getEventResults().getId()) {
-			final String results = current.get("results");
+		else if(viewId == viewHolder.getEventResults().getId()) {
+			final String results = model.getResults();
+			/*
+             * If file exists, open file.
+             * If not: download file; open file.
+             */
+			final String fileName = results.substring(results.lastIndexOf("/") + 1);
+			File file = new File(FileDownloader.RESULTS_DIR, fileName);
+			String fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-			if(!results.equals("")) {
-                    /*
-                     * If file exists, open file.
-                     * If not: download file; open file.
-                     */
-				final String fileName = results.substring(results.lastIndexOf("/") + 1);
-				File file = new File(FileDownloader.RESULTS_DIR, fileName);
-				String fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-				if(!file.exists()) {
+			if(!file.exists()) {
+				if(FileOperations.hasInternetConnection(getContext())) {
 					FileDownloader fileDownloader = new FileDownloader(
 							getContext(),
 							view,
-							holder.getAdapterPosition(),
+							viewHolder.getAdapterPosition(),
 							name + " Results",
 							R.mipmap.ic_excel_circle);
 					fileDownloader.execute(results, fileName, FileDownloader.RESULTS_DIR, fileType);
 				}
 				else {
-					getContext().startActivity(
-							FileDownloader.openFileActivity(FileDownloader.RESULTS_DIR,
-									fileName,
-									fileType
-							)
-					);
+					Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
 				}
 			}
 			else {
-				Snackbar.make(view, "Results not available", Snackbar.LENGTH_SHORT).show();
+				getContext().startActivity(
+					FileDownloader.openFileActivity(FileDownloader.RESULTS_DIR,
+						fileName,
+						fileType
+					)
+				);
 			}
 		}
 	}
