@@ -5,22 +5,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="android.com.kian.butba.EventsFragment" >
 
-    <item
-        android:id="@+id/cb_students"
-        android:title="Students"
-        android:checkable="true"
-        app:showAsAction="never" />
+    <group android:id="@+id/grp_events" android:checkableBehavior="single">
+        <item
+            android:id="@+id/rb_students"
+            android:title="Students"
+            app:showAsAction="never" />
 
-    <item
-        android:id="@+id/cb_ex_students"
-        android:title="Ex-Students"
-        android:checkable="true"
-        app:showAsAction="never" />
+        <item
+            android:id="@+id/rb_ex_students"
+            android:title="Ex-Students"
+            app:showAsAction="never" />
 
-    <item
-        android:id="@+id/cb_btba"
-        android:title="BTBA"
-        android:checkable="true"
-        app:showAsAction="never" />
+        <item
+            android:id="@+id/rb_btba"
+            android:title="BTBA"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/rb_all"
+            android:title="All"
+            android:checked="true"
+            app:showAsAction="never" />
+    </group>
 
 </menu>

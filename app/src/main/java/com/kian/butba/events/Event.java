@@ -1,5 +1,7 @@
 package com.kian.butba.events;
 
+import java.util.HashMap;
+
 /**
  * Created by Kian Mistry on 07/01/17.
  */
@@ -13,7 +15,7 @@ public class Event {
 	private String id;
 	private String name;
 	private String results;
-	private String tags;
+	private HashMap<String, Boolean> tags;
 	private String time;
 	private String venue;
 
@@ -21,8 +23,7 @@ public class Event {
 		//Required: Empty public constructor.
 	}
 
-
-	public Event(Boolean canEnter, String date, String entryForm, String facebookEvent, String id, String name, String results, String tags, String time, String venue) {
+	public Event(Boolean canEnter, String date, String entryForm, String facebookEvent, String id, String name, String results, HashMap<String, Boolean> tags, String time, String venue) {
 		this.canEnter = canEnter;
 		this.date = date;
 		this.entryForm = entryForm;
@@ -63,7 +64,7 @@ public class Event {
 		return results;
 	}
 
-	public String getTags() {
+	public HashMap<String, Boolean> getTags() {
 		return tags;
 	}
 
