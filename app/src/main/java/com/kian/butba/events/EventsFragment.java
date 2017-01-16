@@ -63,8 +63,11 @@ public class EventsFragment extends RequestPermissionsAdapterFragment<Event, Eve
 		exStudentEvents = prefShownEvents.getBoolean("ex_student_events", true);
 		studentEvents = prefShownEvents.getBoolean("student_events", true);
 
-		//Establish reference to database.
+		//Establish reference to the Firebase database.
 		databaseReference = FirebaseDatabase.getInstance().getReference().child("events").child("16-17");
+
+		//Keep the Firebase database synced when online.
+		databaseReference.keepSynced(true);
 	}
 
 	@Override
