@@ -55,7 +55,7 @@ public class EventCardsAdapter extends FirebaseRecyclerAdapter<Event, EventHolde
 		final Event current = getItem(position);
 
 		//Set name of event.
-		String eventName = current.getName();
+		final String eventName = current.getName();
 		holder.getEventName().setText(eventName);
 
 		//Convert date into parts.
@@ -128,6 +128,21 @@ public class EventCardsAdapter extends FirebaseRecyclerAdapter<Event, EventHolde
 			holder.getEventCardLayout().setPadding(eightDpInPx, sixteenDpInPx, eightDpInPx, 0);
 			holder.getEventDivider().setVisibility(View.VISIBLE);
 			holder.getEventRequestTournamentEntry().setVisibility(View.VISIBLE);
+
+			//Open the Event Entry activity.
+			holder.getEventRequestTournamentEntry().setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(fragment.getActivity(), EventEntry.class);
+
+					Integer teamSize = (current.getTeamSize() != null) ? current.getTeamSize() : 0;
+
+					//Put extras into intent.
+					intent.putExtra("EVENT_NAME", eventName);
+					intent.putExtra("EVENT_TEAM_SIZE", teamSize);
+					fragment.getActivity().startActivityFromFragment(fragment, intent, fragment.getTargetRequestCode());
+				}
+			});
 		}
 		else {
 			holder.getEventCardLayout().setPadding(eightDpInPx, sixteenDpInPx, eightDpInPx, sixteenDpInPx);

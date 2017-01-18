@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,7 +40,7 @@ import java.util.HashMap;
  * Created by Kian Mistry on 17/10/16.
  */
 
-public class ProfileFragment extends Fragment implements ProfileCardClickListener {
+public class ProfileFragment extends Fragment implements ProfileCardClickListener<ProfileHolder> {
 
 	private ActionBar toolbar;
 
@@ -176,31 +175,27 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 	}
 
 	@Override
-	public void onProfileCardClicked(ViewHolder holder, int academicYearId) {
+	public void onProfileCardClicked(ProfileHolder holder, int academicYearId) {
+		//Define intent.
+		Intent intent = new Intent(getActivity(), ProfileCardDetails.class);
+
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-			//Define intent.
-			Intent intent = new Intent(getActivity(), ProfileCardDetails.class);
+			//Define new shared element.
+			View cardView = holder.getProfileCard();
+			String expandCardName = getResources().getString(R.string.transition_expand_card);
+			cardView.setTransitionName(expandCardName);
+			Pair<View, String> cardSharedElement = new Pair<>(cardView, expandCardName);
 
-			if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			//Put extras into intent.
+			intent.putExtra("ACADEMIC_YEAR_ID", academicYearId);
+			intent.putExtra("BOWLER_ID", bowlerId);
 
-				//Define new shared element.
-				View cardView = ((ProfileHolder) holder).getProfileCard();
-				String expandCardName = getResources().getString(R.string.transition_expand_card);
-				cardView.setTransitionName(expandCardName);
-				Pair<View, String> cardSharedElement = new Pair<>(cardView, expandCardName);
-
-				//Put extras into intent.
-				intent.putExtra("ACADEMIC_YEAR_ID", academicYearId);
-				intent.putExtra("BOWLER_ID", bowlerId);
-
-				ActivityOptionsCompat sceneTransition = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), cardSharedElement);
-//				ActivityCompat.startActivity(getContext(), intent, sceneTransition.toBundle());
-				getActivity().startActivityFromFragment(this, intent, getTargetRequestCode(), sceneTransition.toBundle());
-			}
-			else {
-				getActivity().startActivity(intent);
-			}
+			ActivityOptionsCompat sceneTransition = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), cardSharedElement);
+			getActivity().startActivityFromFragment(this, intent, getTargetRequestCode(), sceneTransition.toBundle());
+		}
+		else {
+			getActivity().startActivity(intent);
 		}
 	}
 }

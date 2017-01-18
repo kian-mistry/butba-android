@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kian.butba">
-    
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.kian.butba">
+
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- Android Marshmallow Permissions -->
     <uses-permission-sdk-23 android:name="android.permission.INTERNET"/>
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -41,6 +42,16 @@
         <activity
             android:name=".profile.ProfileCardDetails"
             android:label="Profile Details"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <!-- Event Entry Activity -->
+        <activity
+            android:name=".events.EventEntry"
+            android:label="Event Entry"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

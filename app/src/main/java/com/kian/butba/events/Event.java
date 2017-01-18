@@ -16,6 +16,7 @@ public class Event {
 	private String name;
 	private String results;
 	private HashMap<String, Boolean> tags;
+	private Integer teamSize;
 	private String time;
 	private String venue;
 
@@ -23,7 +24,7 @@ public class Event {
 		//Required: Empty public constructor.
 	}
 
-	public Event(Boolean canEnter, String date, String entryForm, String facebookEvent, String id, String name, String results, HashMap<String, Boolean> tags, String time, String venue) {
+	public Event(Boolean canEnter, String date, String entryForm, String facebookEvent, String id, String name, String results, HashMap<String, Boolean> tags, Integer teamSize, String time, String venue) {
 		this.canEnter = canEnter;
 		this.date = date;
 		this.entryForm = entryForm;
@@ -32,6 +33,7 @@ public class Event {
 		this.name = name;
 		this.results = results;
 		this.tags = tags;
+		this.teamSize = teamSize;
 		this.time = time;
 		this.venue = venue;
 	}
@@ -66,6 +68,10 @@ public class Event {
 
 	public HashMap<String, Boolean> getTags() {
 		return tags;
+	}
+
+	public Integer getTeamSize() {
+		return teamSize;
 	}
 
 	public String getTime() {
