@@ -17,102 +17,106 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
-        android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Event Name -->
-        <TextView
-            android:id="@+id/event_entry_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="Event Name"
-            android:textSize="24sp"
-            android:textStyle="bold"/>
+            android:orientation="vertical">
 
-        <!-- Team Name -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp">
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/event_entry_team_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:scrollbars="vertical"
-                android:verticalScrollbarPosition="right"
-                android:hint="Club/Team Name"
-                android:ems="10"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <!-- Bowlers -->
-        <!-- Child views will be added to this layout depending on the team size. -->
-        <GridLayout
-            android:id="@+id/event_entry_averages_grid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:columnCount="1"/>
-
-        <!-- Payment Methods -->
-        <RadioGroup
-            android:id="@+id/event_entry_payment_methods"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="8dp">
-
+            <!-- Event Name -->
             <TextView
+                android:id="@+id/event_entry_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:paddingBottom="8dp"
-                android:text="Payment Method"
-                android:textSize="12sp"/>
+                android:paddingBottom="16dp"
+                android:text="Event Name"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
 
-            <RadioButton
-                android:id="@+id/event_entry_payment_bank"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:text="Bank Transfer"/>
-
-            <RadioButton
-                android:id="@+id/event_entry_payment_cash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:text="Cash On The Day"/>
-
-            <RadioButton
-                android:id="@+id/event_entry_payment_cheque"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:text="Cheque"/>
-
-        </RadioGroup>
-        
-        <!-- More Information -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4dp">
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/event_entry_more_info"
+            <!-- Team Name -->
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:scrollbars="vertical"
-                android:verticalScrollbarPosition="right"
-                android:hint="More Information"
-                android:ems="10"/>
-        </android.support.design.widget.TextInputLayout>
-    </LinearLayout>
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/event_entry_team_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+                    android:scrollbars="vertical"
+                    android:verticalScrollbarPosition="right"
+                    android:hint="Club/Team Name"
+                    android:ems="10"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Bowlers -->
+            <!-- Child views will be added to this layout depending on the team size. -->
+            <GridLayout
+                android:id="@+id/event_entry_averages_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:columnCount="1"/>
+
+            <!-- Payment Methods -->
+            <RadioGroup
+                android:id="@+id/event_entry_payment_methods"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="Payment Method"
+                    android:textSize="12sp"/>
+
+                <RadioButton
+                    android:id="@+id/event_entry_payment_bank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:text="Bank Transfer"/>
+
+                <RadioButton
+                    android:id="@+id/event_entry_payment_cash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:text="Cash On The Day"/>
+
+                <RadioButton
+                    android:id="@+id/event_entry_payment_cheque"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:text="Cheque"/>
+
+            </RadioGroup>
+
+            <!-- More Information -->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/event_entry_more_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine|textLongMessage|textAutoCorrect|textCapSentences"
+                    android:scrollHorizontally="false"
+                    android:hint="More Information"
+                    android:ems="10"/>
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+    </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

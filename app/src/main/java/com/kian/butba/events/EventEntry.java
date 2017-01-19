@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
@@ -77,9 +76,6 @@ public class EventEntry extends AppCompatActivity {
 		eventEntryPaymentMethods = (RadioGroup) findViewById(R.id.event_entry_payment_methods);
 
 		eventEntryMoreInfo = (TextInputEditText) findViewById(R.id.event_entry_more_info);
-
-		//Push activity up when keyboard is present.
-		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 	}
 
 	@Override
@@ -134,7 +130,7 @@ public class EventEntry extends AppCompatActivity {
 				//TODO: Find a way to generate unique IDs for views.
 				TextInputEditText editTextBowler = new TextInputEditText(this);
 				editTextBowler.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-				editTextBowler.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+				editTextBowler.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
 				editTextBowler.setHint("Bowler " + (i + 1));
 
 				//Add to text input layout.
