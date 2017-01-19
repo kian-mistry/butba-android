@@ -2,14 +2,17 @@ package com.kian.butba.events;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,6 +27,9 @@ import java.util.HashMap;
  */
 
 public class EventEntry extends AppCompatActivity {
+
+	public static String ENTRIES_EMAIL = "entries@butba.co.uk";
+	public static String DEV_EMAIL = "developer@butba.co.uk";
 
 	private ActionBar toolbar;
 
@@ -62,6 +68,37 @@ public class EventEntry extends AppCompatActivity {
 		setupAveragesView(eventTeamSize);
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+
+		//Add custom buttons to the toolbar.
+		menu.clear();
+		MenuInflater menuInflater = getMenuInflater();
+		menuInflater.inflate(R.menu.menu_event_entry, menu);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+
+		switch(id) {
+			case android.R.id.home:
+				onBackPressed();
+				break;
+			case R.id.btn_event_entry_submit:
+				obtainTextFieldEntries();
+				submitEntry();
+				break;
+			default:
+				break;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
 	/**
 	 * Populate the entry form with fields asking for the bowler's name and average depending on the team size for the event.
 	 *
@@ -81,7 +118,7 @@ public class EventEntry extends AppCompatActivity {
 
 				//Create edit text for bowler's name.
 				//TODO: Find a way to generate unique IDs for views.
-				EditText editTextBowler = new EditText(this);
+				TextInputEditText editTextBowler = new TextInputEditText(this);
 				editTextBowler.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 				editTextBowler.setInputType(InputType.TYPE_CLASS_TEXT);
 				editTextBowler.setHint("Bowler " + (i + 1));
@@ -97,7 +134,7 @@ public class EventEntry extends AppCompatActivity {
 				textInputLayoutBowlerAverage.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1));
 
 				//Create edit text for bowler's name.
-				EditText editTextBowlerAverage = new EditText(this);
+				TextInputEditText editTextBowlerAverage = new TextInputEditText(this);
 				editTextBowlerAverage.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 				editTextBowlerAverage.setInputType(InputType.TYPE_CLASS_NUMBER);
 				editTextBowlerAverage.setHint("Average");
@@ -114,18 +151,17 @@ public class EventEntry extends AppCompatActivity {
 		}
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
+	/**
+	 * Obtain entries from each text field on the form.
+	 */
+	private void obtainTextFieldEntries() {
 
-		switch(id) {
-			case android.R.id.home:
-				onBackPressed();
-				break;
-			default:
-				break;
-		}
+	}
 
-		return super.onOptionsItemSelected(item);
+	/**
+	 * Packages the data obtained from the text fields to send to an email intent.
+	 */
+	private void submitEntry() {
+		Snackbar.make(getCurrentFocus(), "Entry submitted", Snackbar.LENGTH_SHORT).show();
 	}
 }
