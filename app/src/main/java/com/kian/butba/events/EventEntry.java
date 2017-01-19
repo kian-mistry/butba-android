@@ -1,8 +1,8 @@
 package com.kian.butba.events;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
@@ -13,13 +13,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.kian.butba.R;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -29,7 +32,6 @@ import java.util.HashMap;
 public class EventEntry extends AppCompatActivity {
 
 	public static String ENTRIES_EMAIL = "entries@butba.co.uk";
-	public static String DEV_EMAIL = "developer@butba.co.uk";
 
 	private ActionBar toolbar;
 
@@ -37,10 +39,13 @@ public class EventEntry extends AppCompatActivity {
 	private int eventTeamSize;
 
 	private TextView eventEntryName;
+	private TextInputEditText eventEntryTeamName;
 	private GridLayout eventEntryAveragesGrid;
+	private RadioGroup eventEntryPaymentMethods;
+	private TextInputEditText eventEntryMoreInfo;
 
-	private ArrayList<HashMap<String, String>> bowlersEditTextIds;
-	private ArrayList<HashMap<String, Integer>> bowlersAverages;
+	private HashMap<String, String> bowlersNames;
+	private HashMap<String, Integer> bowlersAverages;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +69,17 @@ public class EventEntry extends AppCompatActivity {
 		eventEntryName = (TextView) findViewById(R.id.event_entry_name);
 		eventEntryName.setText(eventName);
 
+		eventEntryTeamName = (TextInputEditText) findViewById(R.id.event_entry_team_name);
+
 		eventEntryAveragesGrid = (GridLayout) findViewById(R.id.event_entry_averages_grid);
 		setupAveragesView(eventTeamSize);
+
+		eventEntryPaymentMethods = (RadioGroup) findViewById(R.id.event_entry_payment_methods);
+
+		eventEntryMoreInfo = (TextInputEditText) findViewById(R.id.event_entry_more_info);
+
+		//Push activity up when keyboard is present.
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 	}
 
 	@Override
@@ -120,7 +134,7 @@ public class EventEntry extends AppCompatActivity {
 				//TODO: Find a way to generate unique IDs for views.
 				TextInputEditText editTextBowler = new TextInputEditText(this);
 				editTextBowler.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-				editTextBowler.setInputType(InputType.TYPE_CLASS_TEXT);
+				editTextBowler.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
 				editTextBowler.setHint("Bowler " + (i + 1));
 
 				//Add to text input layout.
@@ -155,13 +169,75 @@ public class EventEntry extends AppCompatActivity {
 	 * Obtain entries from each text field on the form.
 	 */
 	private void obtainTextFieldEntries() {
+		bowlersNames = new HashMap<>();
+		bowlersAverages = new HashMap<>();
 
+		for(int i = 0; i < eventTeamSize; i++) {
+			LinearLayout linearLayout = (LinearLayout) eventEntryAveragesGrid.getChildAt(i);
+
+			//Bowler's Name
+			TextInputLayout textInputLayoutBowler = (TextInputLayout) linearLayout.getChildAt(0);
+			FrameLayout frameLayout = (FrameLayout) textInputLayoutBowler.getChildAt(0);
+			TextInputEditText editTextBowler = (TextInputEditText) frameLayout.getChildAt(0);
+			String name = (!editTextBowler.getText().toString().equals("")) ? editTextBowler.getText().toString() : null;
+			bowlersNames.put("bowler_" + (i + 1), name);
+
+			//Bowler's Average
+			TextInputLayout textInputLayoutBowlerAverage = (TextInputLayout) linearLayout.getChildAt(1);
+			frameLayout = (FrameLayout) textInputLayoutBowlerAverage.getChildAt(0);
+			TextInputEditText editTextBowlerAverage = (TextInputEditText) frameLayout.getChildAt(0);
+			Integer average = (!editTextBowlerAverage.getText().toString().equals("")) ? Integer.parseInt(editTextBowlerAverage.getText().toString()) : null;
+
+			bowlersAverages.put("bowler_" + (i + 1), average);
+		}
 	}
 
 	/**
 	 * Packages the data obtained from the text fields to send to an email intent.
 	 */
 	private void submitEntry() {
-		Snackbar.make(getCurrentFocus(), "Entry submitted", Snackbar.LENGTH_SHORT).show();
+		//Construct body of message.
+
+		//Team Name.
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("Club/Team Name: ");
+		stringBuilder.append(eventEntryTeamName.getText().toString() + "\n\n");
+
+		//Bowlers within team.
+		stringBuilder.append("Bowlers: \n");
+		for(int i = 0; i < eventTeamSize; i++) {
+			String name = bowlersNames.get("bowler_" + (i + 1));
+			Integer average = bowlersAverages.get("bowler_" + (i + 1));
+
+			if(name != null) {
+				stringBuilder.append(name + " (" + average + ") \n");
+			}
+		}
+
+		//Payment Method.
+		int checkedRadioButtonId = eventEntryPaymentMethods.getCheckedRadioButtonId();
+		stringBuilder.append("\nPayment Method: ");
+
+		if(checkedRadioButtonId != -1) {
+			//One of the radio buttons are checked.
+			RadioButton radioButton = (RadioButton) findViewById(checkedRadioButtonId);
+			stringBuilder.append(radioButton.getText().toString() + ". \n\n");
+		}
+		else {
+			//None of the radio buttons are checked.
+			stringBuilder.append("Not specified. \n\n");
+		}
+
+		stringBuilder.append("More Information: \n");
+		stringBuilder.append(eventEntryMoreInfo.getText().toString() + "\n\n");
+
+		//Create a new email intent.
+		Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+		StringBuilder uriBuilder = new StringBuilder();
+		uriBuilder.append("mailto:" + Uri.encode(ENTRIES_EMAIL));
+		uriBuilder.append("?subject=" + Uri.encode("BUTBA: " + eventName + " Entry"));
+		uriBuilder.append("&body=" + Uri.encode(stringBuilder.toString()));
+		emailIntent.setData(Uri.parse(uriBuilder.toString()));
+		startActivity(emailIntent);
 	}
 }
