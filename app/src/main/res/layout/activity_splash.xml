@@ -27,7 +27,6 @@
             android:contentDescription="The BUTBA logo." />
 
     </RelativeLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -47,7 +46,5 @@
             android:visibility="visible"
             style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal" />
 
-
     </RelativeLayout>
-
 </LinearLayout>
