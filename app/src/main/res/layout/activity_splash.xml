@@ -39,12 +39,22 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginBottom="64dp"
+            android:layout_marginBottom="96dp"
             android:indeterminate="true"
             android:indeterminateBehavior="cycle"
             android:indeterminateTint="@color/colourAccent"
             android:visibility="visible"
             style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal" />
+
+        <TextView
+            android:id="@+id/splash_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="64dp"
+            android:textAlignment="center"/>
 
     </RelativeLayout>
 </LinearLayout>
