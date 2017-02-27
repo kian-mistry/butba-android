@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.kian.butba.averages.AveragesFragment;
-import com.kian.butba.committee.CommitteeFragment;
 import com.kian.butba.database.sqlite.entities.BowlerSeason;
 import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 import com.kian.butba.events.EventsFragment;
@@ -170,13 +169,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                 manager.beginTransaction()
 		                .replace(R.id.content_main, profileFragment, profileFragment.getTag())
 		                .commit();
-                break;
-            case R.id.nav_committee:
-                CommitteeFragment committeeFragment = new CommitteeFragment();
-                manager.beginTransaction()
-                        .replace(R.id.content_main, committeeFragment, committeeFragment.getTag())
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .commit();
                 break;
             case R.id.nav_events:
                 EventsFragment eventsFragment = new EventsFragment();
