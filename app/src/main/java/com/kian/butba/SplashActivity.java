@@ -2,38 +2,43 @@ package com.kian.butba;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AlertDialog.Builder;
 import android.widget.TextView;
 
-import com.kian.butba.database.sqlite.DatabaseOperations;
+import com.kian.butba.database.server.QueriesUrl;
+import com.kian.butba.file.AsyncDelegate;
 import com.kian.butba.file.FileOperations;
+import com.kian.butba.file.ServerFileDownloader;
+import com.kian.butba.multithreading.FileDownloaderThreadMonitor;
 
 public class SplashActivity extends Activity {
 
+	private static final int MAX_FILES = 2;
+	private static final int STARTUP_DELAY = 1500;
+
 	private SharedPreferences prefInitialisation;
 	private boolean isInitialised = false;
-
 	private boolean isConnected = false;
 
-	private SharedPreferences prefDatabase;
-	private boolean tableAcademicYearExists;
-	private boolean tableBowlerExists;
-	private boolean tableBowlerSeasonsExists;
-	private boolean tableEventCodesExists;
-	private boolean tableRankingStatusExists;
-	private boolean tableStudentStatusExists;
-	private boolean tableUniversityExists;
-
 	private TextView tvStatus;
+	private AlertDialog alertDialog;
 
+	private FileDownloaderThreadMonitor threadMonitor = new FileDownloaderThreadMonitor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+	    super.onCreate(savedInstanceState);
+	    setContentView(R.layout.activity_splash);
 
 	    //Initialise views.
 	    tvStatus = (TextView) findViewById(R.id.splash_status);
@@ -41,132 +46,141 @@ public class SplashActivity extends Activity {
 	    //Check whether app has been ran for the first time.
 	    prefInitialisation = getSharedPreferences("butba_initialisation", Context.MODE_PRIVATE);
 	    isInitialised = prefInitialisation.getBoolean("pref_initialised", false);
-
-	    //Check whether tables have been downloaded.
-	    prefDatabase = getSharedPreferences("butba_database", Context.MODE_PRIVATE);
-	    tableAcademicYearExists = prefDatabase.getBoolean("pref_table_academic_year", false);
-	    tableBowlerExists = prefDatabase.getBoolean("pref_table_bowlers", false);
-	    tableBowlerSeasonsExists = prefDatabase.getBoolean("pref_table_bowlers_seasons", false);
-	    tableEventCodesExists = prefDatabase.getBoolean("pref_table_event_code", false);
-	    tableRankingStatusExists = prefDatabase.getBoolean("pref_table_ranking_status", false);
-	    tableStudentStatusExists = prefDatabase.getBoolean("pref_table_student_status", false);
-	    tableUniversityExists = prefDatabase.getBoolean("pref_table_university", false);
-
-	    //Wait for x seconds, until the home screen is shown.
-	    Thread timer = new Thread() {
-
-		    @Override
-		    public void run() {
-			    try {
-				    //If all data has been downloaded, show the splash screen for 1.5 seconds.
-				    if(
-						    !tableAcademicYearExists ||
-							!tableBowlerExists ||
-							!tableBowlerSeasonsExists ||
-							!tableEventCodesExists ||
-							!tableRankingStatusExists ||
-							!tableStudentStatusExists ||
-							!tableUniversityExists
-					) {
-						//Stay on splash screen until all the data has been downloaded.
-					    tvStatus.setText("Fetching database...");
-					    prefCheckTablesExists();
-
-					    do {
-						    sleep(100);
-					    } while(!DatabaseOperations.isCompleted[0] &&
-							    !DatabaseOperations.isCompleted[1] &&
-							    !DatabaseOperations.isCompleted[2] &&
-							    !DatabaseOperations.isCompleted[3] &&
-							    !DatabaseOperations.isCompleted[4] &&
-							    !DatabaseOperations.isCompleted[5] &&
-							    !DatabaseOperations.isCompleted[6]);
-
-					    Editor editor = prefInitialisation.edit();
-					    editor.putBoolean("pref_initialised", true);
-					    editor.commit();
-
-					    Intent iProfile = new Intent(SplashActivity.this, MainActivity.class);
-					    startActivity(iProfile);
-				    }
-			    }
-			    catch(InterruptedException e) {
-				    Editor editor = prefInitialisation.edit();
-				    editor.putBoolean("pref_initialised", false);
-				    editor.commit();
-
-				    e.printStackTrace();
-			    }
-		    }
-	    };
-
-	    try {
-		    if(!isInitialised) {
-			    tvStatus.setText("Checking Internet connection...");
-			    Thread.sleep(500);
-			    isConnected = FileOperations.hasInternetConnection(this);
-
-			    if(isConnected) {
-				    timer.start();
-			    }
-			    else {
-				    //TODO: App isn't connected to the Internet, prompt for retry or close.
-				    finish();
-			    }
-		    }
-		    else {
-			    tvStatus.setText("Completed!");
-			    Thread.sleep(1500);
-
-			    Intent iProfile = new Intent(SplashActivity.this, MainActivity.class);
-			    startActivity(iProfile);
-		    }
-	    }
-	    catch(InterruptedException e) {
-		    e.printStackTrace();
-	    }
     }
 
 	@Override
-    protected void onPause() {
-        super.onPause();
+	protected void onResume() {
+		super.onResume();
 
-        //Kills the activity.
-        finish();
-    }
+		//Check if device connected to the Internet.
+		isConnected = FileOperations.hasInternetConnection(this);
 
-    /**
-     * Use a preference to check whether a table exists.
-     */
-    private void prefCheckTablesExists() {
-        //TODO: Create threads for each operation.
-        //TODO: Sort of solved using parallel pools of AsyncTasks.
-        if(!tableAcademicYearExists) {
-            DatabaseOperations.getAllAcademicYears(this);
-        }
+		//Will close the alert dialog if it is present on the screen.
+		closeConnectionDialogue();
 
-        if(!tableEventCodesExists) {
-            DatabaseOperations.getAllEvents(this);
-        }
+		//Checks if the device has not been initialised and is not connected to the Internet.
+		if(!isInitialised && !isConnected) {
+			tvStatus.setText("Checking Internet connection...");
+			promptConnectionDialogue();
+		}
+		//Downloads necessary files if device is not initialised but is connected to the Internet.
+		else if(!isInitialised && isConnected) {
+			tvStatus.setText("Fetching data...");
 
-        if(!tableRankingStatusExists) {
-            DatabaseOperations.getAllRankingStatuses(this);
-        }
+			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES, ".json")) {
+				startDownloadingTask(getFileDownloader(),
+						QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
+						FileOperations.LATEST_AVERAGES);
+			}
 
-        if(!tableStudentStatusExists) {
-            DatabaseOperations.getAllStudentStatuses(this);
-        }
+			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_RANKINGS, ".json")) {
+				startDownloadingTask(getFileDownloader(),
+						QueriesUrl.URL_GET_LATEST_EVENT_RANKINGS,
+						FileOperations.LATEST_RANKINGS);
+			}
+		}
+		//Goes to main activity if device has been initialised.
+		else {
+			tvStatus.setText("Loading...");
 
-        if(!tableUniversityExists) {
-            DatabaseOperations.getAllUniversities(this);
-        }
+			//Shows startup screen for 1.5 seconds.
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					Intent intentMain = new Intent(SplashActivity.this, MainActivity.class);
+					startActivity(intentMain);
+				}
+			}, STARTUP_DELAY);
+		}
+	}
 
-        if(!tableBowlerExists) {
-            DatabaseOperations.getAllBowlers(this);
-        }
+	/**
+	 * Creates an alert dialog prompting the user to connect to the Internet.
+	 */
+	private void promptConnectionDialogue() {
+		Builder alertDialogBuilder = new Builder(SplashActivity.this);
 
-        if(!tableBowlerSeasonsExists) {
-            DatabaseOperations.getAllBowlersSeasons(this);
-        }
-    }
+		alertDialogBuilder.setTitle("Internet Connection")
+				.setMessage("Connect to the internet?");
+
+		alertDialogBuilder.setPositiveButton("OPEN SETTINGS", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				//Display the Settings app so that the user is able to connect to the Internet.
+				Intent intent = new Intent();
+				intent.setAction(Settings.ACTION_SETTINGS);
+				intent.addCategory(Intent.CATEGORY_DEFAULT);
+
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
+				startActivity(intent);
+
+				alertDialog.cancel();
+			}
+		});
+
+		alertDialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				//Kills the activity, if refusing to connect to the Internet.
+				finish();
+			}
+		});
+
+		alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+	}
+
+	/**
+	 * Closes the alert dialog, if it is shown on the screen.
+	 */
+	private void closeConnectionDialogue() {
+		if(alertDialog != null && alertDialog.isShowing()) {
+			alertDialog.cancel();
+		}
+	}
+
+	/**
+	 * Creates a new AsyncTask to download the JSON file from the server.
+	 * (AsyncTasks can not be executed more than once).
+	 *
+	 * @return A new ServerFileDownloader object.
+	 */
+	private ServerFileDownloader getFileDownloader() {
+		return new ServerFileDownloader(this, new AsyncDelegate() {
+			@Override
+			public void onProcessResults(Boolean success) {
+				if(success) {
+					synchronized(threadMonitor) {
+						threadMonitor.incrementFilesDownloaded();
+
+						if(threadMonitor.getFilesDownloaded() >= MAX_FILES) {
+							Editor editor = prefInitialisation.edit();
+							editor.putBoolean("pref_initialised", true);
+							editor.commit();
+
+							Intent intentMain = new Intent(SplashActivity.this, MainActivity.class);
+							startActivity(intentMain);
+						}
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * Runs multiple AsyncTasks, providing SDK version >= 11.
+	 * @param asyncTask The AsyncTask to execute.
+	 * @param params The parameters which the AsyncTask takes.
+	 */
+	private void startDownloadingTask(AsyncTask<String, Integer, Boolean> asyncTask, String... params) {
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
+		}
+		else {
+			asyncTask.execute(params);
+		}
+	}
 }
