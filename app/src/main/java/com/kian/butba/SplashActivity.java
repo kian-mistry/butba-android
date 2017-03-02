@@ -23,7 +23,7 @@ import com.kian.butba.multithreading.FileDownloaderThreadMonitor;
 
 public class SplashActivity extends Activity {
 
-	private static final int MAX_FILES = 2;
+	private static final int MAX_FILES = 3;
 	private static final int STARTUP_DELAY = 1500;
 
 	private SharedPreferences prefInitialisation;
@@ -66,6 +66,12 @@ public class SplashActivity extends Activity {
 		//Downloads necessary files if device is not initialised but is connected to the Internet.
 		else if(!isInitialised && isConnected) {
 			tvStatus.setText("Fetching data...");
+
+			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.ALL_BOWLERS, ".json")) {
+				startDownloadingTask(getFileDownloader(),
+						QueriesUrl.URL_GET_ALL_BOWLERS,
+						FileOperations.ALL_BOWLERS);
+			}
 
 			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES, ".json")) {
 				startDownloadingTask(getFileDownloader(),

@@ -20,6 +20,7 @@ public class FileOperations {
 	public static final String INTERNAL_SERVER_DIR = "/server/";
 
 	public static final String BOWLERS_SEASON_STATS_FILE = "bowlers_seasons_stats";
+	public static final String ALL_BOWLERS = "all_bowlers";
 	public static final String LATEST_AVERAGES = "latest_averages";
 	public static final String LATEST_RANKINGS = "latest_rankings";
 

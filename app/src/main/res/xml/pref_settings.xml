@@ -17,8 +17,22 @@
             android:title="Gender" />
 
         <ListPreference
-            android:key="pref_butba_member"
+            android:key="pref_student_status"
             android:dependency="pref_gender"
+            android:defaultValue="None"
+            android:summary="Select your student status."
+            android:title="Student Status" />
+
+        <ListPreference
+            android:key="pref_academic_year"
+            android:dependency="pref_student_status"
+            android:defaultValue="2016/17"
+            android:summary="Select an academic year."
+            android:title="Academic Year" />
+
+        <ListPreference
+            android:key="pref_butba_member"
+            android:dependency="pref_academic_year"
             android:defaultValue=""
             android:summary="Select your name."
             android:title="Name" />
