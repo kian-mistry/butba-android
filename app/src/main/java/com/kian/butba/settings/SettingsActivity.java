@@ -232,7 +232,7 @@ public class SettingsActivity extends AppCompatActivity {
 			        editor.commit();
 
 			        //Set summary once option is chosen.
-			        setListPreferenceSummary(lpAcademicYear, academicYearEntries, bowlerAcademicYear);
+			        setListPreferenceSummary(lpAcademicYear, academicYearEntries, bowlerAcademicYear - 1);
 
 			        return true;
 		        }
