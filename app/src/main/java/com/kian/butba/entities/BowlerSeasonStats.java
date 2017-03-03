@@ -1,10 +1,14 @@
 package com.kian.butba.entities;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Created by Kian Mistry on 02/03/17.
  */
 
-public class BowlerSeasonStats {
+public class BowlerSeasonStats implements Serializable {
 
 	private int academicYearId;
 	private int rankingStatus;
@@ -14,6 +18,10 @@ public class BowlerSeasonStats {
 	private int games;
 	private int points;
 	private int bestN;
+
+	private List<String> stopsList;
+	private HashMap<String, String> tournamentAverages;
+	private HashMap<String, String> tournamentPoints;
 
 	public BowlerSeasonStats(int academicYearId, int rankingStatus, int studentStatus, String university, int average, int games, int points, int bestN) {
 		this.academicYearId = academicYearId;
@@ -56,5 +64,29 @@ public class BowlerSeasonStats {
 
 	public int getBestN() {
 		return bestN;
+	}
+
+	public List<String> getStopsList() {
+		return stopsList;
+	}
+
+	public HashMap<String, String> getTournamentAverages() {
+		return tournamentAverages;
+	}
+
+	public HashMap<String, String> getTournamentPoints() {
+		return tournamentPoints;
+	}
+
+	public void setStopsList(List<String> stopsList) {
+		this.stopsList = stopsList;
+	}
+
+	public void setTournamentAverages(HashMap<String, String> tournamentAverages) {
+		this.tournamentAverages = tournamentAverages;
+	}
+
+	public void setTournamentPoints(HashMap<String, String> tournamentPoints) {
+		this.tournamentPoints = tournamentPoints;
 	}
 }

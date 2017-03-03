@@ -16,7 +16,6 @@ import com.kian.butba.entities.BowlerSeasonStats;
 import com.kian.butba.entities.RankingStatus;
 import com.kian.butba.entities.StudentStatus;
 import com.kian.butba.profile.ProfileCardsAdapter.ProfileHolder;
-import com.kian.butba.views.CardClickListener.ProfileCardClickListener;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +44,7 @@ public class ProfileCardsAdapter extends Adapter<ProfileHolder> {
 	}
 
 	@Override
-	public void onBindViewHolder(final ProfileHolder holder, final int position) {
+	public void onBindViewHolder(final ProfileHolder holder, int position) {
 		final BowlerSeasonStats current = profiles.get(position);
 
 		//Set the contents of the card.
@@ -83,7 +82,7 @@ public class ProfileCardsAdapter extends Adapter<ProfileHolder> {
 		holder.getProfileCard().setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				cardClickListener.onProfileCardClicked(holder, academicYearId);
+				cardClickListener.onProfileCardClicked(holder, current);
 			}
 		});
 	}

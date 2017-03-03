@@ -25,7 +25,6 @@ import com.kian.butba.file.AsyncDelegate;
 import com.kian.butba.file.FileOperations;
 import com.kian.butba.file.ServerFileDownloader;
 import com.kian.butba.profile.ProfileCardsAdapter.ProfileHolder;
-import com.kian.butba.views.CardClickListener.ProfileCardClickListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,13 +34,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by Kian Mistry on 17/10/16.
  */
 
-public class ProfileFragment extends Fragment implements ProfileCardClickListener<ProfileHolder> {
+public class ProfileFragment extends Fragment implements ProfileCardClickListener<ProfileHolder, BowlerSeasonStats> {
 
 	private ActionBar toolbar;
 
@@ -147,12 +147,32 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 						int rankingStatus = Integer.parseInt(detail.getString("RankingStatus"));
 						int studentStatus = Integer.parseInt(detail.getString("StudentStatus"));
 						String university = detail.getString("University");
-						int average = Integer.parseInt(detail.getString("OverallAverage"));
-						int games = Integer.parseInt(detail.getString("TotalGames"));
-						int points = detail.getInt("TotalPoints");
+						int overallAverage = Integer.parseInt(detail.getString("OverallAverage"));
+						int totalGames = Integer.parseInt(detail.getString("TotalGames"));
+						int totalPoints = detail.getInt("TotalPoints");
 						int bestN = detail.getInt("BestN");
 
-						BowlerSeasonStats seasonStats = new BowlerSeasonStats(academicYear, rankingStatus, studentStatus, university, average, games, points, bestN);
+						JSONArray stops = detail.getJSONArray("Stops");
+						JSONObject averages = detail.getJSONObject("Averages");
+						JSONArray points = detail.getJSONArray("RankingPoints");
+
+						List<String> stopsList = new ArrayList<>();
+						HashMap<String, String> tournamentAverages = new HashMap<>();
+						HashMap<String, String> tournamentPoints = new HashMap<>();
+
+						for(int j = 0; j < stops.length(); j++) {
+							String stopName = stops.getString(j);
+							stopsList.add(stopName);
+
+							tournamentAverages.put(stopName, averages.getString(stopName));
+							tournamentPoints.put(stopName, points.getString(j));
+						}
+
+						BowlerSeasonStats seasonStats = new BowlerSeasonStats(academicYear, rankingStatus, studentStatus, university, overallAverage, totalGames, totalPoints, bestN);
+						seasonStats.setStopsList(stopsList);
+						seasonStats.setTournamentAverages(tournamentAverages);
+						seasonStats.setTournamentPoints(tournamentPoints);
+
 						profiles.add(seasonStats);
 					}
 				}
@@ -181,7 +201,7 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 	}
 
 	@Override
-	public void onProfileCardClicked(ProfileHolder holder, int academicYearId) {
+	public void onProfileCardClicked(ProfileHolder holder, BowlerSeasonStats seasonStats) {
 		//Define intent.
 		Intent intent = new Intent(getActivity(), ProfileCardDetails.class);
 
@@ -193,9 +213,8 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 			cardView.setTransitionName(expandCardName);
 			Pair<View, String> cardSharedElement = new Pair<>(cardView, expandCardName);
 
-			//Put extras into intent.
-			intent.putExtra("ACADEMIC_YEAR_ID", academicYearId);
-			intent.putExtra("BOWLER_ID", bowlerId);
+			//Put extras into intent, to send to the Profile Cards Details activity.
+			intent.putExtra("SEASON_STATS", seasonStats);
 
 			ActivityOptionsCompat sceneTransition = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), cardSharedElement);
 			getActivity().startActivityFromFragment(this, intent, getTargetRequestCode(), sceneTransition.toBundle());

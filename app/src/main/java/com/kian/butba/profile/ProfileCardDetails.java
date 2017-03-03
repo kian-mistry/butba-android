@@ -18,15 +18,11 @@ import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 
 import com.kian.butba.R;
-import com.kian.butba.database.sqlite.tables.TableAcademicYear;
-import com.kian.butba.file.FileOperations;
+import com.kian.butba.entities.AcademicYear;
+import com.kian.butba.entities.BowlerSeasonStats;
+import com.kian.butba.entities.RankingStatus;
+import com.kian.butba.entities.StudentStatus;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,20 +33,6 @@ import java.util.List;
 public class ProfileCardDetails extends AppCompatActivity {
 
 	private ActionBar toolbar;
-
-	private int bowlerId;
-	private int academicYearId;
-	private String academicYear;
-
-	private JSONObject jsonObject;
-	private JSONArray jsonArray;
-
-	private boolean isDataRetrieved;
-
-	private List<String> stopsList = new ArrayList<>();
-	private HashMap<String, String> profileSeasonDetails;
-	private HashMap<String, String> profileSeasonAverages = new HashMap<>();
-	private HashMap<String, String> profileSeasonPoints = new HashMap<>();
 
 	private TextView profileDetailsSeason;
 	private TextView profileDetailsStatus;
@@ -84,13 +66,7 @@ public class ProfileCardDetails extends AppCompatActivity {
 
 		//Get extras from intent.
 		Intent intent = getIntent();
-
-		bowlerId = intent.getIntExtra("BOWLER_ID", 0);
-		academicYearId = intent.getIntExtra("ACADEMIC_YEAR_ID", 0);
-		academicYear = (academicYearId != 0) ? new TableAcademicYear(this).getAcademicYear(academicYearId) : "";
-
-		//Get profile details.
-		isDataRetrieved = getProfileDetailsSeason(bowlerId, academicYearId);
+		BowlerSeasonStats seasonStats = (BowlerSeasonStats) intent.getSerializableExtra("SEASON_STATS");
 
 		//Initialise the views on the layout.
 		profileDetailsSeason = (TextView) findViewById(R.id.profile_details_season);
@@ -107,12 +83,15 @@ public class ProfileCardDetails extends AppCompatActivity {
 		LayoutParams layoutParamsAP = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1.0f);
 
 		//Populate views with data.
-		if(isDataRetrieved) {
+		if(seasonStats != null) {
+			int academicYearId = seasonStats.getAcademicYear();
+			String academicYear = (academicYearId != 0) ? new AcademicYear(academicYearId).getAcademicYear() : "";
+
 			profileDetailsSeason.setText(academicYear);
 
-			String rankingStatus = profileSeasonDetails.get("ranking_status");
-			String studentStatus = profileSeasonDetails.get("student_status");
-			String university = profileSeasonDetails.get("university");
+			String rankingStatus = new RankingStatus(seasonStats.getRankingStatus()).getRankingStatus();
+			String studentStatus = new StudentStatus(seasonStats.getStudentStatus()).getStudentStatus();
+			String university = seasonStats.getUniversity();
 
 			if(studentStatus.equals("Student")) {
 				profileDetailsStatus.setText(studentStatus + " // " + rankingStatus + " // " + university);
@@ -121,15 +100,24 @@ public class ProfileCardDetails extends AppCompatActivity {
 				profileDetailsStatus.setText(studentStatus + " // " + rankingStatus);
 			}
 
-			profileDetailsAverage.setText("Overall Average: " + profileSeasonDetails.get("average"));
-			profileDetailsGames.setText("Total Games: " + profileSeasonDetails.get("games"));
+			int overallAverage = seasonStats.getAverage();
+			int totalGames = seasonStats.getGames();
+			int totalPoints = seasonStats.getPoints();
+			int bestN = seasonStats.getBestN();
+
+			profileDetailsAverage.setText("Overall Average: " + overallAverage);
+			profileDetailsGames.setText("Total Games: " + totalGames);
 
 			if(academicYear.equals("2016/17") && studentStatus.equals("Student")) {
-				profileDetailsPoints.setText("Total Ranking Points: " + profileSeasonDetails.get("points") + " // " + "Best 4: " + profileSeasonDetails.get("best_n"));
+				profileDetailsPoints.setText("Total Ranking Points: " + totalPoints + " // " + "Best 4: " + bestN);
 			}
 			else {
-				profileDetailsPoints.setText("Total Ranking Points: " + profileSeasonDetails.get("points") + " // " + "Best 5: " + profileSeasonDetails.get("best_n"));
+				profileDetailsPoints.setText("Total Ranking Points: " + totalPoints + " // " + "Best 5: " + bestN);
 			}
+
+			List<String> stopsList = seasonStats.getStopsList();
+			HashMap<String, String> tournamentAverages = seasonStats.getTournamentAverages();
+			HashMap<String, String> tournamentPoints = seasonStats.getTournamentPoints();
 
 			//Populate table.
 			for(String stop : stopsList) {
@@ -159,8 +147,8 @@ public class ProfileCardDetails extends AppCompatActivity {
 
 				//Populate the text views.
 				stopName.setText(stop);
-				average.setText(profileSeasonAverages.get(stop));
-				points.setText(profileSeasonPoints.get(stop));
+				average.setText(tournamentAverages.get(stop));
+				points.setText(tournamentPoints.get(stop));
 
 				//Add the text views to the table row.
 				tableRow.addView(stopName);
@@ -196,68 +184,5 @@ public class ProfileCardDetails extends AppCompatActivity {
 		else {
 			super.onBackPressed();
 		}
-	}
-
-	private boolean getProfileDetailsSeason(int bowlerId, int academicYearId) {
-		String result;
-
-		if(bowlerId != 0 && academicYearId != 0) {
-			try {
-				result = FileOperations.readFile(
-						getFilesDir() + FileOperations.INTERNAL_SERVER_DIR,
-						FileOperations.BOWLERS_SEASON_STATS_FILE + "_" + bowlerId,
-						".json"
-				);
-
-				jsonObject = new JSONObject(result);
-				jsonArray = jsonObject.getJSONArray("Seasons");
-
-				for(int i = 0; i < jsonArray.length(); i++) {
-					JSONObject season = jsonArray.getJSONObject(i);
-
-					if(!season.isNull("AcademicYear")) {
-						if(academicYearId == season.getInt("AcademicYear")) {
-							String rankingStatus = season.getString("Ranking");
-							String studentStatus = season.getString("Student");
-							String university = season.getString("University");
-
-							String average = season.getString("OverallAverage");
-							String games = season.getString("TotalGames");
-							String totalPoints = season.getString("TotalPoints");
-							String bestN = season.getString("BestN");
-
-							//Add to hash map.
-							profileSeasonDetails = new HashMap<>();
-							profileSeasonDetails.put("ranking_status", rankingStatus);
-							profileSeasonDetails.put("student_status", studentStatus);
-							profileSeasonDetails.put("university", university);
-							profileSeasonDetails.put("average", average);
-							profileSeasonDetails.put("games", games);
-							profileSeasonDetails.put("points", totalPoints);
-							profileSeasonDetails.put("best_n", bestN);
-
-							JSONArray stops = season.getJSONArray("Stops");
-							for(int j = 0; j < stops.length(); j++) {
-								String stopName = stops.getString(j);
-								stopsList.add(stopName);
-								JSONObject averages = season.getJSONObject("Averages");
-								JSONArray points = season.getJSONArray("RankingPoints");
-
-								profileSeasonAverages.put(stopName, averages.getString(stopName));
-								profileSeasonPoints.put(stopName, points.get(j).toString());
-							}
-						}
-					}
-				}
-
-				return true;
-			}
-			catch(IOException | JSONException e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-
-		return false;
 	}
 }
