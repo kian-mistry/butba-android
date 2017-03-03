@@ -15,7 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
 import android.widget.TextView;
 
-import com.kian.butba.database.server.QueriesUrl;
+import com.kian.butba.database.QueriesUrl;
 import com.kian.butba.file.AsyncDelegate;
 import com.kian.butba.file.FileOperations;
 import com.kian.butba.file.ServerFileDownloader;

@@ -20,7 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
-import com.kian.butba.database.server.QueriesUrl;
+import com.kian.butba.database.QueriesUrl;
 import com.kian.butba.file.AsyncDelegate;
 import com.kian.butba.file.FileOperations;
 import com.kian.butba.file.MapComparator;

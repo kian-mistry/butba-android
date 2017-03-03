@@ -3,7 +3,7 @@ package com.kian.butba.file;
 import android.app.Activity;
 import android.support.design.widget.Snackbar;
 
-import com.kian.butba.database.server.QueriesUrl;
+import com.kian.butba.database.QueriesUrl;
 
 /**
  * Created by Kian Mistry on 02/03/17.
