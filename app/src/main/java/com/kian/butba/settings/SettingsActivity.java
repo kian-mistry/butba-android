@@ -254,6 +254,7 @@ public class SettingsActivity extends AppCompatActivity {
 		                editor.putString("bowler_name", bowlerName);
 
 		                DownloadHelpers.downloadSelectedBowlerStats(getActivity(), bowlerId);
+		                DownloadHelpers.downloadBowlersLatestStatus(getActivity(), bowlerId);
 	                }
 	                else {
 		                editor.putInt("bowler_id", 0);
@@ -262,6 +263,8 @@ public class SettingsActivity extends AppCompatActivity {
 		                //Remove previously selected bowler's name from the summary.
 		                lpButbaMembers.setSummary("Select your name.");
 	                }
+
+	                obtainBowlersStatus(bowlerId);
 
 	                editor.commit();
 

@@ -178,11 +178,11 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 		 * If file does not exist, download file from server (providing the device is connected to
 		 * the Internet), else read saved file.
 		 */
-		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES, ".json")) {
+		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES_FILE, ".json")) {
 			if(FileOperations.hasInternetConnection(getContext())) {
 				getFileDownloader().execute(
 						QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
-						FileOperations.LATEST_AVERAGES
+						FileOperations.LATEST_AVERAGES_FILE
 				);
 			}
 			else {
@@ -218,7 +218,7 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 				averagesType = args.getInt(AVERAGES_TYPE, 0);
 				result = FileOperations.readFile(
 						getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR,
-						FileOperations.LATEST_AVERAGES,
+						FileOperations.LATEST_AVERAGES_FILE,
 						".json");
 
 				jsonObject = new JSONObject(result);
@@ -374,7 +374,7 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 		if(FileOperations.hasInternetConnection(getContext())) {
 			getFileDownloader().execute(
 					QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
-					FileOperations.LATEST_AVERAGES
+					FileOperations.LATEST_AVERAGES_FILE
 			);
 		}
 		else {

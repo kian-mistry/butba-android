@@ -111,11 +111,11 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 		 * If file does not exist, download file from server (providing the device is connected to
 		 * the Internet), else read saved file.
 		 */
-		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_RANKINGS, ".json")) {
+		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_RANKINGS_FILE, ".json")) {
 			if(FileOperations.hasInternetConnection(getContext())) {
 				getFileDownloader().execute(
 						QueriesUrl.URL_GET_LATEST_EVENT_RANKINGS,
-						FileOperations.LATEST_RANKINGS
+						FileOperations.LATEST_RANKINGS_FILE
 				);
 			}
 			else {
@@ -146,7 +146,7 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 				rankingsType = args.getInt(RANKINGS_TYPE, 0);
 				result = FileOperations.readFile(
 					getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR,
-					FileOperations.LATEST_RANKINGS,
+					FileOperations.LATEST_RANKINGS_FILE,
 					".json"
 				);
 
@@ -287,7 +287,7 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 		if(FileOperations.hasInternetConnection(getContext())) {
 			getFileDownloader().execute(
 					QueriesUrl.URL_GET_LATEST_EVENT_RANKINGS,
-					FileOperations.LATEST_RANKINGS
+					FileOperations.LATEST_RANKINGS_FILE
 			);
 		}
 		else {

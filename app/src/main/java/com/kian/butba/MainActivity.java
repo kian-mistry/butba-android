@@ -21,6 +21,8 @@ import android.widget.TextView;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.kian.butba.averages.AveragesFragment;
+import com.kian.butba.entities.RankingStatus;
+import com.kian.butba.entities.StudentStatus;
 import com.kian.butba.events.EventsFragment;
 import com.kian.butba.notifications.NotificationConstants;
 import com.kian.butba.profile.ProfileFragment;
@@ -103,9 +105,11 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         }
 
         //Get bowler's details from a shared preference.
-        SharedPreferences sharedPreferences = getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
-        int bowlerId = sharedPreferences.getInt("bowler_id", 0);
-        String bowlerName = sharedPreferences.getString("bowler_name", null);
+        SharedPreferences prefBowlerDetails = getSharedPreferences("bowler_details", Context.MODE_PRIVATE);
+        int bowlerId = prefBowlerDetails.getInt("bowler_id", 0);
+        String bowlerName = prefBowlerDetails.getString("bowler_name", null);
+	    int studentStatusId = prefBowlerDetails.getInt("student_status", 0);
+	    int rankingStatusId = prefBowlerDetails.getInt("ranking_status", 0);
 
         navigationHeader = navigationView.getHeaderView(0);
         tvBowlerName = (TextView) navigationHeader.findViewById(R.id.nav_header_name);
@@ -126,22 +130,16 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         else {
             tvBowlerName.setText(bowlerName);
 
-//            TableBowlerSeason tableBowlerSeason = new TableBowlerSeason(this);
-//            BowlerSeason bowlerSeason = tableBowlerSeason.getBowlersSeason(bowlerId).get(0);
-
             //Only displays the bowler's status for the current academic year.
-//            if(bowlerSeason != null && bowlerSeason.getAcademicYear() == 2) {
-//                int studentStatus = bowlerSeason.getStudentStatus();
-//                int rankingStatus = bowlerSeason.getRankingStatus();
-//
-//                String student = (studentStatus == 1) ? "Student" : "Ex-Student";
-//                String ranking = (rankingStatus == 1) ? "Scratch" : "Handicap";
-//
-//                tvBowlerStatus.setText(student + " // " + ranking);
-//            }
-//            else {
-//                tvBowlerStatus.setText("");
-//            }
+            if(studentStatusId != 0 && rankingStatusId != 0) {
+                String studentStatus = new StudentStatus(studentStatusId).getStudentStatus();
+                String rankingStatus = new RankingStatus(rankingStatusId).getRankingStatus();
+
+                tvBowlerStatus.setText(studentStatus + " // " + rankingStatus);
+            }
+            else {
+                tvBowlerStatus.setText("");
+            }
         }
     }
 
@@ -150,8 +148,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         //Will close the navigation drawer if the back button is pressed.
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -180,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 				        .replace(R.id.content_main, averagesFragment, averagesFragment.getTag())
 				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 				        .commit();
-	            Snackbar.make(this.getCurrentFocus(), "Averages", Snackbar.LENGTH_SHORT).show();
 		        break;
 	        case R.id.nav_rankings:
 		        RankingsFragment rankingsFragment = new RankingsFragment();
@@ -188,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 				        .replace(R.id.content_main, rankingsFragment, rankingsFragment.getTag())
 				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 				        .commit();
-		        Snackbar.make(this.getCurrentFocus(), "Rankings", Snackbar.LENGTH_SHORT).show();
 		        break;
 	        case R.id.nav_social:
 		        SocialFragment socialFragment = new SocialFragment();
@@ -196,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 				        .replace(R.id.content_main, socialFragment, socialFragment.getTag())
 				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 				        .commit();
-		        Snackbar.make(this.getCurrentFocus(), "Social", Snackbar.LENGTH_SHORT).show();
 		        break;
             case R.id.nav_settings:
                 Intent iSettings = new Intent(MainActivity.this, SettingsActivity.class);

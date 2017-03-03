@@ -67,22 +67,22 @@ public class SplashActivity extends Activity {
 		else if(!isInitialised && isConnected) {
 			tvStatus.setText("Fetching data...");
 
-			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.ALL_BOWLERS, ".json")) {
+			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.ALL_BOWLERS_FILE, ".json")) {
 				startDownloadingTask(getFileDownloader(),
 						QueriesUrl.URL_GET_ALL_BOWLERS,
-						FileOperations.ALL_BOWLERS);
+						FileOperations.ALL_BOWLERS_FILE);
 			}
 
-			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES, ".json")) {
+			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES_FILE, ".json")) {
 				startDownloadingTask(getFileDownloader(),
 						QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
-						FileOperations.LATEST_AVERAGES);
+						FileOperations.LATEST_AVERAGES_FILE);
 			}
 
-			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_RANKINGS, ".json")) {
+			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_RANKINGS_FILE, ".json")) {
 				startDownloadingTask(getFileDownloader(),
 						QueriesUrl.URL_GET_LATEST_EVENT_RANKINGS,
-						FileOperations.LATEST_RANKINGS);
+						FileOperations.LATEST_RANKINGS_FILE);
 			}
 		}
 		//Goes to main activity if device has been initialised.

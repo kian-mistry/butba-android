@@ -7,13 +7,8 @@ import android.preference.SwitchPreference;
 
 import com.kian.butba.entities.Bowler;
 import com.kian.butba.file.FileOperations;
+import com.kian.butba.file.FileParsers;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -154,8 +149,8 @@ public class SettingsMethods extends PreferenceFragment  {
 	 */
 	protected void obtainSpecificSetOfBowlers(int genderIndex, int studentStatusIndex, int academicYearIndex) {
 
-		if(FileOperations.fileExists(getActivity().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.ALL_BOWLERS, ".json")) {
-			List<com.kian.butba.entities.Bowler> bowlersList = parseBowlersList(genderIndex, studentStatusIndex, academicYearIndex);
+		if(FileOperations.fileExists(getActivity().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.ALL_BOWLERS_FILE, ".json")) {
+			List<Bowler> bowlersList = FileParsers.parseBowlersList(getActivity(), genderIndex, studentStatusIndex, academicYearIndex);
 
 			if(bowlersList != null) {
 				int size = bowlersList.size();
@@ -174,56 +169,14 @@ public class SettingsMethods extends PreferenceFragment  {
 	}
 
 	/**
-	 * Retrieves a list of BUTBA members, according to their gender, student status and academic year.
+	 * Retrieves the bowler's latest status.
 	 *
-	 * @param genderIndex The index of the gender.
-	 * @param studentStatusIndex The index of the student status.
-	 * @param academicYearIndex The index of the academic year.
-	 *
-	 * @return A list of BUTBA members.
+	 * @param bowlerId The ID of the bowler.
 	 */
-	private List<Bowler> parseBowlersList(int genderIndex, int studentStatusIndex, int academicYearIndex) {
-		String genderCategory = (genderIndex == 1) ? "M" : (genderIndex == 2) ? "F" : "";
+	protected void obtainBowlersStatus(int bowlerId) {
 
-		List<Bowler> bowlersList = new ArrayList<>();
-
-		try {
-			String result = FileOperations.readFile(
-					getActivity().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR,
-					FileOperations.ALL_BOWLERS,
-					".json"
-			);
-
-			JSONObject jsonObject = new JSONObject(result);
-			JSONArray jsonArray = jsonObject.getJSONArray("result");
-
-			for(int i = 0; i < jsonArray.length(); i++) {
-				JSONObject bowlerObject = jsonArray.getJSONObject(i);
-
-				int id = Integer.parseInt(bowlerObject.getString("Id"));
-				String forename = bowlerObject.getString("Forename");
-				String surname = bowlerObject.getString("Surname");
-				String gender = bowlerObject.getString("Gender");
-				int studentStatusId = Integer.parseInt(bowlerObject.getString("StudentStatusId"));
-				int academicYearId = Integer.parseInt(bowlerObject.getString("YearId"));
-
-
-				if(
-					genderCategory.equals(gender) &&
-					studentStatusIndex == studentStatusId &&
-					academicYearIndex == academicYearId
-				) {
-					Bowler bowler = new Bowler(id, forename, surname, gender.charAt(0));
-					bowlersList.add(bowler);
-				}
-			}
-
-			return bowlersList;
+		if(FileOperations.fileExists(getActivity().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_STATUS_FILE + "_" + bowlerId, ".json")) {
+			FileParsers.parseBowlersStatus(getActivity(), bowlerId);
 		}
-		catch(IOException | JSONException e) {
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 }
