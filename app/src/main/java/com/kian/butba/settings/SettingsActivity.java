@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.kian.butba.R;
+import com.kian.butba.file.DownloadHelpers;
 import com.kian.butba.notifications.NotificationConstants;
 
 /**
@@ -247,9 +248,22 @@ public class SettingsActivity extends AppCompatActivity {
                     String bowlerName = setBowlerListPreferenceSummary(bowlerId);
 
                     Editor editor = prefBowlerDetails.edit();
-                    editor.putInt("bowler_id", bowlerId);
-                    editor.putString("bowler_name", bowlerName);
-                    editor.commit();
+
+	                if(bowlerId != 0) {
+		                editor.putInt("bowler_id", bowlerId);
+		                editor.putString("bowler_name", bowlerName);
+
+		                DownloadHelpers.downloadSelectedBowlerStats(getActivity(), bowlerId);
+	                }
+	                else {
+		                editor.putInt("bowler_id", 0);
+		                editor.putString("bowler_name", null);
+
+		                //Remove previously selected bowler's name from the summary.
+		                lpButbaMembers.setSummary("Select your name.");
+	                }
+
+	                editor.commit();
 
                     return true;
                 }

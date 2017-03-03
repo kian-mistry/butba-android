@@ -11,12 +11,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kian.butba.R;
-import com.kian.butba.database.sqlite.tables.TableAcademicYear;
+import com.kian.butba.entities.AcademicYear;
+import com.kian.butba.entities.BowlerSeasonStats;
+import com.kian.butba.entities.RankingStatus;
+import com.kian.butba.entities.StudentStatus;
 import com.kian.butba.profile.ProfileCardsAdapter.ProfileHolder;
 import com.kian.butba.views.CardClickListener.ProfileCardClickListener;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,9 +29,9 @@ public class ProfileCardsAdapter extends Adapter<ProfileHolder> {
 
 	private Context context;
 	private ProfileCardClickListener cardClickListener;
-	private List<HashMap<String, String>> profiles = Collections.emptyList();
+	private List<BowlerSeasonStats> profiles = Collections.emptyList();
 
-	public ProfileCardsAdapter(Context context, ProfileCardClickListener cardClickListener, List<HashMap<String, String>> profiles) {
+	public ProfileCardsAdapter(Context context, ProfileCardClickListener cardClickListener, List<BowlerSeasonStats> profiles) {
 		this.context = context;
 		this.cardClickListener = cardClickListener;
 		this.profiles = profiles;
@@ -44,29 +46,34 @@ public class ProfileCardsAdapter extends Adapter<ProfileHolder> {
 
 	@Override
 	public void onBindViewHolder(final ProfileHolder holder, final int position) {
-		final HashMap<String, String> current = profiles.get(position);
+		final BowlerSeasonStats current = profiles.get(position);
 
 		//Set the contents of the card.
-		final int academicYearId = Integer.valueOf(current.get("academic_year"));
-		String academicYear = new TableAcademicYear(context).getAcademicYear(academicYearId);
+		final int academicYearId = current.getAcademicYear();
+		String academicYear = new AcademicYear(academicYearId).getAcademicYear();
 		holder.getProfileSeason().setText(academicYear);
 
-		String studentStatus = current.get("student_status");
+		int studentStatusId = current.getStudentStatus();
+		String studentStatus = new StudentStatus(studentStatusId).getStudentStatus();
+		int rankingStatusId = current.getRankingStatus();
+		String rankingStatus = new RankingStatus(rankingStatusId).getRankingStatus();
+		String university = current.getUniversity();
+
 		if(studentStatus.equals("Student")) {
-			holder.getProfileStatus().setText(studentStatus + " // " + current.get("ranking_status") + " // " + current.get("university"));
+			holder.getProfileStatus().setText(studentStatus + " // " + rankingStatus + " // " + university);
 		}
 		else {
-			holder.getProfileStatus().setText(studentStatus + " // " + current.get("ranking_status"));
+			holder.getProfileStatus().setText(studentStatus + " // " + rankingStatus);
 		}
 
-		holder.getProfileAverage().setText("Overall Average: " + current.get("average"));
-		holder.getProfileGames().setText("Total Games: " + current.get("games"));
+		holder.getProfileAverage().setText("Overall Average: " + current.getAverage());
+		holder.getProfileGames().setText("Total Games: " + current.getGames());
 
 		if(academicYear.equals("2016/17") && studentStatus.equals("Student")) {
-			holder.getProfileRankingPoints().setText("Total Ranking Points: " + current.get("points") + " // Best 4: " + current.get("best_n"));
+			holder.getProfileRankingPoints().setText("Total Ranking Points: " + current.getPoints() + " // Best 4: " + current.getBestN());
 		}
 		else {
-			holder.getProfileRankingPoints().setText("Total Ranking Points: " + current.get("points") + " // Best 5: " + current.get("best_n"));
+			holder.getProfileRankingPoints().setText("Total Ranking Points: " + current.getPoints() + " // Best 5: " + current.getBestN());
 		}
 
 	    /*

@@ -20,9 +20,9 @@ import android.view.ViewGroup;
 
 import com.kian.butba.R;
 import com.kian.butba.database.server.QueriesUrl;
+import com.kian.butba.entities.BowlerSeasonStats;
 import com.kian.butba.file.AsyncDelegate;
 import com.kian.butba.file.FileOperations;
-import com.kian.butba.file.MapComparator;
 import com.kian.butba.file.ServerFileDownloader;
 import com.kian.butba.profile.ProfileCardsAdapter.ProfileHolder;
 import com.kian.butba.views.CardClickListener.ProfileCardClickListener;
@@ -34,7 +34,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by Kian Mistry on 17/10/16.
@@ -49,7 +50,7 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 
 	private RecyclerView recyclerView;
 	private ProfileCardsAdapter cardsAdapter;
-	private ArrayList<HashMap<String, String>> profiles;
+	private List<BowlerSeasonStats> profiles;
 
 	private JSONObject jsonObject;
 	private JSONArray jsonArray;
@@ -106,7 +107,7 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 		//If file does not exist, download file from server, else read saved file.
 		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.BOWLERS_SEASON_STATS_FILE + "_" + bowlerId, ".json")) {
 			fileDownloader.execute(
-					QueriesUrl.get_particular_bowlers_ranking(bowlerId),
+					QueriesUrl.url_get_bowlers_stats(bowlerId),
 					FileOperations.BOWLERS_SEASON_STATS_FILE + "_" + bowlerId
 			);
 		}
@@ -120,7 +121,7 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 		}
 	}
 
-	public ArrayList<HashMap<String, String>> getProfiles() {
+	public List<BowlerSeasonStats> getProfiles() {
 		return profiles;
 	}
 
@@ -134,39 +135,44 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 				);
 
 				jsonObject = new JSONObject(result);
-				jsonArray = jsonObject.getJSONArray("Seasons");
+				jsonArray = jsonObject.getJSONArray("seasons");
 
 				profiles = new ArrayList<>();
-				HashMap<String, String> seasonDetails;
 
 				for(int i = 0; i < jsonArray.length(); i++) {
 					JSONObject detail = jsonArray.getJSONObject(i);
 
 					if(!detail.isNull("AcademicYear")) {
-						String academicYear = String.valueOf(detail.getInt("AcademicYear"));
-						String rankingStatus = detail.getString("Ranking");
-						String studentStatus = detail.getString("Student");
+						int academicYear = detail.getInt("AcademicYear");
+						int rankingStatus = Integer.parseInt(detail.getString("RankingStatus"));
+						int studentStatus = Integer.parseInt(detail.getString("StudentStatus"));
 						String university = detail.getString("University");
-						String average = String.valueOf(detail.getString("OverallAverage"));
-						String games = detail.getString("TotalGames");
-						String points = String.valueOf(detail.getString("TotalPoints"));
-						String bestN = String.valueOf(detail.getString("BestN"));
+						int average = Integer.parseInt(detail.getString("OverallAverage"));
+						int games = Integer.parseInt(detail.getString("TotalGames"));
+						int points = detail.getInt("TotalPoints");
+						int bestN = detail.getInt("BestN");
 
-						seasonDetails = new HashMap<>();
-						seasonDetails.put("academic_year", academicYear.toString());
-						seasonDetails.put("ranking_status", rankingStatus);
-						seasonDetails.put("student_status", studentStatus);
-						seasonDetails.put("university", university);
-						seasonDetails.put("average", average);
-						seasonDetails.put("games", games);
-						seasonDetails.put("points", points);
-						seasonDetails.put("best_n", bestN);
-
-						profiles.add(seasonDetails);
+						BowlerSeasonStats seasonStats = new BowlerSeasonStats(academicYear, rankingStatus, studentStatus, university, average, games, points, bestN);
+						profiles.add(seasonStats);
 					}
 				}
+				Collections.sort(profiles, new Comparator<BowlerSeasonStats>() {
+					@Override
+					public int compare(BowlerSeasonStats firstObject, BowlerSeasonStats secondObject) {
+						int firstAcadYear = firstObject.getAcademicYear();
+						int secondAcadYear = secondObject.getAcademicYear();
 
-				Collections.sort(profiles, new MapComparator("academic_year", MapComparator.Sort.DESCENDING));
+						return sortDescending(firstAcadYear, secondAcadYear);
+					}
+
+					private int sortAscending(int x, int y) {
+						return (x < y) ? -1 : ((x == y) ? 0 : 1);
+					}
+
+					private int sortDescending(int x, int y) {
+						return (x > y) ? -1 : ((x == y) ? 0 : 1);
+					}
+				});
 			}
 			catch(IOException | JSONException e) {
 				e.printStackTrace();

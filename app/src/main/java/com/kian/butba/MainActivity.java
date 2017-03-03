@@ -21,8 +21,6 @@ import android.widget.TextView;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.kian.butba.averages.AveragesFragment;
-import com.kian.butba.database.sqlite.entities.BowlerSeason;
-import com.kian.butba.database.sqlite.tables.TableBowlerSeason;
 import com.kian.butba.events.EventsFragment;
 import com.kian.butba.notifications.NotificationConstants;
 import com.kian.butba.profile.ProfileFragment;
@@ -47,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private TextView tvBowlerName;
     private TextView tvBowlerStatus;
 
-    private FragmentManager manager = getSupportFragmentManager();
+    private FragmentManager fragmentManager = getSupportFragmentManager();
 
 	private SharedPreferences prefNotifications;
 	private boolean eventNotification;
@@ -100,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
         //Display ProfileFragment on startup.
         if (savedInstanceState == null) {
-            manager.beginTransaction().replace(R.id.content_main, new ProfileFragment()).commit();
+            fragmentManager.beginTransaction().replace(R.id.content_main, new ProfileFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_profile);
         }
 
@@ -122,28 +120,28 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 	         * EventsFragment on startup.
 	         */
 	        navigationMenu.findItem(R.id.nav_profile).setVisible(false);
-	        manager.beginTransaction().replace(R.id.content_main, new EventsFragment()).commit();
+	        fragmentManager.beginTransaction().replace(R.id.content_main, new EventsFragment()).commit();
 	        navigationView.setCheckedItem(R.id.nav_events);
         }
         else {
             tvBowlerName.setText(bowlerName);
 
-            TableBowlerSeason tableBowlerSeason = new TableBowlerSeason(this);
-            BowlerSeason bowlerSeason = tableBowlerSeason.getBowlersSeason(bowlerId).get(0);
+//            TableBowlerSeason tableBowlerSeason = new TableBowlerSeason(this);
+//            BowlerSeason bowlerSeason = tableBowlerSeason.getBowlersSeason(bowlerId).get(0);
 
             //Only displays the bowler's status for the current academic year.
-            if(bowlerSeason != null && bowlerSeason.getAcademicYear() == 2) {
-                int studentStatus = bowlerSeason.getStudentStatus();
-                int rankingStatus = bowlerSeason.getRankingStatus();
-
-                String student = (studentStatus == 1) ? "Student" : "Ex-Student";
-                String ranking = (rankingStatus == 1) ? "Scratch" : "Handicap";
-
-                tvBowlerStatus.setText(student + " // " + ranking);
-            }
-            else {
-                tvBowlerStatus.setText("");
-            }
+//            if(bowlerSeason != null && bowlerSeason.getAcademicYear() == 2) {
+//                int studentStatus = bowlerSeason.getStudentStatus();
+//                int rankingStatus = bowlerSeason.getRankingStatus();
+//
+//                String student = (studentStatus == 1) ? "Student" : "Ex-Student";
+//                String ranking = (rankingStatus == 1) ? "Scratch" : "Handicap";
+//
+//                tvBowlerStatus.setText(student + " // " + ranking);
+//            }
+//            else {
+//                tvBowlerStatus.setText("");
+//            }
         }
     }
 
@@ -166,19 +164,19 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         switch(id) {
             case R.id.nav_profile:
                 ProfileFragment profileFragment = new ProfileFragment();
-                manager.beginTransaction()
+                fragmentManager.beginTransaction()
 		                .replace(R.id.content_main, profileFragment, profileFragment.getTag())
 		                .commit();
                 break;
             case R.id.nav_events:
                 EventsFragment eventsFragment = new EventsFragment();
-                manager.beginTransaction()
+                fragmentManager.beginTransaction()
 		                .replace(R.id.content_main, eventsFragment, eventsFragment.getTag())
 		                .commit();
                 break;
 	        case R.id.nav_averages:
 		        AveragesFragment averagesFragment = new AveragesFragment();
-		        manager.beginTransaction()
+		        fragmentManager.beginTransaction()
 				        .replace(R.id.content_main, averagesFragment, averagesFragment.getTag())
 				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 				        .commit();
@@ -186,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 		        break;
 	        case R.id.nav_rankings:
 		        RankingsFragment rankingsFragment = new RankingsFragment();
-		        manager.beginTransaction()
+		        fragmentManager.beginTransaction()
 				        .replace(R.id.content_main, rankingsFragment, rankingsFragment.getTag())
 				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 				        .commit();
@@ -194,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 		        break;
 	        case R.id.nav_social:
 		        SocialFragment socialFragment = new SocialFragment();
-		        manager.beginTransaction()
+		        fragmentManager.beginTransaction()
 				        .replace(R.id.content_main, socialFragment, socialFragment.getTag())
 				        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 				        .commit();
