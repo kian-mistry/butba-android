@@ -1,6 +1,7 @@
 package com.kian.butba.file;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.design.widget.Snackbar;
 
 import com.kian.butba.database.QueriesUrl;
@@ -41,6 +42,25 @@ public class DownloadHelpers {
 				Snackbar.make(activity.getCurrentFocus(), "No internet connection", Snackbar.LENGTH_SHORT).show();
 			}
 		}
+	}
+
+	/**
+	 * Downloads the latest bowlers stats.
+	 *
+	 * @param context The context of the current activity.
+	 * @param delegate A delegate which will process the results on success.
+	 * @param bowlerId The ID of the bowler.
+	 */
+	public static void downloadSelectedBowlerStats(final Context context, final AsyncDelegate delegate, int bowlerId) {
+		new ServerFileDownloader(context, new AsyncDelegate() {
+			@Override
+			public void onProcessResults(Boolean success) {
+				delegate.onProcessResults(success);
+			}
+		}).execute(
+				QueriesUrl.url_get_bowlers_stats(bowlerId),
+				FileOperations.BOWLERS_SEASON_STATS_FILE
+		);
 	}
 
 	/**

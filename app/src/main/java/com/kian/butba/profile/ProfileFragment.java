@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +25,7 @@ import com.kian.butba.R;
 import com.kian.butba.database.QueriesUrl;
 import com.kian.butba.entities.BowlerSeasonStats;
 import com.kian.butba.file.AsyncDelegate;
+import com.kian.butba.file.DownloadHelpers;
 import com.kian.butba.file.FileOperations;
 import com.kian.butba.file.ServerFileDownloader;
 import com.kian.butba.profile.ProfileCardsAdapter.ProfileHolder;
@@ -41,13 +45,14 @@ import java.util.List;
  * Created by Kian Mistry on 17/10/16.
  */
 
-public class ProfileFragment extends Fragment implements ProfileCardClickListener<ProfileHolder, BowlerSeasonStats> {
+public class ProfileFragment extends Fragment implements ProfileCardClickListener<ProfileHolder, BowlerSeasonStats>, OnRefreshListener, AsyncDelegate {
 
 	private ActionBar toolbar;
 
 	private SharedPreferences prefBowlerDetails;
 	private int bowlerId;
 
+	private SwipeRefreshLayout swipeRefreshLayout;
 	private RecyclerView recyclerView;
 	private ProfileCardsAdapter cardsAdapter;
 	private List<BowlerSeasonStats> profiles;
@@ -70,7 +75,9 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 		toolbar.invalidateOptionsMenu();
 		setHasOptionsMenu(true);
 
-		//Initialise recycler view.
+		//Initialise the swipe refresh layout and recycler view.
+		swipeRefreshLayout = (SwipeRefreshLayout) layout.findViewById(R.id.profile_swipe_refresh);
+		swipeRefreshLayout.setOnRefreshListener(this);
 		recyclerView = (RecyclerView) layout.findViewById(R.id.profile_cards_container);
 
 		return layout;
@@ -221,6 +228,35 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 		}
 		else {
 			getActivity().startActivity(intent);
+		}
+	}
+
+	@Override
+	public void onRefresh() {
+		if(FileOperations.hasInternetConnection(getContext())) {
+			DownloadHelpers.downloadSelectedBowlerStats(getContext(), this, bowlerId);
+		}
+		else {
+			swipeRefreshLayout.setRefreshing(false);
+			Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
+		}
+	}
+
+	@Override
+	public void onProcessResults(Boolean success) {
+		if(success) {
+			getProfileSeasonsList(bowlerId);
+
+			cardsAdapter = new ProfileCardsAdapter(getContext(), this, getProfiles());
+			recyclerView.setAdapter(cardsAdapter);
+			recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+			if(swipeRefreshLayout.isRefreshing()) {
+				swipeRefreshLayout.setRefreshing(false);
+			}
+		}
+		else {
+			Snackbar.make(getView(), "Failed to load stats", Snackbar.LENGTH_SHORT).show();
 		}
 	}
 }
