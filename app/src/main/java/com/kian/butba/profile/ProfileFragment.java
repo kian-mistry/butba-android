@@ -45,7 +45,7 @@ import java.util.List;
  * Created by Kian Mistry on 17/10/16.
  */
 
-public class ProfileFragment extends Fragment implements ProfileCardClickListener<ProfileHolder, BowlerSeasonStats>, OnRefreshListener, AsyncDelegate {
+public class ProfileFragment extends Fragment implements AsyncDelegate, OnRefreshListener, ProfileCardClickListener<ProfileHolder, BowlerSeasonStats> {
 
 	private ActionBar toolbar;
 
@@ -234,7 +234,7 @@ public class ProfileFragment extends Fragment implements ProfileCardClickListene
 	@Override
 	public void onRefresh() {
 		if(FileOperations.hasInternetConnection(getContext())) {
-			DownloadHelpers.downloadSelectedBowlerStats(getContext(), this, bowlerId);
+			DownloadHelpers.downloadSelectedBowlerStats(this, getContext(), bowlerId);
 		}
 		else {
 			swipeRefreshLayout.setRefreshing(false);

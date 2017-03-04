@@ -75,7 +75,7 @@ public class SplashActivity extends Activity {
 
 			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES_FILE, ".json")) {
 				startDownloadingTask(getFileDownloader(),
-						QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
+						QueriesUrl.URL_GET_LATEST_AVERAGES,
 						FileOperations.LATEST_AVERAGES_FILE);
 			}
 

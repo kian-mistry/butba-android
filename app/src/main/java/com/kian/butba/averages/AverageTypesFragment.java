@@ -27,11 +27,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
-import com.kian.butba.database.QueriesUrl;
 import com.kian.butba.file.AsyncDelegate;
+import com.kian.butba.file.DownloadHelpers;
 import com.kian.butba.file.FileOperations;
 import com.kian.butba.file.MapComparator;
-import com.kian.butba.file.ServerFileDownloader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +46,7 @@ import java.util.List;
  * Created by Kian Mistry on 12/12/16.
  */
 
-public class AverageTypesFragment extends Fragment implements OnMenuItemClickListener, OnQueryTextListener, OnRefreshListener {
+public class AverageTypesFragment extends Fragment implements AsyncDelegate, OnMenuItemClickListener, OnQueryTextListener, OnRefreshListener {
 
 	public static final String AVERAGES_TYPE = "averagesType";
 
@@ -180,21 +179,14 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 		 */
 		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_AVERAGES_FILE, ".json")) {
 			if(FileOperations.hasInternetConnection(getContext())) {
-				getFileDownloader().execute(
-						QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
-						FileOperations.LATEST_AVERAGES_FILE
-				);
+				DownloadHelpers.downloadLatestSeasonAverages(this, getContext());
 			}
 			else {
 				Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
 			}
 		}
 		else {
-			getAveragesList(qualifiedBowlers, unqualifiedBowlers);
-
-			cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
-			recyclerView.setAdapter(cardsAdapter);
-			recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+			populateRecyclerView();
 		}
 	}
 
@@ -278,31 +270,6 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 		}
 	}
 
-	/**
-	 * Creates a new AsyncTask to download the JSON file from the server.
-	 * (AsyncTasks can not be executed more than once).
-	 *
-	 * @return A new ServerFileDownloader object.
-	 */
-	private ServerFileDownloader getFileDownloader() {
-		return new ServerFileDownloader(getContext(), new AsyncDelegate() {
-			@Override
-			public void onProcessResults(Boolean success) {
-				if(success) {
-					getAveragesList(qualifiedBowlers, unqualifiedBowlers);
-
-					cardsAdapter = new AverageCardsAdapter(getActivity(), getAverages());
-					recyclerView.setAdapter(cardsAdapter);
-					recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-					if(swipeRefreshLayout.isRefreshing()) {
-						swipeRefreshLayout.setRefreshing(false);
-					}
-				}
-			}
-		});
-	}
-
 	private boolean toggleCheckBox(MenuItem item) {
 		if(item.isChecked()) {
 			item.setChecked(false);
@@ -312,6 +279,14 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 			item.setChecked(true);
 			return true;
 		}
+	}
+	
+	private void populateRecyclerView() {
+		getAveragesList(qualifiedBowlers, unqualifiedBowlers);
+		
+		cardsAdapter = new AverageCardsAdapter(getContext(), getAverages());
+		recyclerView.setAdapter(cardsAdapter);
+		recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 	}
 
 	@Override
@@ -372,14 +347,22 @@ public class AverageTypesFragment extends Fragment implements OnMenuItemClickLis
 	@Override
 	public void onRefresh() {
 		if(FileOperations.hasInternetConnection(getContext())) {
-			getFileDownloader().execute(
-					QueriesUrl.URL_GET_LATEST_EVENT_AVERAGES,
-					FileOperations.LATEST_AVERAGES_FILE
-			);
+			DownloadHelpers.downloadLatestSeasonAverages(this, getContext());
 		}
 		else {
 			swipeRefreshLayout.setRefreshing(false);
 			Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
+		}
+	}
+
+	@Override
+	public void onProcessResults(Boolean success) {
+		if(success) {
+			populateRecyclerView();
+
+			if(swipeRefreshLayout.isRefreshing()) {
+				swipeRefreshLayout.setRefreshing(false);
+			}
 		}
 	}
 }

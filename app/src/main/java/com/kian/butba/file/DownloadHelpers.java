@@ -47,11 +47,11 @@ public class DownloadHelpers {
 	/**
 	 * Downloads the latest bowlers stats.
 	 *
-	 * @param context The context of the current activity.
 	 * @param delegate A delegate which will process the results on success.
+	 * @param context The context of the current activity.
 	 * @param bowlerId The ID of the bowler.
 	 */
-	public static void downloadSelectedBowlerStats(final Context context, final AsyncDelegate delegate, int bowlerId) {
+	public static void downloadSelectedBowlerStats(final AsyncDelegate delegate, Context context, int bowlerId) {
 		new ServerFileDownloader(context, new AsyncDelegate() {
 			@Override
 			public void onProcessResults(Boolean success) {
@@ -96,5 +96,23 @@ public class DownloadHelpers {
 				Snackbar.make(activity.getCurrentFocus(), "No internet connection", Snackbar.LENGTH_SHORT).show();
 			}
 		}
+	}
+
+	/**
+	 * Downloads the averages of all bowlers from the current season.
+	 *
+	 * @param delegate A delegate which will process the results on success.
+	 * @param context The context of the current activity.
+	 */
+	public static void downloadLatestSeasonAverages(final AsyncDelegate delegate, Context context) {
+		new ServerFileDownloader(context, new AsyncDelegate() {
+			@Override
+			public void onProcessResults(Boolean success) {
+				delegate.onProcessResults(success);
+			}
+		}).execute(
+				QueriesUrl.URL_GET_LATEST_AVERAGES,
+				FileOperations.LATEST_AVERAGES_FILE
+		);
 	}
 }
