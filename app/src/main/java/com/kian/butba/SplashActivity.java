@@ -66,7 +66,14 @@ public class SplashActivity extends Activity {
 		//Downloads necessary files if device is not initialised but is connected to the Internet.
 		else if(!isInitialised && isConnected) {
 			tvStatus.setText("Fetching data...");
-
+			
+			try {
+				Thread.sleep(1500);
+			}
+			catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+			
 			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.ALL_BOWLERS_FILE, ".json")) {
 				startDownloadingTask(getFileDownloader(),
 						QueriesUrl.URL_GET_ALL_BOWLERS,
@@ -81,7 +88,7 @@ public class SplashActivity extends Activity {
 
 			if(!FileOperations.fileExists(getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_RANKINGS_FILE, ".json")) {
 				startDownloadingTask(getFileDownloader(),
-						QueriesUrl.URL_GET_LATEST_EVENT_RANKINGS,
+						QueriesUrl.URL_GET_LATEST_RANKINGS,
 						FileOperations.LATEST_RANKINGS_FILE);
 			}
 		}

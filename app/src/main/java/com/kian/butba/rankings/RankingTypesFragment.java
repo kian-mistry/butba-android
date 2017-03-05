@@ -20,11 +20,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kian.butba.R;
-import com.kian.butba.database.QueriesUrl;
 import com.kian.butba.file.AsyncDelegate;
+import com.kian.butba.file.DownloadHelpers;
 import com.kian.butba.file.FileOperations;
 import com.kian.butba.file.MapComparator;
-import com.kian.butba.file.ServerFileDownloader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +39,7 @@ import java.util.List;
  * Created by Kian Mistry on 14/12/16.
  */
 
-public class RankingTypesFragment extends Fragment implements OnQueryTextListener, OnRefreshListener {
+public class RankingTypesFragment extends Fragment implements AsyncDelegate, OnQueryTextListener, OnRefreshListener {
 
 	public static final String RANKINGS_TYPE = "rankingsType";
 
@@ -113,21 +112,14 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 		 */
 		if(!FileOperations.fileExists(getContext().getFilesDir() + FileOperations.INTERNAL_SERVER_DIR, FileOperations.LATEST_RANKINGS_FILE, ".json")) {
 			if(FileOperations.hasInternetConnection(getContext())) {
-				getFileDownloader().execute(
-						QueriesUrl.URL_GET_LATEST_EVENT_RANKINGS,
-						FileOperations.LATEST_RANKINGS_FILE
-				);
+				DownloadHelpers.downloadLatestSeasonRankings(this, getContext());
 			}
 			else {
 				Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
 			}
 		}
 		else {
-			getRankingsList();
-
-			cardsAdapter = new RankingCardsAdapter(getActivity(), getRankings());
-			recyclerView.setAdapter(cardsAdapter);
-			recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+			populateRecyclerView();
 		}
 	}
 
@@ -193,9 +185,9 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 
 					name = (detail.has("Name")) ? detail.getString("Name") : null;
 					String university = detail.getString("University");
-					bestN = (detail.has("Best N")) ? detail.getString("Best N") : null;
-					String totalPoints = detail.getString("Total Points");
-					totalEvents = (detail.has("Total Events")) ? detail.getString("Total Events") : null;
+					bestN = (detail.has("BestN")) ? detail.getString("BestN") : null;
+					String totalPoints = detail.getString("TotalPoints");
+					totalEvents = (detail.has("Events")) ? detail.getString("Events") : null;
 
 					rankingDetails = new HashMap<>();
 					rankingDetails.put("name", name);
@@ -219,30 +211,13 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Creates a new AsyncTask to download the JSON file from the server.
-	 * (AsyncTasks can not be executed more than once).
-	 *
-	 * @return A new ServerFileDownloader object.
-	 */
-	private ServerFileDownloader getFileDownloader() {
-		return new ServerFileDownloader(getContext(), new AsyncDelegate() {
-			@Override
-			public void onProcessResults(Boolean success) {
-				if(success) {
-					getRankingsList();
-
-					cardsAdapter = new RankingCardsAdapter(getActivity(), getRankings());
-					recyclerView.setAdapter(cardsAdapter);
-					recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-					if(swipeRefreshLayout.isRefreshing()) {
-						swipeRefreshLayout.setRefreshing(false);
-					}
-				}
-			}
-		});
+	
+	private void populateRecyclerView() {
+		getRankingsList();
+		
+		cardsAdapter = new RankingCardsAdapter(getContext(), getRankings());
+		recyclerView.setAdapter(cardsAdapter);
+		recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 	}
 
 	@Override
@@ -285,14 +260,22 @@ public class RankingTypesFragment extends Fragment implements OnQueryTextListene
 	@Override
 	public void onRefresh() {
 		if(FileOperations.hasInternetConnection(getContext())) {
-			getFileDownloader().execute(
-					QueriesUrl.URL_GET_LATEST_EVENT_RANKINGS,
-					FileOperations.LATEST_RANKINGS_FILE
-			);
+			DownloadHelpers.downloadLatestSeasonRankings(this, getContext());
 		}
 		else {
 			swipeRefreshLayout.setRefreshing(false);
 			Snackbar.make(getView(), "No internet connection", Snackbar.LENGTH_SHORT).show();
+		}
+	}
+	
+	@Override
+	public void onProcessResults(Boolean success) {
+		if(success) {
+			populateRecyclerView();
+			
+			if(swipeRefreshLayout.isRefreshing()) {
+				swipeRefreshLayout.setRefreshing(false);
+			}
 		}
 	}
 }

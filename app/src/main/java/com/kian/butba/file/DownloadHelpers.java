@@ -115,4 +115,22 @@ public class DownloadHelpers {
 				FileOperations.LATEST_AVERAGES_FILE
 		);
 	}
+	
+	/**
+	 * Downloads the rankings of all bowlers from the current season.
+	 *
+	 * @param delegate A delegate which will process the results on success.
+	 * @param context The context of the current activity.
+	 */
+	public static void downloadLatestSeasonRankings(final AsyncDelegate delegate, Context context) {
+		new ServerFileDownloader(context, new AsyncDelegate() {
+			@Override
+			public void onProcessResults(Boolean success) {
+				delegate.onProcessResults(success);
+			}
+		}).execute(
+				QueriesUrl.URL_GET_LATEST_RANKINGS,
+				FileOperations.LATEST_RANKINGS_FILE
+		);
+	}
 }
