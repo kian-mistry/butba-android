@@ -55,6 +55,19 @@
                     android:ems="10"/>
             </android.support.design.widget.TextInputLayout>
 
+            <!-- Number of Teams -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Number of Teams"
+                style="@style/InputLabel"/>
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/event_entry_number_of_teams"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"/>
+
             <!-- Bowlers -->
             <!-- Child views will be added to this layout depending on the team size. -->
             <GridLayout

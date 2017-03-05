@@ -3,12 +3,14 @@
     <style name="AppTheme" parent="AppTheme.Base">
         <!-- Customize your theme here. -->
     </style>
+
     <!-- Base Theme -->
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colourPrimary</item>
         <item name="colorPrimaryDark">@color/colourPrimaryDark</item>
         <item name="colorAccent">@color/colourAccent</item>
     </style>
+
     <!-- Toolbar Theme -->
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:textColorPrimary">@android:color/white</item>
@@ -16,6 +18,7 @@
         <!--<item name="android:itemBackground">@color/blueGrey</item>-->
         <item name="android:textAppearanceListItem">@color/colourPrimaryText</item>
     </style>
+
     <!-- Tab Theme -->
     <style name="TabTheme" parent="Base.Widget.Design.TabLayout">
         <item name="android:layout_height">@dimen/tab_height</item>
@@ -28,12 +31,14 @@
         <item name="tabTextAppearance">@style/TabTextTheme</item>
         <item name="tabSelectedTextColor">@android:color/white</item>
     </style>
+
     <!-- Tab Text -->
     <style name="TabTextTheme" parent="TextAppearance.Design.Tab">
         <item name="android:textColor">@color/colourInactiveTab</item>
         <item name="android:textSize">@dimen/tab_text_size</item>
         <item name="textAllCaps">true</item>
     </style>
+
     <!-- Divider -->
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
@@ -43,7 +48,11 @@
         <item name="android:background">@color/colourDividerDark</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <!-- Input Label -->
+    <style name="InputLabel" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:padding">@dimen/input_label_vertical_spacing</item>
+    </style>
 
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
