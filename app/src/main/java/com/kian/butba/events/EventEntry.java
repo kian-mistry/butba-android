@@ -18,6 +18,9 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
@@ -33,7 +36,7 @@ import java.util.HashMap;
  * Created by Kian Mistry on 17/01/17.
  */
 
-public class EventEntry extends AppCompatActivity implements OnItemSelectedListener {
+public class EventEntry extends AppCompatActivity implements OnCheckedChangeListener, OnItemSelectedListener {
 
 	public static String ENTRIES_EMAIL = "entries@butba.co.uk";
 
@@ -42,10 +45,12 @@ public class EventEntry extends AppCompatActivity implements OnItemSelectedListe
 	private String eventName;
 	private int eventTeamSize;
 	private int numberOfTeams = 1;
+	private boolean showEntrants = true;
 
 	private TextView tvEventName;
 	private TextInputEditText etTeamName;
 	private AppCompatSpinner spNumberOfTeams;
+	private CheckBox cbEnterBowlers;
 	private GridLayout glEntrants;
 	private RadioGroup rgPaymentMethods;
 	private TextInputEditText etMoreInfo;
@@ -82,6 +87,9 @@ public class EventEntry extends AppCompatActivity implements OnItemSelectedListe
 		spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spNumberOfTeams.setAdapter(spinnerAdapter);
 		spNumberOfTeams.setOnItemSelectedListener(this);
+		
+		cbEnterBowlers = (CheckBox) findViewById(R.id.event_entry_enter_bowlers);
+		cbEnterBowlers.setOnCheckedChangeListener(this);
 
 		glEntrants = (GridLayout) findViewById(R.id.event_entry_averages_grid);
 
@@ -111,8 +119,8 @@ public class EventEntry extends AppCompatActivity implements OnItemSelectedListe
 				onBackPressed();
 				break;
 			case R.id.btn_event_entry_submit:
-				obtainTextFieldEntries(eventTeamSize, numberOfTeams);
-				submitEntry(eventTeamSize, numberOfTeams);
+				obtainTextFieldEntries(eventTeamSize, numberOfTeams, showEntrants);
+				submitEntry(eventTeamSize, numberOfTeams, showEntrants);
 				break;
 			default:
 				break;
@@ -126,12 +134,13 @@ public class EventEntry extends AppCompatActivity implements OnItemSelectedListe
 	 *
 	 * @param teamSize The size of each team for the event.
 	 * @param numberOfTeams The number of teams the user wants to enter.
+	 * @param showEntrants A flag to show whether to display of entrants on the entry form.
 	 */
-	private void setupEntrantsView(int teamSize, int numberOfTeams) {
-		if(teamSize > 0) {
-			
-			//Remove all child views from the grid layout, before redrawing the views.
-			glEntrants.removeAllViews();
+	private void setupEntrantsView(int teamSize, int numberOfTeams, boolean showEntrants) {
+		//Remove all child views from the grid layout, before redrawing the views.
+		glEntrants.removeAllViews();
+		
+		if(teamSize > 0 && showEntrants) {
 			
 			for(int i = 0; i < numberOfTeams; i++) {
 				for(int j = 1; j <= teamSize; j++) {
@@ -184,29 +193,32 @@ public class EventEntry extends AppCompatActivity implements OnItemSelectedListe
 	 *
 	 * @param teamSize The size of each team for the event.
 	 * @param numberOfTeams The number of teams the user wants to enter.
+	 * @param showEntrants A flag to show whether to display of entrants on the entry form.
 	 */
-	private void obtainTextFieldEntries(int teamSize, int numberOfTeams) {
-		bowlersNames = new HashMap<>();
-		bowlersAverages = new HashMap<>();
-
-		for(int i = 0; i < numberOfTeams; i++) {
-			for(int j = 1; j <= teamSize; j++) {
-				LinearLayout linearLayout = (LinearLayout) glEntrants.getChildAt((i * teamSize) + (j - 1));
-				
-				//Bowler's Name
-				TextInputLayout textInputLayoutBowler = (TextInputLayout) linearLayout.getChildAt(0);
-				FrameLayout frameLayout = (FrameLayout) textInputLayoutBowler.getChildAt(0);
-				TextInputEditText editTextBowler = (TextInputEditText) frameLayout.getChildAt(0);
-				String name = (!editTextBowler.getText().toString().equals("")) ? editTextBowler.getText().toString() : null;
-				bowlersNames.put("bowler_" + ((i * teamSize) + j), name);
-				
-				//Bowler's Average
-				TextInputLayout textInputLayoutBowlerAverage = (TextInputLayout) linearLayout.getChildAt(1);
-				frameLayout = (FrameLayout) textInputLayoutBowlerAverage.getChildAt(0);
-				TextInputEditText editTextBowlerAverage = (TextInputEditText) frameLayout.getChildAt(0);
-				Integer average = (!editTextBowlerAverage.getText().toString().equals("")) ? Integer.parseInt(editTextBowlerAverage.getText().toString()) : null;
-				
-				bowlersAverages.put("bowler_" + ((i * teamSize) + j), average);
+	private void obtainTextFieldEntries(int teamSize, int numberOfTeams, boolean showEntrants) {
+		if(showEntrants) {
+			bowlersNames = new HashMap<>();
+			bowlersAverages = new HashMap<>();
+			
+			for(int i = 0; i < numberOfTeams; i++) {
+				for(int j = 1; j <= teamSize; j++) {
+					LinearLayout linearLayout = (LinearLayout) glEntrants.getChildAt((i * teamSize) + (j - 1));
+					
+					//Bowler's Name
+					TextInputLayout textInputLayoutBowler = (TextInputLayout) linearLayout.getChildAt(0);
+					FrameLayout frameLayout = (FrameLayout) textInputLayoutBowler.getChildAt(0);
+					TextInputEditText editTextBowler = (TextInputEditText) frameLayout.getChildAt(0);
+					String name = (!editTextBowler.getText().toString().equals("")) ? editTextBowler.getText().toString() : null;
+					bowlersNames.put("bowler_" + ((i * teamSize) + j), name);
+					
+					//Bowler's Average
+					TextInputLayout textInputLayoutBowlerAverage = (TextInputLayout) linearLayout.getChildAt(1);
+					frameLayout = (FrameLayout) textInputLayoutBowlerAverage.getChildAt(0);
+					TextInputEditText editTextBowlerAverage = (TextInputEditText) frameLayout.getChildAt(0);
+					Integer average = (!editTextBowlerAverage.getText().toString().equals("")) ? Integer.parseInt(editTextBowlerAverage.getText().toString()) : null;
+					
+					bowlersAverages.put("bowler_" + ((i * teamSize) + j), average);
+				}
 			}
 		}
 	}
@@ -216,8 +228,9 @@ public class EventEntry extends AppCompatActivity implements OnItemSelectedListe
 	 *
 	 * @param teamSize The size of each team for the event.
 	 * @param numberOfTeams The number of teams the user wants to enter.
+	 * @param showEntrants A flag to show whether to display of entrants on the entry form.
 	 */
-	private void submitEntry(int teamSize, int numberOfTeams) {
+	private void submitEntry(int teamSize, int numberOfTeams, boolean showEntrants) {
 		//Construct body of message.
 
 		//Team Name.
@@ -225,22 +238,28 @@ public class EventEntry extends AppCompatActivity implements OnItemSelectedListe
 		stringBuilder.append("Club/Team Name: ");
 		stringBuilder.append(etTeamName.getText().toString() + "\n\n");
 
-		//Bowlers within team.
-		stringBuilder.append("Bowlers: \n");
-		for(int i = 0; i < numberOfTeams; i++) {
-			stringBuilder.append("Team " + (i + 1) + ": \n");
-			for(int j = 1; j <= teamSize; j++) {
-				String name = bowlersNames.get("bowler_" + ((i * teamSize) + j));
-				Integer average = bowlersAverages.get("bowler_" + ((i * teamSize) + j));
-				
-				if(name != null) {
-					if(average != null) {
-						stringBuilder.append(name + " (" + average + ") \n");
-					} else {
-						stringBuilder.append(name + " \n");
+		if(showEntrants) {
+			//Bowlers within team.
+			stringBuilder.append("Bowlers: \n");
+			for(int i = 0; i < numberOfTeams; i++) {
+				stringBuilder.append("Team " + (i + 1) + ": \n");
+				for(int j = 1; j <= teamSize; j++) {
+					String name = bowlersNames.get("bowler_" + ((i * teamSize) + j));
+					Integer average = bowlersAverages.get("bowler_" + ((i * teamSize) + j));
+					
+					if(name != null) {
+						if(average != null) {
+							stringBuilder.append(name + " (" + average + ") \n");
+						} else {
+							stringBuilder.append(name + " \n");
+						}
 					}
 				}
 			}
+		}
+		else {
+			//Number of teams.
+			stringBuilder.append("Number of Teams: " + numberOfTeams + " \n");
 		}
 
 		//Payment Method.
@@ -274,9 +293,15 @@ public class EventEntry extends AppCompatActivity implements OnItemSelectedListe
 	}
 	
 	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		showEntrants = isChecked;
+		setupEntrantsView(eventTeamSize, numberOfTeams, showEntrants);
+	}
+	
+	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 		numberOfTeams = Integer.parseInt(parent.getItemAtPosition(position).toString());
-		setupEntrantsView(eventTeamSize, numberOfTeams);
+		setupEntrantsView(eventTeamSize, numberOfTeams, showEntrants);
 	}
 	
 	@Override
