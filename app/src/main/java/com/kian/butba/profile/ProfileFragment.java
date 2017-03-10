@@ -209,25 +209,27 @@ public class ProfileFragment extends Fragment implements AsyncDelegate, OnRefres
 
 	@Override
 	public void onProfileCardClicked(ProfileHolder holder, BowlerSeasonStats seasonStats) {
-		//Define intent.
-		Intent intent = new Intent(getActivity(), ProfileCardDetails.class);
-
+		ActivityOptionsCompat sceneTransition = null;
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
+			
 			//Define new shared element.
 			View cardView = holder.getProfileCard();
 			String expandCardName = getResources().getString(R.string.transition_expand_card);
 			cardView.setTransitionName(expandCardName);
 			Pair<View, String> cardSharedElement = new Pair<>(cardView, expandCardName);
-
-			//Put extras into intent, to send to the Profile Cards Details activity.
-			intent.putExtra("SEASON_STATS", seasonStats);
-
-			ActivityOptionsCompat sceneTransition = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), cardSharedElement);
+			
+			sceneTransition = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), cardSharedElement);
+		}
+			
+		//Put extras into intent, to send to the Profile Cards Details activity.
+		Intent intent = new Intent(getActivity(), ProfileCardDetails.class);
+		intent.putExtra("SEASON_STATS", seasonStats);
+		
+		if(sceneTransition != null) {
 			getActivity().startActivityFromFragment(this, intent, getTargetRequestCode(), sceneTransition.toBundle());
 		}
 		else {
-			getActivity().startActivity(intent);
+			getActivity().startActivityFromFragment(this, intent, getTargetRequestCode());
 		}
 	}
 
