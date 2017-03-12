@@ -9,7 +9,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -202,6 +204,19 @@ public class EventEntry extends AppCompatActivity implements OnCheckedChangeList
 							textViewBowler.setText(entrant.getName());
 							editTextBowlerAverage.setText(String.valueOf(entrant.getLatestQualifiedAverage()));
 						}
+					});
+					
+					textViewBowler.addTextChangedListener(new TextWatcher() {
+						@Override
+						public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+						
+						@Override
+						public void onTextChanged(CharSequence s, int start, int before, int count) {
+							editTextBowlerAverage.setText("");
+						}
+						
+						@Override
+						public void afterTextChanged(Editable s) {}
 					});
 					
 					//Add to text input layout.
