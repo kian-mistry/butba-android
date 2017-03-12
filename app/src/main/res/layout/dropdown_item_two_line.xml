@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/two_line_list_item_height"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/two_line_list_item_side_padding"
+    android:paddingLeft="@dimen/two_line_list_item_side_padding"
+    android:paddingEnd="@dimen/two_line_list_item_side_padding"
+    android:paddingRight="@dimen/two_line_list_item_side_padding"
+    android:paddingTop="@dimen/two_line_list_item_top_bottom_padding">
+
+    <TextView
+        android:id="@+id/dropdown_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/colourPrimaryText"/>
+
+    <TextView
+        android:id="@+id/dropdown_sub_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@color/colourSecondaryText"/>
+
+</LinearLayout>

@@ -25,4 +25,9 @@
     <!-- Input Label Dimensions -->
     <dimen name="input_label_horizontal_spacing">8dp</dimen>
     <dimen name="input_label_vertical_spacing">4dp</dimen>
+
+    <!-- Two Line List Item -->
+    <dimen name="two_line_list_item_height">72dp</dimen>
+    <dimen name="two_line_list_item_side_padding">16dp</dimen>
+    <dimen name="two_line_list_item_top_bottom_padding">20dp</dimen>
 </resources>

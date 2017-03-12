@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -92,7 +91,7 @@
             </LinearLayout>
 
             <!-- Bowlers -->
-            <!-- Child views will be added to this layout depending on the team size. -->
+            <!-- Child views will be added to this layout depending on the team size and how many teams are entered. -->
             <GridLayout
                 android:id="@+id/event_entry_averages_grid"
                 android:layout_width="match_parent"

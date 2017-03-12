@@ -15,7 +15,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -24,11 +26,14 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.kian.butba.R;
+import com.kian.butba.entities.Entrant;
+import com.kian.butba.views.DelayAutoCompleteTextView;
 
 import java.util.HashMap;
 
@@ -38,7 +43,8 @@ import java.util.HashMap;
 
 public class EventEntry extends AppCompatActivity implements OnCheckedChangeListener, OnItemSelectedListener {
 
-	public static String ENTRIES_EMAIL = "entries@butba.co.uk";
+	private static String ENTRIES_EMAIL = "entries@butba.co.uk";
+	private static int AUTOCOMPLETE_THRESHOLD = 1;
 
 	private ActionBar toolbar;
 
@@ -54,6 +60,8 @@ public class EventEntry extends AppCompatActivity implements OnCheckedChangeList
 	private GridLayout glEntrants;
 	private RadioGroup rgPaymentMethods;
 	private TextInputEditText etMoreInfo;
+	
+	private EntrantAutoCompleteAdapter autoCompleteAdapter = new EntrantAutoCompleteAdapter(this);
 
 	private HashMap<String, String> bowlersNames;
 	private HashMap<String, Integer> bowlersAverages;
@@ -151,29 +159,50 @@ public class EventEntry extends AppCompatActivity implements OnCheckedChangeList
 					
 					//Create text input layout.
 					TextInputLayout textInputLayoutBowler = new TextInputLayout(this);
-					textInputLayoutBowler.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 3));
+					textInputLayoutBowler.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 2));
 					
-					//Create edit text for bowler's name.
-					TextInputEditText editTextBowler = new TextInputEditText(this);
-					editTextBowler.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-					editTextBowler.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-					editTextBowler.setHint("Bowler " + ((i * teamSize) + j));
+					//Create autocomplete text view for bowler's name.
+					final DelayAutoCompleteTextView textViewBowler = new DelayAutoCompleteTextView(this);
+					textViewBowler.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+					textViewBowler.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+					textViewBowler.setHint("Bowler " + ((i * teamSize) + j));
+					textViewBowler.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_SEARCH);
+					textViewBowler.setThreshold(AUTOCOMPLETE_THRESHOLD);
+					textViewBowler.setAdapter(autoCompleteAdapter);
 					
-					//Add to text input layout.
-					textInputLayoutBowler.addView(editTextBowler);
+					//Add autocomplete text view to text input layout.
+					textInputLayoutBowler.addView(textViewBowler);
 					
-					//Add to linear layout.
+					//Create progress bar for the autocomplete text view.
+					ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleSmall);
+					LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+					progressBar.setLayoutParams(layoutParams);
+					progressBar.setVisibility(View.GONE);
+					
+					textViewBowler.setProgressBar(progressBar);
+					
+					//Add text input layout and progress bar to text view container.
 					linearLayout.addView(textInputLayoutBowler);
+					linearLayout.addView(progressBar);
 					
 					//Create text input layout.
 					TextInputLayout textInputLayoutBowlerAverage = new TextInputLayout(this);
 					textInputLayoutBowlerAverage.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1));
 					
 					//Create edit text for bowler's average.
-					TextInputEditText editTextBowlerAverage = new TextInputEditText(this);
+					final TextInputEditText editTextBowlerAverage = new TextInputEditText(this);
 					editTextBowlerAverage.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 					editTextBowlerAverage.setInputType(InputType.TYPE_CLASS_NUMBER);
 					editTextBowlerAverage.setHint("Average");
+					
+					textViewBowler.setOnItemClickListener(new OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+							Entrant entrant = (Entrant) parent.getItemAtPosition(position);
+							textViewBowler.setText(entrant.getName());
+							editTextBowlerAverage.setText(String.valueOf(entrant.getLatestQualifiedAverage()));
+						}
+					});
 					
 					//Add to text input layout.
 					textInputLayoutBowlerAverage.addView(editTextBowlerAverage);
