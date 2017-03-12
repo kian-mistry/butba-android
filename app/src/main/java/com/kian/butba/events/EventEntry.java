@@ -236,12 +236,12 @@ public class EventEntry extends AppCompatActivity implements OnCheckedChangeList
 					//Bowler's Name
 					TextInputLayout textInputLayoutBowler = (TextInputLayout) linearLayout.getChildAt(0);
 					FrameLayout frameLayout = (FrameLayout) textInputLayoutBowler.getChildAt(0);
-					TextInputEditText editTextBowler = (TextInputEditText) frameLayout.getChildAt(0);
-					String name = (!editTextBowler.getText().toString().equals("")) ? editTextBowler.getText().toString() : null;
+					DelayAutoCompleteTextView textViewBowler = (DelayAutoCompleteTextView) frameLayout.getChildAt(0);
+					String name = (!textViewBowler.getText().toString().equals("")) ? textViewBowler.getText().toString() : null;
 					bowlersNames.put("bowler_" + ((i * teamSize) + j), name);
 					
 					//Bowler's Average
-					TextInputLayout textInputLayoutBowlerAverage = (TextInputLayout) linearLayout.getChildAt(1);
+					TextInputLayout textInputLayoutBowlerAverage = (TextInputLayout) linearLayout.getChildAt(2);
 					frameLayout = (FrameLayout) textInputLayoutBowlerAverage.getChildAt(0);
 					TextInputEditText editTextBowlerAverage = (TextInputEditText) frameLayout.getChildAt(0);
 					Integer average = (!editTextBowlerAverage.getText().toString().equals("")) ? Integer.parseInt(editTextBowlerAverage.getText().toString()) : null;
@@ -261,11 +261,13 @@ public class EventEntry extends AppCompatActivity implements OnCheckedChangeList
 	 */
 	private void submitEntry(int teamSize, int numberOfTeams, boolean showEntrants) {
 		//Construct body of message.
+		StringBuilder stringBuilder = new StringBuilder();
 
 		//Team Name.
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("Club/Team Name: ");
-		stringBuilder.append(etTeamName.getText().toString() + "\n\n");
+		String teamName = etTeamName.getText().toString();
+		if(!teamName.equals("")) {
+			stringBuilder.append("Club/Team Name: " + teamName + "\n\n");
+		}
 
 		if(showEntrants) {
 			//Bowlers within team.

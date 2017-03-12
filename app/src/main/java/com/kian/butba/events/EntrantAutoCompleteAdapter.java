@@ -1,7 +1,6 @@
 package com.kian.butba.events;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,8 +74,6 @@ public class EntrantAutoCompleteAdapter extends BaseAdapter implements Filterabl
 				FilterResults filterResults = new FilterResults();
 				
 				if(constraint != null) {
-					Log.d("SEARCH TERM", constraint.toString());
-					
 					findEntrants(context, constraint.toString());
 					
 					filterResults.values = entrantList;
