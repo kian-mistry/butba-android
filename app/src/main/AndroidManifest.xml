@@ -39,9 +39,9 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <!-- Profile Details Card Activity -->
+        <!-- Profile Details Activity -->
         <activity
-            android:name=".profile.ProfileCardDetails"
+            android:name=".profile.ProfileDetailsActivity"
             android:label="Profile Details"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -51,7 +51,7 @@
         </activity>
         <!-- Event Entry Activity -->
         <activity
-            android:name=".events.EventEntry"
+            android:name=".events.EventEntryActivity"
             android:label="Event Entry"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible|adjustResize">

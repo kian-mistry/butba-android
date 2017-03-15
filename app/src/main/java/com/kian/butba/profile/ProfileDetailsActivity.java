@@ -30,7 +30,7 @@ import java.util.List;
  * Created by Kian Mistry on 24/12/16.
  */
 
-public class ProfileCardDetails extends AppCompatActivity {
+public class ProfileDetailsActivity extends AppCompatActivity {
 
 	private ActionBar toolbar;
 

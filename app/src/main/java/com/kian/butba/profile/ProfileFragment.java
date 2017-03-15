@@ -222,7 +222,7 @@ public class ProfileFragment extends Fragment implements AsyncDelegate, OnRefres
 		}
 			
 		//Put extras into intent, to send to the Profile Cards Details activity.
-		Intent intent = new Intent(getActivity(), ProfileCardDetails.class);
+		Intent intent = new Intent(getActivity(), ProfileDetailsActivity.class);
 		intent.putExtra("SEASON_STATS", seasonStats);
 		
 		if(sceneTransition != null) {

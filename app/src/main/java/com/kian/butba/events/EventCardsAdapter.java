@@ -133,7 +133,7 @@ public class EventCardsAdapter extends FirebaseRecyclerAdapter<Event, EventHolde
 			holder.getEventRequestTournamentEntry().setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent(fragment.getActivity(), EventEntry.class);
+					Intent intent = new Intent(fragment.getActivity(), EventEntryActivity.class);
 
 					Integer teamSize = (current.getTeamSize() != null) ? current.getTeamSize() : 0;
 

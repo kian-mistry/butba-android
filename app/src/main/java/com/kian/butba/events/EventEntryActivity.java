@@ -43,7 +43,7 @@ import java.util.HashMap;
  * Created by Kian Mistry on 17/01/17.
  */
 
-public class EventEntry extends AppCompatActivity implements OnCheckedChangeListener, OnItemSelectedListener {
+public class EventEntryActivity extends AppCompatActivity implements OnCheckedChangeListener, OnItemSelectedListener {
 
 	private static String ENTRIES_EMAIL = "entries@butba.co.uk";
 	private static int AUTOCOMPLETE_THRESHOLD = 1;
